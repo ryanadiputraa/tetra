@@ -4,6 +4,9 @@ api: docker
 docker:
 	docker-compose up -d
 
+web: 
+	cd frontend && npm run dev 	
+
 stop:
 	docker-compose down
 
@@ -16,4 +19,4 @@ docs:
 test:
 	go test ./... -v -cover
 
-.PHONY: docs test
+.PHONY: web docs test
