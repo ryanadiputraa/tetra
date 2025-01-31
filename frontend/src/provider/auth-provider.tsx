@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { COOKIE_AUTH_KEY } from "@/constant";
-import { getCookie } from "@/lib/storage";
+import { getCookie } from "@/lib";
 
 export default function AuthProvider({
   children,
@@ -12,16 +12,14 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    console.log("hiot");
     const token = getCookie(COOKIE_AUTH_KEY);
-    if (!token) {
+    if (!token && pathname !== "/login") {
       router.push("/login");
     }
-    window.addEventListener("popstate", () => router.refresh());
-    return () => window.removeEventListener("popstate", () => router.refresh());
-  });
+  }, [router, pathname]);
 
   return children;
 }

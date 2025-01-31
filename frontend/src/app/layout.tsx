@@ -1,5 +1,6 @@
 import AppProvider from "@/provider/app-provider";
 import AuthProvider from "@/provider/auth-provider";
+import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -21,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font} antialiased`}>
+      <body className={`${font} antialiased bg-slate-200 text-slate-950`}>
         <AuthProvider>
           <AppProvider>{children}</AppProvider>
         </AuthProvider>
