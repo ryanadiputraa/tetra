@@ -1,3 +1,5 @@
+import AppProvider from "@/provider/app-provider";
+import AuthProvider from "@/provider/auth-provider";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
@@ -19,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font} antialiased`}>{children}</body>
+      <body className={`${font} antialiased`}>
+        <AuthProvider>
+          <AppProvider>{children}</AppProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
