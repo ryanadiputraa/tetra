@@ -20,27 +20,34 @@ type User struct {
 	CreatedAt time.Time      `json:"created_at" gorm:"notNull"`
 }
 
-func NewUser(email, password, fullname string) (user User, err error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	if err != nil {
-		return
-	}
-
+func New(fullname, email, password string) (user User, err error) {
 	user = User{
-		Email: email,
-		Password: sql.NullString{
-			Valid:  true,
-			String: string(hashedPassword),
-		},
+		Email:     email,
 		Fullname:  fullname,
 		CreatedAt: time.Now().UTC(),
+	}
+
+	if len(password) > 0 {
+		var hashed []byte
+		hashed, err = bcrypt.GenerateFromPassword([]byte(password), 10)
+		if err != nil {
+			return
+		}
+
+		user.Password = sql.NullString{
+			Valid:  true,
+			String: string(hashed),
+		}
 	}
 	return
 }
 
-type UserService interface{}
+type UserService interface {
+	CreateOrUpdate(ctx context.Context, fullname, email, password string) (User, error)
+}
 
 type UserRepository interface {
 	Save(ctx context.Context, user User) (User, error)
+	SaveOrUpdate(ctx context.Context, user User) (User, error)
 	FindByEmail(ctx context.Context, email string) (User, error)
 }

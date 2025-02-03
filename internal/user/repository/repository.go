@@ -6,6 +6,7 @@ import (
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type repository struct {
@@ -24,6 +25,15 @@ func (r *repository) Save(ctx context.Context, user user.User) (res user.User, e
 		err = errors.NewServiceErr(errors.BadRequest, errors.EmailTaken)
 		return
 	}
+	res = user
+	return
+}
+
+func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (res user.User, err error) {
+	err = r.db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "email"}},
+		DoUpdates: clause.AssignmentColumns([]string{"fullname"}),
+	}).Create(&user).Error
 	res = user
 	return
 }

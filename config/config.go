@@ -3,14 +3,18 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	Port        string `mapstructure:"PORT"`
-	FrontendURL string `mapstructure:"FRONTEND_URL"`
-	JWTSecret   string `mapstructure:"JWT_SECRET"`
-	DBHost      string `mapstructure:"DB_HOST"`
-	DBUser      string `mapstructure:"DB_USER"`
-	DBPassword  string `mapstructure:"DB_PASSWORD"`
-	DBName      string `mapstructure:"DB_NAME"`
-	DBPort      int    `mapstructure:"DB_PORT"`
+	Port               string `mapstructure:"PORT"`
+	FrontendURL        string `mapstructure:"FRONTEND_URL"`
+	JWTSecret          string `mapstructure:"JWT_SECRET"`
+	DBHost             string `mapstructure:"DB_HOST"`
+	DBUser             string `mapstructure:"DB_USER"`
+	DBPassword         string `mapstructure:"DB_PASSWORD"`
+	DBName             string `mapstructure:"DB_NAME"`
+	DBPort             int    `mapstructure:"DB_PORT"`
+	OauthState         string `mapstructure:"OAUTH_STATE"`
+	OauthRedirectURL   string `mapstructure:"OAUTH_REDIRECT_URL"`
+	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 }
 
 func LoadConfig() (c Config, err error) {

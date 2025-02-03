@@ -47,10 +47,9 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 }
 
 func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (res user.User, err error) {
-	u, err := user.NewUser(payload.Email, payload.Password, payload.Fullname)
+	u, err := user.New(payload.Fullname, payload.Email, payload.Password)
 	if err != nil {
 		s.log.Error("Fail to create new user. Err: ", err.Error())
-		err = errors.NewServiceErr(errors.ServerError, errors.ServerError)
 		return
 	}
 

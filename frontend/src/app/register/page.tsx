@@ -9,7 +9,7 @@ import { AiOutlineLine } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 
 import { register } from "@/api";
-import { API_MSG, COOKIE_AUTH_KEY, SERVER_ERR_MSG } from "@/constant";
+import { API_MSG, API_URL, COOKIE_AUTH_KEY, SERVER_ERR_MSG } from "@/constant";
 import { getCookie, setCookie } from "@/lib";
 import { APIError, JWT, RegisterPayload, RegisterPayloadForm } from "@/types";
 
@@ -103,13 +103,13 @@ export default function Login() {
             loading={isPending}
             className="font-semibold"
           >
-            Login
+            Daftar
           </Button>
         </Form>
         <p className="my-4 flex items-center justify-center gap-2">
           <AiOutlineLine /> Atau daftar dengan <AiOutlineLine />
         </p>
-        <a href="https://google.com">
+        <a href={API_URL + "/oauth/login/google"}>
           <Button
             disabled={isPending}
             size="large"
@@ -120,7 +120,7 @@ export default function Login() {
         </a>
         <p className="text-center mt-8">
           Sudah punya akun?{" "}
-          <Link href="/login" className="font-semibold">
+          <Link href="/login" className="font-semibold text-blue-600">
             Masuk di sini.
           </Link>
         </p>

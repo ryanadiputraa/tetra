@@ -14,7 +14,12 @@ import {
 import { FcGoogle } from "react-icons/fc";
 
 import { login } from "@/api";
-import { COOKIE_AUTH_KEY, SERVER_ERR, SERVER_ERR_MSG } from "@/constant";
+import {
+  API_URL,
+  COOKIE_AUTH_KEY,
+  SERVER_ERR,
+  SERVER_ERR_MSG,
+} from "@/constant";
 import { getCookie, setCookie } from "@/lib";
 import { APIError, JWT, LoginPayload } from "@/types";
 
@@ -94,7 +99,7 @@ export default function Login() {
         <p className="my-4 flex items-center justify-center gap-2">
           <AiOutlineLine /> Atau masuk dengan <AiOutlineLine />
         </p>
-        <a href="https://google.com">
+        <a href={API_URL + "/oauth/login/google"}>
           <Button
             disabled={isPending}
             size="large"
@@ -105,7 +110,7 @@ export default function Login() {
         </a>
         <p className="text-center mt-8">
           Belum punya akun?{" "}
-          <Link href="/register" className="font-semibold">
+          <Link href="/register" className="font-semibold text-blue-600">
             Daftar di sini.
           </Link>
         </p>
