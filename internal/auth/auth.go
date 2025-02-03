@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"time"
+
+	"github.com/ryanadiputraa/inventra/internal/user"
 )
 
 type Role string
@@ -35,6 +37,14 @@ type LoginPayload struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type RegisterPayload struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
+	Fullname string `json:"fullname" validate:"required"`
+}
+
 type AuthService interface {
+	Login(ctx context.Context, email, password string) (user.User, error)
+	Register(ctx context.Context, payload RegisterPayload) (user.User, error)
 	GenerateJWT(ctx context.Context, userID int) (JWT, error)
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { Button, Input, notification } from "antd";
+import { Button, Form, Input, notification } from "antd";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -20,10 +21,7 @@ import { APIError, JWT, LoginPayload } from "@/types";
 export default function Login() {
   const router = useRouter();
   const [toast, contextHolder] = notification.useNotification();
-  const [payload, setPayload] = useState<LoginPayload>({
-    email: "",
-    password: "",
-  });
+  const [form] = Form.useForm<LoginPayload>();
 
   const { mutate, isPending } = useMutation<JWT, APIError, LoginPayload>({
     mutationKey: ["login"],
@@ -34,9 +32,9 @@ export default function Login() {
     },
     onError: (error) => {
       const description =
-        error.message === SERVER_ERR || !error.errors
+        !error.errors && error.message === SERVER_ERR
           ? SERVER_ERR_MSG
-          : "Mohon periksa email dan password yang anda masukan.";
+          : "Mohon periksa email dan password yang kamu masukan.";
       toast.error({
         message: "Login Gagal",
         description,
@@ -45,8 +43,7 @@ export default function Login() {
     },
   });
 
-  const onLogin = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onLogin = (payload: LoginPayload) => {
     mutate(payload);
   };
 
@@ -65,34 +62,24 @@ export default function Login() {
           <h4 className="font-bold text-2xl">Inventra</h4>
           <p className="mt-2">Login untuk masuk ke dashboard Inventra.</p>
         </div>
-        <form onSubmit={onLogin} className="mt-8 flex flex-col gap-4">
-          <Input
-            required
-            size="large"
-            placeholder="Email"
-            type="email"
-            suffix={<AiOutlineUser />}
-            onChange={(e) =>
-              setPayload((prev) => ({
-                ...prev,
-                email: e.target.value,
-              }))
-            }
-          />
-          <Input.Password
-            required
-            size="large"
-            placeholder="Password"
-            iconRender={(visible) =>
-              visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />
-            }
-            onChange={(e) =>
-              setPayload((prev) => ({
-                ...prev,
-                password: e.target.value,
-              }))
-            }
-          />
+        <Form form={form} onFinish={onLogin} className="mt-8 flex flex-col">
+          <Form.Item name="email" rules={[{ required: true, message: "" }]}>
+            <Input
+              size="large"
+              placeholder="Email"
+              type="email"
+              suffix={<AiOutlineUser />}
+            />
+          </Form.Item>
+          <Form.Item name="password" rules={[{ required: true, message: "" }]}>
+            <Input.Password
+              size="large"
+              placeholder="Password"
+              iconRender={(visible) =>
+                visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />
+              }
+            />
+          </Form.Item>
           <Button
             htmlType="submit"
             size="large"
@@ -103,7 +90,7 @@ export default function Login() {
           >
             Login
           </Button>
-        </form>
+        </Form>
         <p className="my-4 flex items-center justify-center gap-2">
           <AiOutlineLine /> Atau masuk dengan <AiOutlineLine />
         </p>
@@ -116,6 +103,12 @@ export default function Login() {
             <FcGoogle className="text-xl" /> Google
           </Button>
         </a>
+        <p className="text-center mt-8">
+          Belum punya akun?{" "}
+          <Link href="/register" className="font-semibold">
+            Daftar di sini.
+          </Link>
+        </p>
       </div>
     </div>
   );

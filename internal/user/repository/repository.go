@@ -18,6 +18,16 @@ func New(db *gorm.DB) user.UserRepository {
 	}
 }
 
+func (r *repository) Save(ctx context.Context, user user.User) (res user.User, err error) {
+	err = r.db.Create(&user).Error
+	if err == gorm.ErrDuplicatedKey {
+		err = errors.NewServiceErr(errors.BadRequest, errors.EmailTaken)
+		return
+	}
+	res = user
+	return
+}
+
 func (r *repository) FindByEmail(ctx context.Context, email string) (user user.User, err error) {
 	err = r.db.First(&user, "email = ?", email).Error
 	if err == gorm.ErrRecordNotFound {

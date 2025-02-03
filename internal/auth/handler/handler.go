@@ -6,27 +6,24 @@ import (
 
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/user"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 )
 
 type handler struct {
-	writer      writer.HTTPWriter
-	validator   validator.Validator
-	jwt         jwt.JWT
-	service     auth.AuthService
-	userService user.UserService
+	writer    writer.HTTPWriter
+	validator validator.Validator
+	jwt       jwt.JWT
+	service   auth.AuthService
 }
 
-func New(writer writer.HTTPWriter, validator validator.Validator, jwt jwt.JWT, service auth.AuthService, userService user.UserService) *handler {
+func New(writer writer.HTTPWriter, validator validator.Validator, jwt jwt.JWT, service auth.AuthService) *handler {
 	return &handler{
-		writer:      writer,
-		validator:   validator,
-		jwt:         jwt,
-		service:     service,
-		userService: userService,
+		writer:    writer,
+		validator: validator,
+		jwt:       jwt,
+		service:   service,
 	}
 }
 
@@ -44,7 +41,7 @@ func (h *handler) Login() http.HandlerFunc {
 			return
 		}
 
-		user, err := h.userService.Login(r.Context(), p.Email, p.Password)
+		user, err := h.service.Login(r.Context(), p.Email, p.Password)
 		if err != nil {
 			if sErr, ok := err.(*errors.ServiceErr); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
@@ -58,6 +55,44 @@ func (h *handler) Login() http.HandlerFunc {
 		if err != nil {
 			if sErr, ok := err.(*errors.ServiceErr); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], errors.Unauthorized)
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusOK, jwt)
+	}
+}
+
+func (h *handler) Register() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var p auth.RegisterPayload
+		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		errMap, err := h.validator.Validate(p)
+		if err != nil {
+			h.writer.WriteErrorResponseWithDetail(w, http.StatusBadRequest, errors.BadRequest, errMap)
+			return
+		}
+
+		u, err := h.service.Register(r.Context(), p)
+		if err != nil {
+			if sErr, ok := err.(*errors.ServiceErr); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		jwt, err := h.service.GenerateJWT(r.Context(), u.ID)
+		if err != nil {
+			if sErr, ok := err.(*errors.ServiceErr); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], errors.BadRequest)
 				return
 			}
 			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)

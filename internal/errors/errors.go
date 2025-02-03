@@ -9,6 +9,9 @@ const (
 	Forbidden    = "forbidden"
 	NotFound     = "not_found"
 	ServerError  = "internal_server_error"
+
+	// Error Msg Code
+	EmailTaken = "email_taken"
 )
 
 var HttpErrMap = map[string]int{

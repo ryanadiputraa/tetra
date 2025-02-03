@@ -16,7 +16,7 @@ export default function AuthProvider({
 
   useEffect(() => {
     const token = getCookie(COOKIE_AUTH_KEY);
-    if (!token && pathname !== "/login") {
+    if (!token && pathname !== "/login" && pathname !== "/register") {
       router.push("/login");
     }
   }, [router, pathname]);
