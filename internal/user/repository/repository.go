@@ -38,6 +38,15 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (res user
 	return
 }
 
+func (r *repository) FindByID(ctx context.Context, userID int) (user user.User, err error) {
+	err = r.db.First(&user, userID).Error
+	if err == gorm.ErrRecordNotFound {
+		err = errors.NewServiceErr(errors.BadRequest, errors.BadRequest)
+		return
+	}
+	return
+}
+
 func (r *repository) FindByEmail(ctx context.Context, email string) (user user.User, err error) {
 	err = r.db.First(&user, "email = ?", email).Error
 	if err == gorm.ErrRecordNotFound {

@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { COOKIE_AUTH_KEY } from "@/constant";
-import { getCookie } from "@/lib";
+import { fetcher, getCookie } from "@/lib";
 
 export default function AuthProvider({
   children,
@@ -13,6 +13,7 @@ export default function AuthProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const token = getCookie(COOKIE_AUTH_KEY);
@@ -23,8 +24,12 @@ export default function AuthProvider({
       pathname !== "/auth"
     ) {
       router.push("/login");
+    } else {
+      fetcher.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setIsLoggedIn(true);
     }
   }, [router, pathname]);
 
+  if (!isLoggedIn) return <></>;
   return children;
 }

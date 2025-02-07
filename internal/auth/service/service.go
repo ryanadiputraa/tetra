@@ -33,12 +33,12 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 	}
 
 	// Handle user only signin with social (password is still empty)
-	if user.Password.String == "" {
+	if user.Password != nil {
 		err = errors.NewServiceErr(errors.Unauthorized, errors.Unauthorized)
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(password))
 	if err != nil {
 		err = errors.NewServiceErr(errors.Unauthorized, errors.Unauthorized)
 		return

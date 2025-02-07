@@ -33,3 +33,12 @@ func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password 
 	}
 	return
 }
+
+func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err error) {
+	user, err = s.repository.FindByID(ctx, userID)
+	if err != nil {
+		s.log.Error("Fail to get user data. Err:", err.Error())
+		return
+	}
+	return
+}

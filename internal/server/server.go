@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/pkg/middleware"
+	"github.com/ryanadiputraa/inventra/internal/middleware"
 	"gorm.io/gorm"
 )
 

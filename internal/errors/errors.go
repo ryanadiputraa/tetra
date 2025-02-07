@@ -11,7 +11,9 @@ const (
 	ServerError  = "internal_server_error"
 
 	// Error Msg Code
-	EmailTaken = "email_taken"
+	EmailTaken        = "email_taken"
+	MissingAuthHeader = "missing_auth_header"
+	InvalidAuthHeader = "invalid_auth_header"
 )
 
 var HttpErrMap = map[string]int{
