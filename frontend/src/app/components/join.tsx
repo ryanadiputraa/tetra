@@ -1,11 +1,12 @@
 "use client";
 
-import { createOrganization } from "@/api/organization";
-import { API_MSG } from "@/constant";
-import { APIError, Organization, OrganizationPayload } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, notification } from "antd";
 import { AiOutlineTeam } from "react-icons/ai";
+
+import { createOrganization } from "@/api/organization";
+import { API_MSG } from "@/constant";
+import { APIError, Organization, OrganizationPayload } from "@/types";
 
 export const Join = () => {
   const [form] = Form.useForm<OrganizationPayload>();

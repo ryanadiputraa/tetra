@@ -1,7 +1,8 @@
 "use client";
 
-import { Button } from "antd";
 import { Join } from "./components";
+import { ErrorPage } from "./components/error";
+import { Loader } from "./components/loader";
 
 import { useUserData } from "@/queries";
 
@@ -9,24 +10,11 @@ export default function Home() {
   const { data, isLoading, error, refetch } = useUserData();
 
   if (error) {
-    return (
-      <div className="min-h-screen bg-slate-200 grid place-items-center">
-        <div className="text-center">
-          <p className="mb-2">
-            Terjadi kesalahan, mohon coba beberapa saat lagi.
-          </p>
-          <Button size="large" type="default" onClick={() => refetch()}>
-            Muat Kembali
-          </Button>
-        </div>
-      </div>
-    );
+    return <ErrorPage onRetry={() => refetch()} />;
   }
-
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
-
   if (!data?.organization_id) {
     return <Join />;
   }
