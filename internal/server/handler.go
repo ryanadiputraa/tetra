@@ -8,6 +8,9 @@ import (
 	authService "github.com/ryanadiputraa/inventra/internal/auth/service"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
 	oauthHandler "github.com/ryanadiputraa/inventra/internal/oauth/handler"
+	organizationHandler "github.com/ryanadiputraa/inventra/internal/organization/handler"
+	organizationRepository "github.com/ryanadiputraa/inventra/internal/organization/repository"
+	organizationService "github.com/ryanadiputraa/inventra/internal/organization/service"
 	userHandler "github.com/ryanadiputraa/inventra/internal/user/handler"
 	userRepository "github.com/ryanadiputraa/inventra/internal/user/repository"
 	userService "github.com/ryanadiputraa/inventra/internal/user/service"
@@ -35,13 +38,16 @@ func setupHandler(c config.Config, db *gorm.DB) http.Handler {
 	authMiddleware := middleware.NewAuthMiddleware(jwt, c.JWTSecret)
 
 	userRepository := userRepository.New(db)
+	organizationRepository := organizationRepository.New(db)
+
 	userService := userService.New(log, userRepository)
-
 	authService := authService.New(log, jwt, userRepository)
-	authHandler := authHandler.New(writer, validator, jwt, authService)
-	userHandler := userHandler.New(writer, userService)
+	organizationService := organizationService.New(log, organizationRepository)
 
+	authHandler := authHandler.New(writer, validator, jwt, authService)
 	oauthHandler := oauthHandler.New(log, c, oauth, userService, jwt)
+	userHandler := userHandler.New(writer, userService)
+	organizationHandler := organizationHandler.New(writer, organizationService)
 
 	router.Handle("POST /auth/login", authHandler.Login())
 	router.Handle("POST /auth/register", authHandler.Register())
@@ -49,5 +55,7 @@ func setupHandler(c config.Config, db *gorm.DB) http.Handler {
 	router.Handle("GET /oauth/callback/google", oauthHandler.GoogleCallback())
 
 	router.Handle("GET /api/users/profile", authMiddleware.ParseJWTToken(userHandler.GetUserData()))
+
+	router.Handle("POST /api/organizations", authMiddleware.ParseJWTToken(organizationHandler.CreateOrganization()))
 	return router
 }

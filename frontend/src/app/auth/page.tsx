@@ -30,7 +30,9 @@ export default function Auth() {
     <div className="min-h-screen bg-slate-200 grid place-items-center">
       {isError ? (
         <div className="text-center">
-          <p>Terjadi kesalahan, mohon coba beberapa saat lagi.</p>
+          <p className="mb-2">
+            Terjadi kesalahan, mohon coba beberapa saat lagi.
+          </p>
           <Link href="/login">
             <Button size="large" type="link">
               Back to Login

@@ -4,19 +4,21 @@ import (
 	"context"
 	"time"
 
+	"github.com/ryanadiputraa/inventra/internal/organization"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Status string
 
 type User struct {
-	ID             int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	Email          string    `json:"email" gorm:"type:varchar(100);unique;notNull"`
-	Password       *string   `json:"-" gorm:"type:varchar(100)"`
-	Fullname       string    `json:"fullname" gorm:"type:varchar(100);notNull"`
-	Role           *string   `json:"role" gorm:"type:varchar(10)"`
-	OrganizationID *int      `json:"organization_id"`
-	CreatedAt      time.Time `json:"created_at" gorm:"notNull"`
+	ID             int                       `json:"id" gorm:"primaryKey;autoIncrement"`
+	Email          string                    `json:"email" gorm:"type:varchar(100);unique;notNull"`
+	Password       *string                   `json:"-" gorm:"type:varchar(100)"`
+	Fullname       string                    `json:"fullname" gorm:"type:varchar(100);notNull"`
+	Role           *string                   `json:"role" gorm:"type:varchar(10)"`
+	OrganizationID *int                      `json:"organization_id"`
+	Organization   organization.Organization `json:"-" gorm:"constraint:OnDelete:SET NULL;"`
+	CreatedAt      time.Time                 `json:"created_at" gorm:"notNull"`
 }
 
 func New(fullname, email, password string) (user User, err error) {

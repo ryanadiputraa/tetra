@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "antd";
+import { Join } from "./components";
 
 import { useUserData } from "@/queries";
 
@@ -11,7 +12,9 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-slate-200 grid place-items-center">
         <div className="text-center">
-          <p>Terjadi kesalahan, mohon coba beberapa saat lagi.</p>
+          <p className="mb-2">
+            Terjadi kesalahan, mohon coba beberapa saat lagi.
+          </p>
           <Button size="large" type="default" onClick={() => refetch()}>
             Muat Kembali
           </Button>
@@ -22,6 +25,10 @@ export default function Home() {
 
   if (isLoading) {
     return <p>Loading...</p>;
+  }
+
+  if (!data?.organization_id) {
+    return <Join />;
   }
 
   return (

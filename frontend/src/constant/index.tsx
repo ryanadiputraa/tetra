@@ -14,4 +14,5 @@ export const API_MSG: Record<string, string> = {
   internal_server_error:
     "Sistem dalam perbaikan, mohon coba beberapa saat lagi.",
   email_taken: "Email telah terdaftar.",
+  organization_already_exists: "Organisasi sudah dibuat.",
 };
