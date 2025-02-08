@@ -28,7 +28,7 @@ func New(log logger.Logger, jwt jwt.JWT, userRepository user.UserRepository) aut
 func (s *service) Login(ctx context.Context, email, password string) (user user.User, err error) {
 	user, err = s.userRepository.FindByEmail(ctx, email)
 	if err != nil {
-		s.log.Error("Fail to find user by email. Err: ", err.Error())
+		s.log.Warn("Fail to find user by email. Err: ", err.Error())
 		return
 	}
 
@@ -55,7 +55,7 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 
 	res, err = s.userRepository.Save(ctx, u)
 	if err != nil {
-		s.log.Error("Fail to save user. Err: ", err.Error())
+		s.log.Warn("Fail to save user. Err: ", err.Error())
 		return
 	}
 	return
