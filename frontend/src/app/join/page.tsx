@@ -1,17 +1,27 @@
 "use client";
 
+import { ErrorPage, Loader } from "@/components";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, notification } from "antd";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 
 import { createOrganization } from "@/api/organization";
 import { API_MSG } from "@/constant";
+import { useUserData } from "@/queries";
 import { APIError, Organization, OrganizationPayload } from "@/types";
 
-export const Join = () => {
+export default function Join() {
   const [form] = Form.useForm<OrganizationPayload>();
   const [toast, contextHolder] = notification.useNotification();
   const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { data, isLoading, error, refetch } = useUserData(true);
+  useEffect(() => {
+    if (data && data.organization_id) router.push("/");
+  }, [data, router]);
 
   const { mutate, isPending } = useMutation<
     Organization,
@@ -20,14 +30,15 @@ export const Join = () => {
   >({
     mutationKey: ["createOrganization"],
     mutationFn: createOrganization,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userData"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userData"] });
+      router.push("/");
     },
     onError: (err) => {
       toast.error({
         message: "Gagal Membuat Organisasi",
         description: API_MSG[err.message],
-        placement: "topRight",
+        placement: "bottomRight",
       });
     },
   });
@@ -35,6 +46,13 @@ export const Join = () => {
   const onCreate = (payload: OrganizationPayload) => {
     mutate(payload);
   };
+
+  if (error) {
+    return <ErrorPage onRetry={() => refetch()} />;
+  }
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="min-h-screen grid place-items-center px-8">
@@ -69,4 +87,4 @@ export const Join = () => {
       </div>
     </div>
   );
-};
+}

@@ -30,7 +30,7 @@ export default function Login() {
         toast.error({
           message: "Gagal",
           description: API_MSG[error.message] || SERVER_ERR_MSG,
-          placement: "topRight",
+          placement: "bottomRight",
         });
       } else {
         const fields = [];

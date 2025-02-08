@@ -43,7 +43,7 @@ export default function Login() {
       toast.error({
         message: "Login Gagal",
         description,
-        placement: "topRight",
+        placement: "bottomRight",
       });
     },
   });
