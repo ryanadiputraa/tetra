@@ -1,9 +1,11 @@
 "use client";
 
+import { Dropdown, MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
@@ -20,6 +22,23 @@ export const DashboardLayout = ({ children }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const excludedRoutes = ["/auth", "/login", "/register", "/join"];
+  const headerTitle = pathname.split("/").filter(Boolean).pop() ?? "dashboard";
+
+  const menuItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <Link href="/profile">My Account</Link>,
+      icon: <AiOutlineUser />,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "2",
+      label: <button>Logout</button>,
+      icon: <AiOutlineLogout />,
+    },
+  ];
 
   const { data, isLoading, error, refetch } = useUserData(
     !excludedRoutes.includes(pathname),
@@ -46,24 +65,24 @@ export const DashboardLayout = ({ children }: Props) => {
 
   return (
     <div className="min-h-screen flex">
-      <nav className="bg-base text-white w-56">
+      <nav className="w-80 bg-white text-slate-400 border-r-2 border-gray-200">
         <div className="flex items-center gap-2 p-6">
-          <Image src={logo} alt="inventra" width={32} />
-          <h1 className="text-xl">Inventra</h1>
+          <Image src={logo} alt="inventra" height={32} />
+          <h1 className="text-xl text-black font-semibold">Inventra</h1>
         </div>
-        <div className="text-slate-300 mt-8">
-          <span className="text-sm pl-6">MENU</span>
+        <div className="mt-8 px-6">
+          <span className="text-sm">MENU UTAMA</span>
           <ul className="mt-2 flex flex-col gap-2">
             {mainMenu.map((menu) => (
               <li key={menu.link}>
                 <Link
                   href={menu.link}
-                  className={`border-l-4 p-2 pl-6 flex items-center gap-2 ${pathname === menu.link ? "border-primary text-white font-medium" : "border-transparent hover:text-primary"}`}
+                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary rounded-lg text-white" : "hover:text-primary"}`}
                 >
                   {pathname === menu.link ? (
-                    <menu.IcoActive className="text-2xl text-primary" />
+                    <menu.IcoActive className="text-2xl text-white" />
                   ) : (
-                    <menu.Ico className="text-2xl" />
+                    <menu.Ico className="text-2xl hover:text-primary" />
                   )}
                   {menu.label}
                 </Link>
@@ -72,7 +91,20 @@ export const DashboardLayout = ({ children }: Props) => {
           </ul>
         </div>
       </nav>
-      <main className="p-6">{children}</main>
+      <div className="w-full">
+        <header className="py-3 px-6 bg-white border-b-2 border-gray-200 flex justify-between items-center">
+          <h3 className="capitalize text-lg font-medium">{headerTitle}</h3>
+          <Dropdown menu={{ items: menuItems }}>
+            <div className="flex items-center gap-2">
+              <div className="grid place-items-center size-10 bg-primary text-white font-bold rounded-full">
+                <span className="text-lg">{data?.fullname.split("")[0]}</span>
+              </div>
+              <AiOutlineDown className="text-sm" />
+            </div>
+          </Dropdown>
+        </header>
+        <main className="w-full p-6">{children}</main>
+      </div>
     </div>
   );
 };

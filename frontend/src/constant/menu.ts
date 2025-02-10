@@ -1,8 +1,7 @@
 import {
   AiFillAppstore,
-  AiFillSchedule,
   AiOutlineAppstore,
-  AiOutlineSchedule,
+  AiOutlineTeam,
 } from "react-icons/ai";
 
 export const mainMenu = [
@@ -13,9 +12,9 @@ export const mainMenu = [
     label: "Dashboard",
   },
   {
-    link: "/timesheet",
-    Ico: AiOutlineSchedule,
-    IcoActive: AiFillSchedule,
-    label: "Timesheet",
+    link: "/people",
+    Ico: AiOutlineTeam,
+    IcoActive: AiOutlineTeam,
+    label: "People",
   },
 ];

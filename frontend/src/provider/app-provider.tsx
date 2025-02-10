@@ -14,7 +14,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         theme={{
           token: {
             colorPrimary: "#0b222a",
-            borderRadius: 16,
+            borderRadius: 8,
           },
           components: {
             Button: {
