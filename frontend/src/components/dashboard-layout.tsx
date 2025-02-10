@@ -5,14 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineDown, AiOutlineLogout } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
-import { mainMenu } from "@/constant";
+import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
+import { removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
-
-import logo from "@/assets/svg/inventra.svg";
 
 interface Props {
   children: React.ReactNode;
@@ -24,18 +23,23 @@ export const DashboardLayout = ({ children }: Props) => {
   const excludedRoutes = ["/auth", "/login", "/register", "/join"];
   const headerTitle = pathname.split("/").filter(Boolean).pop() ?? "dashboard";
 
+  const onLogout = () => {
+    removeCookie(COOKIE_AUTH_KEY);
+    router.push("/login");
+  };
+
   const menuItems: MenuProps["items"] = [
-    {
-      key: "1",
-      label: <Link href="/profile">My Account</Link>,
-      icon: <AiOutlineUser />,
-    },
-    {
-      type: "divider",
-    },
+    // {
+    //   key: "1",
+    //   label: <Link href="/profile">Akun Saya</Link>,
+    //   icon: <AiOutlineUser />,
+    // },
+    // {
+    //   type: "divider",
+    // },
     {
       key: "2",
-      label: <button>Logout</button>,
+      label: <button onClick={onLogout}>Keluar</button>,
       icon: <AiOutlineLogout />,
     },
   ];
@@ -67,7 +71,7 @@ export const DashboardLayout = ({ children }: Props) => {
     <div className="min-h-screen flex">
       <nav className="w-80 bg-white text-slate-400 border-r-2 border-gray-200">
         <div className="flex items-center gap-2 p-6">
-          <Image src={logo} alt="inventra" height={32} />
+          <Image src="/inventra.png" alt="inventra" width={32} height={32} />
           <h1 className="text-xl text-black font-semibold">Inventra</h1>
         </div>
         <div className="mt-8 px-6">

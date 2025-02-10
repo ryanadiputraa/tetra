@@ -9,7 +9,7 @@ import { fetcher, getCookie } from "@/lib";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCheck, setIsCheck] = useState(false);
 
   useEffect(() => {
     const token = getCookie(COOKIE_AUTH_KEY);
@@ -18,10 +18,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.push("/login");
     } else {
       fetcher.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      setIsLoggedIn(true);
     }
+    setIsCheck(true);
   }, [router, pathname]);
 
-  if (!isLoggedIn) return <></>;
+  if (!isCheck) return <></>;
   return children;
 };
