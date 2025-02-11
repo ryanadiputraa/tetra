@@ -6,3 +6,8 @@ export type User = {
   organization_id: number;
   created_at: string;
 };
+
+export type ChangePasswordForm = {
+  password: string;
+  confirm: string;
+};

@@ -62,3 +62,18 @@ func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err 
 	}
 	return
 }
+
+func (s *service) ChangePassword(ctx context.Context, userID int, password string) error {
+	err := s.repository.UpdatePassword(ctx, userID, password)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to change user password",
+				"error", err.Error(),
+				"user_id", userID,
+			)
+		}
+		return err
+	}
+	return err
+}

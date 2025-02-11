@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { AiOutlineDown, AiOutlineLogout } from "react-icons/ai";
+import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
 import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
-import { getCookie, removeCookie } from "@/lib";
+import { removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
 
 interface Props {
@@ -29,14 +29,14 @@ export const DashboardLayout = ({ children }: Props) => {
   };
 
   const menuItems: MenuProps["items"] = [
-    // {
-    //   key: "1",
-    //   label: <Link href="/profile">Akun Saya</Link>,
-    //   icon: <AiOutlineUser />,
-    // },
-    // {
-    //   type: "divider",
-    // },
+    {
+      key: "1",
+      label: <Link href="/profile">Akun Saya</Link>,
+      icon: <AiOutlineUser />,
+    },
+    {
+      type: "divider",
+    },
     {
       key: "2",
       label: <button onClick={onLogout}>Keluar</button>,
@@ -45,7 +45,7 @@ export const DashboardLayout = ({ children }: Props) => {
   ];
 
   const { data, isLoading, error, refetch } = useUserData(
-    !excludedRoutes.includes(pathname) && getCookie(COOKIE_AUTH_KEY) !== null,
+    !excludedRoutes.includes(pathname),
   );
   useEffect(() => {
     if (data && !data?.organization_id) router.push("/join");
@@ -55,13 +55,12 @@ export const DashboardLayout = ({ children }: Props) => {
   if (excludedRoutes.includes(pathname)) {
     return children;
   }
-  if (error) {
-    return <ErrorPage onRetry={() => refetch()} />;
-  }
   if (isLoading) {
     return <Loader />;
   }
-
+  if (error) {
+    return <ErrorPage onRetry={() => refetch()} />;
+  }
   // Push to join page when user hasn't join an organization
   if (!data?.organization_id) {
     return <></>;
@@ -100,8 +99,10 @@ export const DashboardLayout = ({ children }: Props) => {
           <h3 className="capitalize text-lg font-medium">{headerTitle}</h3>
           <Dropdown menu={{ items: menuItems }}>
             <div className="flex items-center gap-2">
-              <div className="grid place-items-center size-10 bg-primary text-white font-bold rounded-full">
-                <span className="text-lg">{data?.fullname.split("")[0]}</span>
+              <div className="grid place-items-center size-10 bg-primary rounded-full">
+                <span className="text-lg text-white font-bold">
+                  {data?.fullname.split("")[0]}
+                </span>
               </div>
               <AiOutlineDown className="text-sm" />
             </div>

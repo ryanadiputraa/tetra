@@ -55,3 +55,7 @@ func (r *repository) FindByEmail(ctx context.Context, email string) (user user.U
 	}
 	return
 }
+
+func (r *repository) UpdatePassword(ctx context.Context, userID int, password string) error {
+	return r.db.Model(&user.User{}).Where("id = ?", userID).Update("password", password).Error
+}

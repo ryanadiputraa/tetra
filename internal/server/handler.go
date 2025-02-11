@@ -45,7 +45,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
 	oauthHandler := oauthHandler.New(logger, c, oauth, userService, jwt)
-	userHandler := userHandler.New(writer, userService)
+	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(writer, organizationService)
 
 	router.Handle("POST /auth/login", authHandler.Login())
@@ -54,6 +54,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 	router.Handle("GET /oauth/callback/google", oauthHandler.GoogleCallback())
 
 	router.Handle("GET /api/users/profile", authMiddleware.ParseJWTToken(userHandler.GetUserData()))
+	router.Handle("POST /api/users/password", authMiddleware.ParseJWTToken(userHandler.ChangePassword()))
 
 	router.Handle("POST /api/organizations", authMiddleware.ParseJWTToken(organizationHandler.CreateOrganization()))
 	return router

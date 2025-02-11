@@ -1,11 +1,18 @@
-import { fetchUserData } from "@/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 
-export const useUserData = (enabled: boolean) => {
+import { fetchUserData } from "@/api";
+import { User } from "@/types";
+import { QUERY_KEYS } from ".";
+
+export const useUserData = (
+  enabled = true,
+  options?: UseQueryOptions<User>,
+) => {
   return useQuery({
-    queryKey: ["userData"],
+    queryKey: QUERY_KEYS.userData,
     queryFn: fetchUserData,
     staleTime: Infinity,
     enabled,
+    ...options,
   });
 };

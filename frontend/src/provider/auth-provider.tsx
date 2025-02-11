@@ -18,8 +18,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.push("/login");
     } else {
       fetcher.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setIsCheck(true);
     }
-    setIsCheck(true);
   }, [router, pathname]);
 
   if (!isCheck) return <></>;

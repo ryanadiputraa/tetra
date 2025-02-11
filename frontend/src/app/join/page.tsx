@@ -9,7 +9,7 @@ import { AiOutlineTeam } from "react-icons/ai";
 
 import { createOrganization } from "@/api/organization";
 import { API_MSG } from "@/constant";
-import { useUserData } from "@/queries";
+import { QUERY_KEYS, useUserData } from "@/queries";
 import { APIError, Organization, OrganizationPayload } from "@/types";
 
 export default function Join() {
@@ -31,7 +31,7 @@ export default function Join() {
     mutationKey: ["createOrganization"],
     mutationFn: createOrganization,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["userData"] });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userData });
       router.push("/");
     },
     onError: (err) => {

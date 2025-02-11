@@ -21,6 +21,10 @@ type User struct {
 	CreatedAt      time.Time                 `json:"created_at" gorm:"notNull"`
 }
 
+type ChangePassowrdPayload struct {
+	Password string `json:"password" validate:"required,min=8"`
+}
+
 func New(fullname, email, password string) (user User, err error) {
 	user = User{
 		Email:     email,
@@ -43,6 +47,7 @@ func New(fullname, email, password string) (user User, err error) {
 type UserService interface {
 	CreateOrUpdate(ctx context.Context, fullname, email, password string) (User, error)
 	GetByID(ctx context.Context, userID int) (User, error)
+	ChangePassword(ctx context.Context, userID int, password string) error
 }
 
 type UserRepository interface {
@@ -50,4 +55,5 @@ type UserRepository interface {
 	SaveOrUpdate(ctx context.Context, user User) (User, error)
 	FindByID(ctx context.Context, userID int) (User, error)
 	FindByEmail(ctx context.Context, email string) (User, error)
+	UpdatePassword(ctx context.Context, userID int, password string) error
 }
