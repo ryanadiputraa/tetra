@@ -43,7 +43,7 @@ func (h *handler) Login() http.HandlerFunc {
 
 		user, err := h.service.Login(r.Context(), p.Email, p.Password)
 		if err != nil {
-			if sErr, ok := err.(*errors.ServiceErr); ok {
+			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
 				return
 			}
@@ -53,7 +53,7 @@ func (h *handler) Login() http.HandlerFunc {
 
 		jwt, err := h.service.GenerateJWT(r.Context(), user.ID)
 		if err != nil {
-			if sErr, ok := err.(*errors.ServiceErr); ok {
+			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
 				return
 			}
@@ -81,7 +81,7 @@ func (h *handler) Register() http.HandlerFunc {
 
 		u, err := h.service.Register(r.Context(), p)
 		if err != nil {
-			if sErr, ok := err.(*errors.ServiceErr); ok {
+			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
 				return
 			}
@@ -91,7 +91,7 @@ func (h *handler) Register() http.HandlerFunc {
 
 		jwt, err := h.service.GenerateJWT(r.Context(), u.ID)
 		if err != nil {
-			if sErr, ok := err.(*errors.ServiceErr); ok {
+			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
 				return
 			}

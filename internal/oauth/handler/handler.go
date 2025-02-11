@@ -2,27 +2,27 @@ package handler
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/logger"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
 )
 
 type handler struct {
-	log         logger.Logger
+	logger      *slog.Logger
 	config      config.Config
 	googleOauth oauth.GoogleOauth
 	userService user.UserService
 	jwt         jwt.JWT
 }
 
-func New(log logger.Logger, config config.Config, googleOauth oauth.GoogleOauth, userService user.UserService, jwt jwt.JWT) *handler {
+func New(logger *slog.Logger, config config.Config, googleOauth oauth.GoogleOauth, userService user.UserService, jwt jwt.JWT) *handler {
 	return &handler{
-		log:         logger.New(),
+		logger:      logger,
 		config:      config,
 		googleOauth: googleOauth,
 		userService: userService,
@@ -43,14 +43,18 @@ func (h *handler) GoogleCallback() http.HandlerFunc {
 		state := r.URL.Query().Get("state")
 
 		if state != h.config.OauthState || code == "" {
-			h.log.Warn("Invalid callback state")
+			h.logger.Warn("Invalid oauth callback state", "provider", "Google")
 			h.redirectWithError(w, r, errors.Unauthorized)
 			return
 		}
 
 		u, err := h.googleOauth.ExchangeCodeWithUserInfo(r.Context(), code)
 		if err != nil {
-			h.log.Warn("Fail to exchange user info. Err: ", err.Error())
+			h.logger.Warn(
+				"Fail to exchange user info",
+				"error", err.Error(),
+				"provider", "Google",
+			)
 			h.redirectWithError(w, r, errors.Unauthorized)
 			return
 		}

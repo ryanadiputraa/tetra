@@ -10,7 +10,7 @@ import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
 import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
-import { removeCookie } from "@/lib";
+import { getCookie, removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
 
 interface Props {
@@ -45,7 +45,7 @@ export const DashboardLayout = ({ children }: Props) => {
   ];
 
   const { data, isLoading, error, refetch } = useUserData(
-    !excludedRoutes.includes(pathname),
+    !excludedRoutes.includes(pathname) && getCookie(COOKIE_AUTH_KEY) !== null,
   );
   useEffect(() => {
     if (data && !data?.organization_id) router.push("/join");

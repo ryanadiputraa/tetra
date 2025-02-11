@@ -2,19 +2,21 @@ package service
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/logger"
 )
 
 type service struct {
-	log        logger.Logger
+	logger     *slog.Logger
 	repository user.UserRepository
 }
 
-func New(log logger.Logger, repository user.UserRepository) user.UserService {
+func New(logger *slog.Logger, repository user.UserRepository) user.UserService {
 	return &service{
-		log:        log,
+		logger:     logger,
 		repository: repository,
 	}
 }
@@ -22,13 +24,25 @@ func New(log logger.Logger, repository user.UserRepository) user.UserService {
 func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password string) (res user.User, err error) {
 	u, err := user.New(fullname, email, password)
 	if err != nil {
-		s.log.Error("Fail to create new user. Err: ", err.Error())
+		s.logger.Error(
+			"Fail to save user data",
+			"error", err.Error(),
+			"fullname", fullname,
+			"email", email,
+		)
 		return
 	}
 
 	res, err = s.repository.SaveOrUpdate(ctx, u)
 	if err != nil {
-		s.log.Error("Fail to save or update. Err: ", err.Error())
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to save user data",
+				"error", err.Error(),
+				"fullname", fullname,
+				"email", email,
+			)
+		}
 		return
 	}
 	return
@@ -37,7 +51,13 @@ func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password 
 func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err error) {
 	user, err = s.repository.FindByID(ctx, userID)
 	if err != nil {
-		s.log.Error("Fail to get user data. Err:", err.Error())
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch user data",
+				"error", err.Error(),
+				"user_id", userID,
+			)
+		}
 		return
 	}
 	return

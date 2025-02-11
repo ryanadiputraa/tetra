@@ -25,18 +25,18 @@ var HttpErrMap = map[string]int{
 	ServerError:  http.StatusInternalServerError,
 }
 
-type ServiceErr struct {
+type Error struct {
 	ErrCode string
 	msg     string
 }
 
 func NewServiceErr(errCode, msg string) error {
-	return &ServiceErr{
+	return &Error{
 		ErrCode: errCode,
 		msg:     msg,
 	}
 }
 
-func (e *ServiceErr) Error() string {
+func (e *Error) Error() string {
 	return e.msg
 }

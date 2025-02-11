@@ -34,7 +34,7 @@ func (h *handler) CreateOrganization() http.HandlerFunc {
 
 		res, err := h.service.Create(c, p.Name, c.UserID)
 		if err != nil {
-			if sErr, ok := err.(*errors.ServiceErr); ok {
+			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
 				return
 			}

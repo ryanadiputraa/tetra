@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,47 +12,48 @@ import (
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/server"
 	"github.com/ryanadiputraa/inventra/pkg/db"
-	"github.com/ryanadiputraa/inventra/pkg/logger"
 )
 
 func main() {
-	log := logger.New()
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	c, err := config.LoadConfig()
 	if err != nil {
-		log.Fatal("Fail to load config. Err: ", err)
+		logger.Error("Fail to load config", "error", err.Error())
+		os.Exit(1)
 		return
 	}
 
 	db, sqlDB, err := db.NewPostgres(c)
 	if err != nil {
-		log.Fatal("Fail to open db connection. Err: ", err)
+		logger.Error("Fail to open DB connection", "error", err.Error())
+		os.Exit(1)
 		return
 	}
 	defer func() {
 		if err := sqlDB.Close(); err != nil {
-			log.Error("Fail to close DB connection. Err: ", err)
+			logger.Error("Fail to close DB connection", "error", err.Error())
 		}
 	}()
 
-	s := server.New(c, db)
+	s := server.New(c, logger, db)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Info("Starting server on port", c.Port)
+		slog.Info("Starting server", "port", c.Port)
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("Fail to start server. Err: ", err)
+			slog.Error("Fail to start server", "error", err.Error())
 		}
 	}()
 
 	<-done
-	log.Info("Shutting down gracefully...")
+	slog.Info("Shutting down gracefully")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 	if err := s.Shutdown(ctx); err == context.DeadlineExceeded {
-		log.Error("Error shutting down server. Err: ", err.Error())
+		slog.Error("Error while shutting down server", "error", err.Error())
 	}
-	log.Info("Server stop successfully")
+	slog.Info("Server stop successfully")
 }

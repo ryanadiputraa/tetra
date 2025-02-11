@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/ryanadiputraa/inventra/config"
@@ -15,17 +16,15 @@ import (
 	userRepository "github.com/ryanadiputraa/inventra/internal/user/repository"
 	userService "github.com/ryanadiputraa/inventra/internal/user/service"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/logger"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 	"gorm.io/gorm"
 )
 
-func setupHandler(c config.Config, db *gorm.DB) http.Handler {
+func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handler {
 	router := http.NewServeMux()
 
-	log := logger.New()
 	writer := writer.NewHTTPWriter()
 	validator := validator.NewValidator()
 	jwt := jwt.NewJWT(c.JWTSecret)
@@ -40,12 +39,12 @@ func setupHandler(c config.Config, db *gorm.DB) http.Handler {
 	userRepository := userRepository.New(db)
 	organizationRepository := organizationRepository.New(db)
 
-	userService := userService.New(log, userRepository)
-	authService := authService.New(log, jwt, userRepository)
-	organizationService := organizationService.New(log, organizationRepository)
+	userService := userService.New(logger, userRepository)
+	authService := authService.New(logger, jwt, userRepository)
+	organizationService := organizationService.New(logger, organizationRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
-	oauthHandler := oauthHandler.New(log, c, oauth, userService, jwt)
+	oauthHandler := oauthHandler.New(logger, c, oauth, userService, jwt)
 	userHandler := userHandler.New(writer, userService)
 	organizationHandler := organizationHandler.New(writer, organizationService)
 

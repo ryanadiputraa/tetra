@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -9,8 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func New(c config.Config, db *gorm.DB) *http.Server {
-	handler := setupHandler(c, db)
+func New(c config.Config, logger *slog.Logger, db *gorm.DB) *http.Server {
+	handler := setupHandler(c, logger, db)
 	handler = registerMiddlewares(
 		handler,
 		middleware.CORSMiddleware,

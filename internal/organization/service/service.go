@@ -2,19 +2,21 @@ package service
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
-	"github.com/ryanadiputraa/inventra/pkg/logger"
 )
 
 type service struct {
-	log        logger.Logger
+	logger     *slog.Logger
 	repository organization.OrganizationRepository
 }
 
-func New(log logger.Logger, repository organization.OrganizationRepository) organization.OrganizationService {
+func New(logger *slog.Logger, repository organization.OrganizationRepository) organization.OrganizationService {
 	return &service{
-		log:        log,
+		logger:     logger,
 		repository: repository,
 	}
 }
@@ -23,8 +25,23 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (res orga
 	o := organization.New(Name, userID)
 	res, err = s.repository.Save(ctx, o)
 	if err != nil {
-		s.log.Error("Fail to create new organization. Err: ", err.Error())
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to register new organization",
+				"error", err.Error(),
+				"user_id", userID,
+				"organization_name", Name,
+			)
+		}
 		return
 	}
+
+	s.logger.Info(
+		"New organization registered",
+		"id", res.ID,
+		"name", res.Name,
+		"owner", res.OwnerID,
+		"created_at", res.CreatedAt,
+	)
 	return
 }
