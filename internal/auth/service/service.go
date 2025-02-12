@@ -45,7 +45,6 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 		return
 	}
 
-	s.logger.Info("login", "pass", *user.Password, "input", password)
 	err = bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(password))
 	if err != nil {
 		err = serviceErr.NewServiceErr(serviceErr.Unauthorized, serviceErr.Unauthorized)

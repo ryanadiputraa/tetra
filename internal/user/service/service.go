@@ -66,7 +66,6 @@ func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err 
 
 func (s *service) ChangePassword(ctx context.Context, userID int, password string) error {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
-	s.logger.Info(string(hashed))
 	if err != nil {
 		s.logger.Error("Fail to hash user password", "error", err.Error())
 	}

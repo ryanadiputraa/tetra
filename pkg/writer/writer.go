@@ -29,42 +29,40 @@ func NewHTTPWriter() HTTPWriter {
 }
 
 func (wr *httpWriter) WriteResponseData(w http.ResponseWriter, code int, data any) {
-	writeHeader(w, code)
-	if data == nil {
+	w.Header().Set("Content-Type", "application/json")
+	if code != http.StatusNoContent && data == nil {
 		data = map[string]string{"status": "ok"}
 	}
-
-	err := json.NewEncoder(w).Encode(data)
+	resp, err := json.Marshal(data)
 	if err != nil {
-		handleEncodingError(w)
+		http.Error(w, errors.ServerError, http.StatusInternalServerError)
+		return
 	}
+	w.WriteHeader(code)
+	w.Write(resp)
 }
 
 func (wr *httpWriter) WriteErrorResponse(w http.ResponseWriter, code int, message string) {
-	writeHeader(w, code)
-	err := json.NewEncoder(w).Encode(ErrorMessage{Message: message})
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(ErrorMessage{Message: message})
 	if err != nil {
-		handleEncodingError(w)
+		http.Error(w, errors.ServerError, http.StatusInternalServerError)
+		return
 	}
+	w.WriteHeader(code)
+	w.Write(resp)
 }
 
 func (wr *httpWriter) WriteErrorResponseWithDetail(w http.ResponseWriter, code int, message string, errors map[string]string) {
-	writeHeader(w, code)
-	err := json.NewEncoder(w).Encode(ErrorDetail{
+	w.Header().Set("Content-Type", "application/json")
+	resp, err := json.Marshal(ErrorDetail{
 		Message: message,
 		Errors:  errors,
 	})
 	if err != nil {
-		handleEncodingError(w)
+		http.Error(w, message, http.StatusInternalServerError)
+		return
 	}
-}
-
-func writeHeader(w http.ResponseWriter, code int) {
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-}
-
-func handleEncodingError(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte(errors.ServerError))
+	w.Write(resp)
 }
