@@ -44,7 +44,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 	organizationService := organizationService.New(logger, organizationRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
-	oauthHandler := oauthHandler.New(logger, c, oauth, userService, jwt)
+	oauthHandler := oauthHandler.New(logger, c, oauth, userService, authService)
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(writer, organizationService)
 

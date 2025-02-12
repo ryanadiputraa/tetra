@@ -7,6 +7,7 @@ import (
 
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type service struct {
@@ -64,7 +65,13 @@ func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err 
 }
 
 func (s *service) ChangePassword(ctx context.Context, userID int, password string) error {
-	err := s.repository.UpdatePassword(ctx, userID, password)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	s.logger.Info(string(hashed))
+	if err != nil {
+		s.logger.Error("Fail to hash user password", "error", err.Error())
+	}
+
+	err = s.repository.UpdatePassword(ctx, userID, string(hashed))
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
 			s.logger.Error(

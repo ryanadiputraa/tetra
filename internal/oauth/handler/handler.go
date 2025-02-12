@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
 )
 
@@ -17,16 +17,16 @@ type handler struct {
 	config      config.Config
 	googleOauth oauth.GoogleOauth
 	userService user.UserService
-	jwt         jwt.JWT
+	authService auth.AuthService
 }
 
-func New(logger *slog.Logger, config config.Config, googleOauth oauth.GoogleOauth, userService user.UserService, jwt jwt.JWT) *handler {
+func New(logger *slog.Logger, config config.Config, googleOauth oauth.GoogleOauth, userService user.UserService, authService auth.AuthService) *handler {
 	return &handler{
 		logger:      logger,
 		config:      config,
 		googleOauth: googleOauth,
 		userService: userService,
-		jwt:         jwt,
+		authService: authService,
 	}
 }
 
@@ -65,7 +65,7 @@ func (h *handler) GoogleCallback() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := h.jwt.GenereateJWTWithClaims(newUser.ID)
+		jwt, err := h.authService.GenerateJWT(r.Context(), newUser.ID, newUser.OrganizationID)
 		if err != nil {
 			h.redirectWithError(w, r, errors.ServerError)
 			return

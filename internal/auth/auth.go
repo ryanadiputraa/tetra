@@ -46,5 +46,5 @@ type RegisterPayload struct {
 type AuthService interface {
 	Login(ctx context.Context, email, password string) (user.User, error)
 	Register(ctx context.Context, payload RegisterPayload) (user.User, error)
-	GenerateJWT(ctx context.Context, userID int) (JWT, error)
+	GenerateJWT(ctx context.Context, userID int, organizationID *int) (JWT, error)
 }

@@ -40,11 +40,12 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 	}
 
 	// Handle user only signin with social (password is still empty)
-	if user.Password != nil {
+	if user.Password == nil {
 		err = serviceErr.NewServiceErr(serviceErr.Unauthorized, serviceErr.Unauthorized)
 		return
 	}
 
+	s.logger.Info("login", "pass", *user.Password, "input", password)
 	err = bcrypt.CompareHashAndPassword([]byte(*user.Password), []byte(password))
 	if err != nil {
 		err = serviceErr.NewServiceErr(serviceErr.Unauthorized, serviceErr.Unauthorized)
@@ -89,8 +90,8 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 	return
 }
 
-func (s *service) GenerateJWT(ctx context.Context, userID int) (tokens auth.JWT, err error) {
-	tokens, err = s.jwt.GenereateJWTWithClaims(userID)
+func (s *service) GenerateJWT(ctx context.Context, userID int, organizationID *int) (tokens auth.JWT, err error) {
+	tokens, err = s.jwt.GenereateJWTWithClaims(userID, organizationID)
 	if err != nil {
 		s.logger.Error("Fail to generate jwt", "error", err.Error())
 	}
