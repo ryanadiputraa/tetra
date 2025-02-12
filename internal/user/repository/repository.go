@@ -39,9 +39,11 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result u
 }
 
 func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
-	err = r.db.Model(&user.User{}).
-		Select("users.id", "users.email", "users.fullname", "users.created_at, members.organization_id").
+	// TODO: add cache
+	err = r.db.Table("users").
+		Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
 		Joins("LEFT JOIN members ON members.user_id = users.id").
+		Where("users.id = ?", userID).
 		Scan(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -54,7 +56,8 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 
 func (r *repository) FindByEmail(ctx context.Context, email string) (result user.User, err error) {
 	err = r.db.Model(&user.User{}).
-		Select("users.id", "users.email", "users.fullname", "users.created_at").
+		Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at").
+		Where("users.email = ?", email).
 		Scan(&result).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

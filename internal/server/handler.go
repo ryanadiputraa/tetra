@@ -34,7 +34,6 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 		ClientID:     c.GoogleClientID,
 		ClientSecret: c.GoogleClientSecret,
 	})
-	authMiddleware := middleware.NewAuthMiddleware(jwt, c.JWTSecret)
 
 	userRepository := userRepository.New(db)
 	organizationRepository := organizationRepository.New(db)
@@ -48,6 +47,8 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(writer, organizationService)
 
+	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
+
 	router.Handle("POST /auth/login", authHandler.Login())
 	router.Handle("POST /auth/register", authHandler.Register())
 	router.Handle("GET /oauth/login/google", oauthHandler.GoogleSignin())
@@ -57,5 +58,6 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 	router.Handle("POST /api/users/password", authMiddleware.AuthorizeUser(userHandler.ChangePassword()))
 
 	router.Handle("POST /api/organizations", authMiddleware.AuthorizeUser(organizationHandler.CreateOrganization()))
+
 	return router
 }

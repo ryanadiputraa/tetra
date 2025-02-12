@@ -50,8 +50,10 @@ func NewMember(organizationID, userID int, role string) Member {
 
 type OrganizationService interface {
 	Create(ctx context.Context, Name string, userID int) (Organization, error)
+	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
 }
 
 type OrganizationRepository interface {
 	Save(ctx context.Context, organization Organization) (Organization, error)
+	FindByID(ctx context.Context, organizationID int) (Organization, error)
 }

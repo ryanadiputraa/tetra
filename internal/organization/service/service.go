@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"time"
 
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
@@ -43,5 +44,21 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (result o
 		"owner", result.OwnerID,
 		"created_at", result.CreatedAt,
 	)
+	return
+}
+
+func (s *service) IsSubscriptionValid(ctx context.Context, organizationID int) (isValid bool, err error) {
+	organization, err := s.repository.FindByID(ctx, organizationID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch organization data",
+				"error", err.Error(),
+				"organiaztion_id", organizationID,
+			)
+		}
+	}
+
+	isValid = time.Now().UTC().Before(organization.SubscriptionEndAt)
 	return
 }

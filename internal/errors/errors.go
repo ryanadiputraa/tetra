@@ -11,6 +11,7 @@ const (
 	ServerError  = "internal_server_error"
 
 	// Error Msg Code
+	SubscriptionEnd           = "subscription_end"
 	RecordNotFound            = "record_not_found"
 	EmailTaken                = "email_taken"
 	MissingAuthHeader         = "missing_auth_header"

@@ -16,12 +16,13 @@ const (
 	Admin      Role = "admin"
 	Supervisor Role = "supervisor"
 	Staff      Role = "staff"
-
-	// Access level
-	AdminAccessLevel      = 1
-	SupervisorAccessLevel = 2
-	StaffAccessLevel      = 3
 )
+
+var AccessLevel = map[Role]int{
+	Admin:      1,
+	Supervisor: 2,
+	Staff:      3,
+}
 
 type JWT struct {
 	AccessToken string `json:"access_token"`

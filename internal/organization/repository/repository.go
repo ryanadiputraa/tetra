@@ -39,3 +39,12 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 	})
 	return
 }
+
+func (r *repository) FindByID(ctx context.Context, organizationID int) (result organization.Organization, err error) {
+	// TODO: add cache
+	err = r.db.Table("organizations").
+		Select("organizations.id, organizations.owner_id, organizations.name, organizations.created_at, organizations.subscription_end_at").
+		Where("organizations.id = ?", organizationID).
+		Scan(&result).Error
+	return
+}

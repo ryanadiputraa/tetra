@@ -7,21 +7,25 @@ import (
 
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
+	"github.com/ryanadiputraa/inventra/internal/organization"
+	"github.com/ryanadiputraa/inventra/internal/user"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 )
 
 type Middleware struct {
-	writer    writer.HTTPWriter
-	jwt       jwt.JWT
-	jwtSecret string
+	writer              writer.HTTPWriter
+	jwt                 jwt.JWT
+	userService         user.UserService
+	organizationService organization.OrganizationService
 }
 
-func NewAuthMiddleware(jwt jwt.JWT, jwtSecret string) *Middleware {
+func NewAuthMiddleware(writer writer.HTTPWriter, jwt jwt.JWT, userService user.UserService, organizationService organization.OrganizationService) *Middleware {
 	return &Middleware{
-		writer:    writer.NewHTTPWriter(),
-		jwt:       jwt,
-		jwtSecret: jwtSecret,
+		writer:              writer,
+		jwt:                 jwt,
+		userService:         userService,
+		organizationService: organizationService,
 	}
 }
 
@@ -43,7 +47,7 @@ func (m *Middleware) AuthorizeUser(h http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) AuthorizeUserRole(h http.Handler) http.Handler {
+func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
 		claims, err := m.parseJWT(authorization)
@@ -52,9 +56,37 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler) http.Handler {
 			return
 		}
 
-		// fetch organiztion id and role
-		// check organiztion subscription date
-		// validate access level
+		user, err := m.userService.GetByID(r.Context(), claims.UserID)
+		if err != nil {
+			if sErr, ok := err.(*serviceError.Error); ok {
+				m.writer.WriteErrorResponse(w, serviceError.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			} else {
+				m.writer.WriteErrorResponse(w, http.StatusInternalServerError, serviceError.ServerError)
+				return
+			}
+		}
+
+		isValid, err := m.organizationService.IsSubscriptionValid(r.Context(), *user.OrganizationID)
+		if err != nil {
+			if sErr, ok := err.(*serviceError.Error); ok {
+				m.writer.WriteErrorResponse(w, serviceError.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			} else {
+				m.writer.WriteErrorResponse(w, http.StatusInternalServerError, serviceError.ServerError)
+				return
+			}
+		}
+
+		if !isValid {
+			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.SubscriptionEnd)
+			return
+		}
+
+		if auth.AccessLevel[auth.Role(user.Role)] > level {
+			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
+			return
+		}
 
 		ac := &auth.AppContext{
 			UserID:  claims.UserID,
