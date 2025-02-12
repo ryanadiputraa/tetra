@@ -34,7 +34,7 @@ func (m *Middleware) AuthorizeUser(h http.Handler) http.Handler {
 			return
 		}
 
-		ac := &auth.AuthContext{
+		ac := &auth.AppContext{
 			UserID:  claims.UserID,
 			Context: r.Context(),
 		}
@@ -43,29 +43,27 @@ func (m *Middleware) AuthorizeUser(h http.Handler) http.Handler {
 	})
 }
 
-// TODO: finish middleware
-// func (m *Middleware) AuthorizeUserRole(h http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		authorization := r.Header.Get("Authorization")
-// 		claims, err := m.parseJWT(authorization)
-// 		if err != nil {
-// 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, err.Error())
-// 			return
-// 		}
-//
-// 		if claims.OrganizationID == nil {
-// 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
-// 			return
-// 		}
-//
-// 		ac := &auth.AuthContext{
-// 			UserID:  claims.UserID,
-// 			Context: r.Context(),
-// 		}
-// 		rc := r.WithContext(ac)
-// 		h.ServeHTTP(w, rc)
-// 	})
-// }
+func (m *Middleware) AuthorizeUserRole(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authorization := r.Header.Get("Authorization")
+		claims, err := m.parseJWT(authorization)
+		if err != nil {
+			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		// fetch organiztion id and role
+		// check organiztion subscription date
+		// validate access level
+
+		ac := &auth.AppContext{
+			UserID:  claims.UserID,
+			Context: r.Context(),
+		}
+		rc := r.WithContext(ac)
+		h.ServeHTTP(w, rc)
+	})
+}
 
 func (m *Middleware) parseJWT(authorization string) (claims *jwt.Claims, err error) {
 	if len(authorization) == 0 {

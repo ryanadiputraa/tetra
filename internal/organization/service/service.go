@@ -21,9 +21,9 @@ func New(logger *slog.Logger, repository organization.OrganizationRepository) or
 	}
 }
 
-func (s *service) Create(ctx context.Context, Name string, userID int) (res organization.Organization, err error) {
+func (s *service) Create(ctx context.Context, Name string, userID int) (result organization.Organization, err error) {
 	o := organization.New(Name, userID)
-	res, err = s.repository.Save(ctx, o)
+	result, err = s.repository.Save(ctx, o)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
 			s.logger.Error(
@@ -38,10 +38,10 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (res orga
 
 	s.logger.Info(
 		"New organization registered",
-		"id", res.ID,
-		"name", res.Name,
-		"owner", res.OwnerID,
-		"created_at", res.CreatedAt,
+		"id", result.ID,
+		"name", result.Name,
+		"owner", result.OwnerID,
+		"created_at", result.CreatedAt,
 	)
 	return
 }

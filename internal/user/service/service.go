@@ -22,7 +22,7 @@ func New(logger *slog.Logger, repository user.UserRepository) user.UserService {
 	}
 }
 
-func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password string) (res user.User, err error) {
+func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password string) (result user.User, err error) {
 	u, err := user.New(fullname, email, password)
 	if err != nil {
 		s.logger.Error(
@@ -34,7 +34,7 @@ func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password 
 		return
 	}
 
-	res, err = s.repository.SaveOrUpdate(ctx, u)
+	result, err = s.repository.SaveOrUpdate(ctx, u)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
 			s.logger.Error(

@@ -24,7 +24,7 @@ func New(writer writer.HTTPWriter, service organization.OrganizationService) *ha
 
 func (h *handler) CreateOrganization() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c := r.Context().(*auth.AuthContext)
+		c := r.Context().(*auth.AppContext)
 		var p organization.OrganizationPayload
 		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {

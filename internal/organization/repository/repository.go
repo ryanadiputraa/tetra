@@ -19,7 +19,7 @@ func New(db *gorm.DB) organization.OrganizationRepository {
 	}
 }
 
-func (r *repository) Save(ctx context.Context, data organization.Organization) (res organization.Organization, err error) {
+func (r *repository) Save(ctx context.Context, data organization.Organization) (result organization.Organization, err error) {
 	err = r.db.Transaction(func(tx *gorm.DB) error {
 		if err = r.db.Create(&data).Error; err != nil {
 			if err == gorm.ErrDuplicatedKey {
@@ -34,7 +34,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 			return err
 		}
 
-		res = data
+		result = data
 		return nil
 	})
 	return

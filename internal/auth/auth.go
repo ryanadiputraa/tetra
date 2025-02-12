@@ -28,9 +28,10 @@ type JWT struct {
 	ExpiresAt   string `json:"expires_at"`
 }
 
-type AuthContext struct {
+type AppContext struct {
 	UserID         int
 	OrganizationID *int
+	Role           Role
 	context.Context
 }
 

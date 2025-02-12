@@ -27,7 +27,7 @@ func New(writer writer.HTTPWriter, validator validator.Validator, service user.U
 
 func (h *handler) GetUserData() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c := r.Context().(*auth.AuthContext)
+		c := r.Context().(*auth.AppContext)
 
 		user, err := h.service.GetByID(c, c.UserID)
 		if err != nil {
@@ -46,7 +46,7 @@ func (h *handler) GetUserData() http.HandlerFunc {
 
 func (h *handler) ChangePassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c := r.Context().(*auth.AuthContext)
+		c := r.Context().(*auth.AppContext)
 		var p user.ChangePassowrdPayload
 		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {

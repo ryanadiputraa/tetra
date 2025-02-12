@@ -53,7 +53,7 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 	return
 }
 
-func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (res user.User, err error) {
+func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (result user.User, err error) {
 	u, err := user.New(payload.Fullname, payload.Email, payload.Password)
 	if err != nil {
 		s.logger.Error(
@@ -64,7 +64,7 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 		return
 	}
 
-	res, err = s.userRepository.Save(ctx, u)
+	result, err = s.userRepository.Save(ctx, u)
 	if err != nil {
 		if !errors.As(err, new(*serviceErr.Error)) {
 			s.logger.Error(
@@ -79,10 +79,10 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 
 	s.logger.Info(
 		"New user registered",
-		"id", res.ID,
-		"fullname", res.Fullname,
-		"email", res.Email,
-		"created_at", res.CreatedAt,
+		"id", result.ID,
+		"fullname", result.Fullname,
+		"email", result.Email,
+		"created_at", result.CreatedAt,
 	)
 	return
 }

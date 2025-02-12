@@ -19,22 +19,22 @@ func New(db *gorm.DB) user.UserRepository {
 	}
 }
 
-func (r *repository) Save(ctx context.Context, user user.User) (res user.User, err error) {
+func (r *repository) Save(ctx context.Context, user user.User) (result user.User, err error) {
 	err = r.db.Create(&user).Error
 	if err == gorm.ErrDuplicatedKey {
 		err = errors.NewServiceErr(errors.BadRequest, errors.EmailTaken)
 		return
 	}
-	res = user
+	result = user
 	return
 }
 
-func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (res user.User, err error) {
+func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result user.User, err error) {
 	err = r.db.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "email"}},
 		DoUpdates: clause.AssignmentColumns([]string{"fullname"}),
 	}).Create(&user).Error
-	res = user
+	result = user
 	return
 }
 
@@ -52,11 +52,15 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 	return
 }
 
-func (r *repository) FindByEmail(ctx context.Context, email string) (user user.User, err error) {
-	err = r.db.First(&user, "email = ?", email).Error
-	if err == gorm.ErrRecordNotFound {
-		err = errors.NewServiceErr(errors.Unauthorized, errors.Unauthorized)
-		return
+func (r *repository) FindByEmail(ctx context.Context, email string) (result user.User, err error) {
+	err = r.db.Model(&user.User{}).
+		Select("users.id", "users.email", "users.fullname", "users.created_at").
+		Scan(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
+			return
+		}
 	}
 	return
 }
