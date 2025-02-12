@@ -8,7 +8,7 @@ interface Props {
 }
 export const ErrorPage = ({ onRetry }: Props) => {
   return (
-    <div className="min-h-screen bg-slate-200 grid place-items-center">
+    <div className="h-full w-full grid place-items-center">
       <div className="text-center">
         <p className="mb-2">
           Terjadi kesalahan, mohon coba beberapa saat lagi.

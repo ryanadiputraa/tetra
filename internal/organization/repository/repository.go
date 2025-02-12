@@ -48,3 +48,14 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result o
 		Scan(&result).Error
 	return
 }
+
+func (r *repository) FetchMembers(ctx context.Context, organizationID int) (result []organization.MemberData, err error) {
+	result = make([]organization.MemberData, 0)
+	err = r.db.Table("members").
+		Select("members.id, members.user_id, users.fullname, users.email, members.role").
+		Joins("LEFT JOIN users ON users.id = members.user_id").
+		Where("members.organization_id = ?", organizationID).
+		Order("users.fullname ASC").
+		Scan(&result).Error
+	return
+}

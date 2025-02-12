@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/inventra/internal/auth"
 	authHandler "github.com/ryanadiputraa/inventra/internal/auth/handler"
 	authService "github.com/ryanadiputraa/inventra/internal/auth/service"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
@@ -49,6 +50,8 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
+	staffAccessLv := auth.AccessLevel[auth.Staff]
+
 	router.Handle("POST /auth/login", authHandler.Login())
 	router.Handle("POST /auth/register", authHandler.Register())
 	router.Handle("GET /oauth/login/google", oauthHandler.GoogleSignin())
@@ -58,6 +61,6 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 	router.Handle("POST /api/users/password", authMiddleware.AuthorizeUser(userHandler.ChangePassword()))
 
 	router.Handle("POST /api/organizations", authMiddleware.AuthorizeUser(organizationHandler.CreateOrganization()))
-
+	router.Handle("GET /api/organizations/members", authMiddleware.AuthorizeUserRole(organizationHandler.FetchMembers(), staffAccessLv))
 	return router
 }

@@ -57,8 +57,24 @@ func (s *service) IsSubscriptionValid(ctx context.Context, organizationID int) (
 				"organiaztion_id", organizationID,
 			)
 		}
+		return
 	}
 
 	isValid = time.Now().UTC().Before(organization.SubscriptionEndAt)
+	return
+}
+
+func (s *service) ListMember(ctx context.Context, organizationID int) (result []organization.MemberData, err error) {
+	result, err = s.repository.FetchMembers(ctx, organizationID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch organization members",
+				"error", err.Error(),
+				"organization_id", organizationID,
+			)
+		}
+		return
+	}
 	return
 }

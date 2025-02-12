@@ -67,6 +67,11 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 			}
 		}
 
+		if user.OrganizationID == nil {
+			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
+			return
+		}
+
 		isValid, err := m.organizationService.IsSubscriptionValid(r.Context(), *user.OrganizationID)
 		if err != nil {
 			if sErr, ok := err.(*serviceError.Error); ok {
@@ -89,8 +94,9 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 		}
 
 		ac := &auth.AppContext{
-			UserID:  claims.UserID,
-			Context: r.Context(),
+			UserID:         user.ID,
+			OrganizationID: user.OrganizationID,
+			Context:        r.Context(),
 		}
 		rc := r.WithContext(ac)
 		h.ServeHTTP(w, rc)

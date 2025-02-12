@@ -32,7 +32,7 @@ func (h *handler) CreateOrganization() http.HandlerFunc {
 			return
 		}
 
-		res, err := h.service.Create(c, p.Name, c.UserID)
+		organization, err := h.service.Create(c, p.Name, c.UserID)
 		if err != nil {
 			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
@@ -42,6 +42,24 @@ func (h *handler) CreateOrganization() http.HandlerFunc {
 			return
 		}
 
-		h.writer.WriteResponseData(w, http.StatusCreated, res)
+		h.writer.WriteResponseData(w, http.StatusCreated, organization)
+	}
+}
+
+func (h *handler) FetchMembers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+
+		members, err := h.service.ListMember(c, *c.OrganizationID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusOK, map[string][]organization.MemberData{"members": members})
 	}
 }

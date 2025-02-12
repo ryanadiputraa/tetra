@@ -9,3 +9,11 @@ export type Organization = {
 export type OrganizationPayload = {
   name: string;
 };
+
+export type Member = {
+  id: number;
+  user_id: number;
+  fullname: string;
+  email: string;
+  role: string;
+};

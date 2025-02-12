@@ -1,8 +1,8 @@
 "use client";
 
-import { ContentSkeleton, ErrorPage } from "@/components";
+import { ErrorPage } from "@/components";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Form, Input, notification } from "antd";
+import { Button, Form, Input, notification, Skeleton } from "antd";
 
 import { changePassword } from "@/api";
 import { API_MSG } from "@/constant";
@@ -42,7 +42,7 @@ export default function Profile() {
   });
 
   if (isLoading) {
-    return <ContentSkeleton length={5} />;
+    return <Skeleton avatar round paragraph={{ rows: 4 }} />;
   }
   if (error) {
     return <ErrorPage onRetry={() => refetch()} />;
@@ -69,33 +69,43 @@ export default function Profile() {
           <div className="flex flex-col">
             <p className="text-2xl font-semibold">{data?.fullname}</p>
             <p>{data?.email}</p>
-            <span className="italic text-slate-400">{data?.role}</span>
+            <span className="italic text-slate-400 capitalize">
+              {data?.role}
+            </span>
           </div>
         </div>
-        <Form
-          form={form}
-          onFinish={onChangePassword}
-          className="mt-8 flex flex-col"
-        >
-          <label className="mb-1 font-semibold">Password</label>
-          <Form.Item name="password" rules={[{ required: true, message: "" }]}>
-            <Input size="large" placeholder="Password" type="password" />
-          </Form.Item>
-          <label className="mb-1 font-semibold">Konfirmasi Password</label>
-          <Form.Item name="confirm" rules={[{ required: true, message: "" }]}>
-            <Input size="large" placeholder="Password" type="password" />
-          </Form.Item>
-          <Button
-            htmlType="submit"
-            size="large"
-            variant="solid"
-            color="primary"
-            loading={isPending}
-            className="font-semibold"
+        <section className="mt-8">
+          <h6 className="my-4 border-b-2 border-gray-200 text-lg font-medium">
+            Ubah Password
+          </h6>
+          <Form
+            form={form}
+            onFinish={onChangePassword}
+            className="flex flex-col"
           >
-            Simpan
-          </Button>
-        </Form>
+            <label className="mb-1 font-semibold">Password</label>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: "" }]}
+            >
+              <Input size="large" placeholder="Password" type="password" />
+            </Form.Item>
+            <label className="mb-1 font-semibold">Konfirmasi Password</label>
+            <Form.Item name="confirm" rules={[{ required: true, message: "" }]}>
+              <Input size="large" placeholder="Password" type="password" />
+            </Form.Item>
+            <Button
+              htmlType="submit"
+              size="large"
+              variant="solid"
+              color="primary"
+              loading={isPending}
+              className="font-semibold"
+            >
+              Simpan
+            </Button>
+          </Form>
+        </section>
       </div>
     </>
   );

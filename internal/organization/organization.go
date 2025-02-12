@@ -26,6 +26,14 @@ type Member struct {
 	CreatedAt      time.Time `json:"created_at" gorm:"notNull"`
 }
 
+type MemberData struct {
+	ID       int    `json:"id"`
+	UserID   int    `json:"user_id"`
+	Fullname string `json:"fullname"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
+}
+
 type OrganizationPayload struct {
 	Name string `json:"name"`
 }
@@ -51,9 +59,11 @@ func NewMember(organizationID, userID int, role string) Member {
 type OrganizationService interface {
 	Create(ctx context.Context, Name string, userID int) (Organization, error)
 	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
+	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 }
 
 type OrganizationRepository interface {
 	Save(ctx context.Context, organization Organization) (Organization, error)
 	FindByID(ctx context.Context, organizationID int) (Organization, error)
+	FetchMembers(ctx context.Context, organizationID int) ([]MemberData, error)
 }
