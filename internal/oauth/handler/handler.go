@@ -65,7 +65,7 @@ func (h *handler) GoogleCallback() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := h.authService.GenerateJWT(r.Context(), newUser.ID, newUser.OrganizationID)
+		jwt, err := h.authService.GenerateJWT(r.Context(), newUser.ID)
 		if err != nil {
 			h.redirectWithError(w, r, errors.ServerError)
 			return

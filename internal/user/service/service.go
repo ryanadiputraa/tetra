@@ -49,7 +49,7 @@ func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password 
 	return
 }
 
-func (s *service) GetByID(ctx context.Context, userID int) (user user.User, err error) {
+func (s *service) GetByID(ctx context.Context, userID int) (user user.UserData, err error) {
 	user, err = s.repository.FindByID(ctx, userID)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {

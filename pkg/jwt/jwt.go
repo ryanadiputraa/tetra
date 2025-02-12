@@ -9,13 +9,12 @@ import (
 )
 
 type Claims struct {
-	UserID         int  `json:"user_id"`
-	OrganizationID *int `json:"organization_id"`
+	UserID int `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
 type JWT interface {
-	GenereateJWTWithClaims(userID int, organizationID *int) (auth.JWT, error)
+	GenereateJWTWithClaims(userID int) (auth.JWT, error)
 	ParseJWTClaims(accessToken string) (*Claims, error)
 }
 
@@ -29,10 +28,9 @@ func NewJWT(secretKey string) JWT {
 	}
 }
 
-func (s *service) GenereateJWTWithClaims(userID int, organizationID *int) (tokens auth.JWT, err error) {
+func (s *service) GenereateJWTWithClaims(userID int) (tokens auth.JWT, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		userID,
-		organizationID,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(auth.JWTExpiresTime)),
 		},

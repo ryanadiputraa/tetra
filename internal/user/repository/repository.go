@@ -38,11 +38,16 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (res user
 	return
 }
 
-func (r *repository) FindByID(ctx context.Context, userID int) (user user.User, err error) {
-	err = r.db.First(&user, userID).Error
-	if err == gorm.ErrRecordNotFound {
-		err = errors.NewServiceErr(errors.BadRequest, errors.BadRequest)
-		return
+func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
+	err = r.db.Model(&user.User{}).
+		Select("users.id", "users.email", "users.fullname", "users.created_at, members.organization_id").
+		Joins("LEFT JOIN members ON members.user_id = users.id").
+		Scan(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
+			return
+		}
 	}
 	return
 }

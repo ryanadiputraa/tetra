@@ -47,5 +47,9 @@ func NewPostgres(c config.Config) (db *gorm.DB, sqlDB *sql.DB, err error) {
 }
 
 func runMigration(db *gorm.DB) error {
-	return db.AutoMigrate(&user.User{}, &organization.Organization{})
+	return db.AutoMigrate(
+		&user.User{},
+		&organization.Organization{},
+		&organization.Member{},
+	)
 }

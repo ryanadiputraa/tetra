@@ -10,17 +10,18 @@ import (
 type Role string
 
 const (
-	Admin          Role = "admin"
-	Supervisor     Role = "supervisor"
-	Staff          Role = "staff"
-	JWTExpiresTime      = time.Hour * 24
-)
+	JWTExpiresTime = time.Hour * 24
 
-var AccessLevel = map[Role]int{
-	Admin:      3,
-	Supervisor: 2,
-	Staff:      1,
-}
+	// Role
+	Admin      Role = "admin"
+	Supervisor Role = "supervisor"
+	Staff      Role = "staff"
+
+	// Access level
+	AdminAccessLevel      = 1
+	SupervisorAccessLevel = 2
+	StaffAccessLevel      = 3
+)
 
 type JWT struct {
 	AccessToken string `json:"access_token"`
@@ -28,7 +29,8 @@ type JWT struct {
 }
 
 type AuthContext struct {
-	UserID int
+	UserID         int
+	OrganizationID *int
 	context.Context
 }
 
@@ -46,5 +48,5 @@ type RegisterPayload struct {
 type AuthService interface {
 	Login(ctx context.Context, email, password string) (user.User, error)
 	Register(ctx context.Context, payload RegisterPayload) (user.User, error)
-	GenerateJWT(ctx context.Context, userID int, organizationID *int) (JWT, error)
+	GenerateJWT(ctx context.Context, userID int) (JWT, error)
 }

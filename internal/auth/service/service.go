@@ -82,15 +82,13 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 		"id", res.ID,
 		"fullname", res.Fullname,
 		"email", res.Email,
-		"orgnaization_id", res.OrganizationID,
-		"role", res.Role,
 		"created_at", res.CreatedAt,
 	)
 	return
 }
 
-func (s *service) GenerateJWT(ctx context.Context, userID int, organizationID *int) (tokens auth.JWT, err error) {
-	tokens, err = s.jwt.GenereateJWTWithClaims(userID, organizationID)
+func (s *service) GenerateJWT(ctx context.Context, userID int) (tokens auth.JWT, err error) {
+	tokens, err = s.jwt.GenereateJWTWithClaims(userID)
 	if err != nil {
 		s.logger.Error("Fail to generate jwt", "error", err.Error())
 	}

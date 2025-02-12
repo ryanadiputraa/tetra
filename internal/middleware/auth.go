@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/ryanadiputraa/inventra/internal/auth"
-	"github.com/ryanadiputraa/inventra/internal/errors"
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 )
@@ -24,23 +25,12 @@ func NewAuthMiddleware(jwt jwt.JWT, jwtSecret string) *Middleware {
 	}
 }
 
-func (m *Middleware) ParseJWTToken(h http.Handler) http.Handler {
+func (m *Middleware) AuthorizeUser(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
-		if len(authorization) == 0 {
-			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, errors.MissingAuthHeader)
-			return
-		}
-
-		tokens := strings.Split(authorization, " ")
-		if len(tokens) < 2 || tokens[0] != "Bearer" {
-			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, errors.InvalidAuthHeader)
-			return
-		}
-
-		claims, err := m.jwt.ParseJWTClaims(tokens[1])
+		claims, err := m.parseJWT(authorization)
 		if err != nil {
-			m.writer.WriteErrorResponse(w, http.StatusForbidden, err.Error())
+			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, err.Error())
 			return
 		}
 
@@ -51,4 +41,47 @@ func (m *Middleware) ParseJWTToken(h http.Handler) http.Handler {
 		rc := r.WithContext(ac)
 		h.ServeHTTP(w, rc)
 	})
+}
+
+// TODO: finish middleware
+// func (m *Middleware) AuthorizeUserRole(h http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		authorization := r.Header.Get("Authorization")
+// 		claims, err := m.parseJWT(authorization)
+// 		if err != nil {
+// 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, err.Error())
+// 			return
+// 		}
+//
+// 		if claims.OrganizationID == nil {
+// 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
+// 			return
+// 		}
+//
+// 		ac := &auth.AuthContext{
+// 			UserID:  claims.UserID,
+// 			Context: r.Context(),
+// 		}
+// 		rc := r.WithContext(ac)
+// 		h.ServeHTTP(w, rc)
+// 	})
+// }
+
+func (m *Middleware) parseJWT(authorization string) (claims *jwt.Claims, err error) {
+	if len(authorization) == 0 {
+		err = errors.New(serviceError.MissingAuthHeader)
+		return
+	}
+
+	tokens := strings.Split(authorization, " ")
+	if len(tokens) < 2 || tokens[0] != "Bearer" {
+		err = errors.New(serviceError.InvalidAuthHeader)
+		return
+	}
+
+	claims, err = m.jwt.ParseJWTClaims(tokens[1])
+	if err != nil {
+		return
+	}
+	return
 }
