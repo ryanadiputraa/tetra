@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	redisKeyUserData = "users:data:"
+	redisKeyUserData = "users:"
 )
 
 type repository struct {
@@ -50,7 +50,7 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result u
 
 func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
 	id := strconv.Itoa(userID)
-	val, err := r.rdb.Get(ctx, redisKeyUserData+id).Result()
+	cache, err := r.rdb.Get(ctx, redisKeyUserData+id).Result()
 	if err == redis.Nil {
 		err = r.db.Table("users").
 			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
@@ -65,18 +65,18 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 			return
 		}
 
-		var cache []byte
-		cache, err = json.Marshal(result)
+		var val []byte
+		val, err = json.Marshal(result)
 		if err != nil {
 			return
 		}
-		err = r.rdb.Set(ctx, redisKeyUserData+id, cache, time.Hour*6).Err()
+		err = r.rdb.Set(ctx, redisKeyUserData+id, val, time.Hour*6).Err()
 		return
 	} else if err != nil {
 		return
 	}
 
-	err = json.Unmarshal([]byte(val), &result)
+	err = json.Unmarshal([]byte(cache), &result)
 	return
 }
 

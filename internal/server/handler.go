@@ -38,7 +38,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	})
 
 	userRepository := userRepository.New(db, rdb)
-	organizationRepository := organizationRepository.New(db)
+	organizationRepository := organizationRepository.New(db, rdb)
 
 	userService := userService.New(logger, userRepository)
 	authService := authService.New(logger, jwt, userRepository)
