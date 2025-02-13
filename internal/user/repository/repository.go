@@ -2,20 +2,30 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
+	"strconv"
+	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
+const (
+	redisKeyUserData = "users:data:"
+)
+
 type repository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	rdb *redis.Client
 }
 
-func New(db *gorm.DB) user.UserRepository {
+func New(db *gorm.DB, rdb *redis.Client) user.UserRepository {
 	return &repository{
-		db: db,
+		db:  db,
+		rdb: rdb,
 	}
 }
 
@@ -39,18 +49,34 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result u
 }
 
 func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
-	// TODO: add cache
-	err = r.db.Table("users").
-		Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
-		Joins("LEFT JOIN members ON members.user_id = users.id").
-		Where("users.id = ?", userID).
-		Scan(&result).Error
-	if err != nil {
+	id := strconv.Itoa(userID)
+	val, err := r.rdb.Get(ctx, redisKeyUserData+id).Result()
+	if err == redis.Nil {
+		err = r.db.Table("users").
+			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
+			Joins("LEFT JOIN members ON members.user_id = users.id").
+			Where("users.id = ?", userID).
+			Scan(&result).Error
 		if err == gorm.ErrRecordNotFound {
 			err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
 			return
 		}
+		if err != nil {
+			return
+		}
+
+		var cache []byte
+		cache, err = json.Marshal(result)
+		if err != nil {
+			return
+		}
+		err = r.rdb.Set(ctx, redisKeyUserData+id, cache, time.Hour*6).Err()
+		return
+	} else if err != nil {
+		return
 	}
+
+	err = json.Unmarshal([]byte(val), &result)
 	return
 }
 
@@ -59,11 +85,9 @@ func (r *repository) FindByEmail(ctx context.Context, email string) (result user
 		Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at").
 		Where("users.email = ?", email).
 		Scan(&result).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
-			return
-		}
+	if err != gorm.ErrRecordNotFound {
+		err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
+		return
 	}
 	return
 }

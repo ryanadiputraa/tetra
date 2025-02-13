@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	authHandler "github.com/ryanadiputraa/inventra/internal/auth/handler"
@@ -23,7 +24,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handler {
+func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client) http.Handler {
 	router := http.NewServeMux()
 
 	writer := writer.NewHTTPWriter()
@@ -36,7 +37,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB) http.Handle
 		ClientSecret: c.GoogleClientSecret,
 	})
 
-	userRepository := userRepository.New(db)
+	userRepository := userRepository.New(db, rdb)
 	organizationRepository := organizationRepository.New(db)
 
 	userService := userService.New(logger, userRepository)

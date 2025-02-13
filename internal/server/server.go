@@ -5,13 +5,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
 	"gorm.io/gorm"
 )
 
-func New(c config.Config, logger *slog.Logger, db *gorm.DB) *http.Server {
-	handler := setupHandler(c, logger, db)
+func New(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client) *http.Server {
+	handler := setupHandler(c, logger, db, rdb)
 	handler = registerMiddlewares(
 		handler,
 		middleware.CORSMiddleware,

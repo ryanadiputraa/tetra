@@ -21,11 +21,12 @@ func New(db *gorm.DB) organization.OrganizationRepository {
 
 func (r *repository) Save(ctx context.Context, data organization.Organization) (result organization.Organization, err error) {
 	err = r.db.Transaction(func(tx *gorm.DB) error {
-		if err = r.db.Create(&data).Error; err != nil {
-			if err == gorm.ErrDuplicatedKey {
-				err = errors.NewServiceErr(errors.BadRequest, errors.OrganizationAlreadyExists)
-				return err
-			}
+		err = r.db.Create(&data).Error
+		if err == gorm.ErrDuplicatedKey {
+			err = errors.NewServiceErr(errors.BadRequest, errors.OrganizationAlreadyExists)
+			return err
+		}
+		if err != nil {
 			return err
 		}
 

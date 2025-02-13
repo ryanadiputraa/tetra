@@ -32,9 +32,14 @@ func main() {
 		return
 	}
 
-	rdb := cache.NewRedis(c)
+	rdb, err := cache.NewRedis(c)
+	if err != nil {
+		logger.Error("Fail to open redis client", "error", err.Error())
+		os.Exit(1)
+		return
+	}
 
-	s := server.New(c, logger, db)
+	s := server.New(c, logger, db, rdb)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
