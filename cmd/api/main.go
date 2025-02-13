@@ -11,6 +11,7 @@ import (
 
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/server"
+	"github.com/ryanadiputraa/inventra/pkg/cache"
 	"github.com/ryanadiputraa/inventra/pkg/db"
 )
 
@@ -30,11 +31,8 @@ func main() {
 		os.Exit(1)
 		return
 	}
-	defer func() {
-		if err := sqlDB.Close(); err != nil {
-			logger.Error("Fail to close DB connection", "error", err.Error())
-		}
-	}()
+
+	rdb := cache.NewRedis(c)
 
 	s := server.New(c, logger, db)
 	done := make(chan os.Signal, 1)
@@ -55,5 +53,12 @@ func main() {
 	if err := s.Shutdown(ctx); err == context.DeadlineExceeded {
 		slog.Error("Error while shutting down server", "error", err.Error())
 	}
+	if err := sqlDB.Close(); err != nil {
+		logger.Error("Fail to close DB connection", "error", err.Error())
+	}
+	if err := rdb.Close(); err != nil {
+		logger.Error("Fail to close redis client", "error", err.Error())
+	}
+
 	slog.Info("Server stop successfully")
 }
