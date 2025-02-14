@@ -2,9 +2,84 @@ package organization
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/ryanadiputraa/inventra/internal/user"
+)
+
+const (
+	invitationMailBody = `
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Undangan Inventra</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f7;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #ffffff !important;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+      text-align: center;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #4682AB;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="content">
+      <p>Halo!</p>
+      <p>Kamu telah diundang untuk bergabung dengan %s di Inventra. Silakan klik tombol Terima Undangan di bawah untuk bergabung.</p>
+      <a href="%s" class="button">Terima Undangan</a>
+    </div>
+    <div class="footer">
+      <p>Copyright © %d Inventra. All Right Reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>
+`
 )
 
 type Organization struct {
@@ -35,7 +110,11 @@ type MemberData struct {
 }
 
 type OrganizationPayload struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
+}
+
+type InvitePayload struct {
+	Email string `json:"email" validate:"required,email"`
 }
 
 func New(Name string, userID int) Organization {
@@ -56,10 +135,17 @@ func NewMember(organizationID, userID int, role string) Member {
 	}
 }
 
+func GenrateInvitationMailBody(organizationName, domain, inviteCode string) string {
+	link := domain + "/join/" + inviteCode
+	year := time.Now().Year()
+	return fmt.Sprintf(invitationMailBody, organizationName, link, year)
+}
+
 type OrganizationService interface {
 	Create(ctx context.Context, Name string, userID int) (Organization, error)
 	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
+	InviteUser(ctx context.Context, organizationID int, email string) error
 }
 
 type OrganizationRepository interface {

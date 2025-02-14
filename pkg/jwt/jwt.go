@@ -14,7 +14,7 @@ type Claims struct {
 }
 
 type JWT interface {
-	GenereateJWTWithClaims(userID int) (auth.JWT, error)
+	GenerateJWTWithClaims(userID int) (auth.JWT, error)
 	ParseJWTClaims(accessToken string) (*Claims, error)
 }
 
@@ -28,7 +28,7 @@ func NewJWT(secretKey string) JWT {
 	}
 }
 
-func (s *service) GenereateJWTWithClaims(userID int) (tokens auth.JWT, err error) {
+func (s *service) GenerateJWTWithClaims(userID int) (tokens auth.JWT, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		userID,
 		jwt.RegisteredClaims{

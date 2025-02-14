@@ -18,6 +18,7 @@ import (
 	userRepository "github.com/ryanadiputraa/inventra/internal/user/repository"
 	userService "github.com/ryanadiputraa/inventra/internal/user/service"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
+	"github.com/ryanadiputraa/inventra/pkg/mail"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
@@ -36,22 +37,25 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 		ClientID:     c.GoogleClientID,
 		ClientSecret: c.GoogleClientSecret,
 	})
+	smtpMail := mail.NewSMTPMail(c.SMTPEmail, c.SMTPPassword)
 
 	userRepository := userRepository.New(db, rdb)
 	organizationRepository := organizationRepository.New(db, rdb)
 
 	userService := userService.New(logger, userRepository)
 	authService := authService.New(logger, jwt, userRepository)
-	organizationService := organizationService.New(logger, organizationRepository)
+	organizationService := organizationService.New(c, logger, jwt, smtpMail, organizationRepository, userRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
 	oauthHandler := oauthHandler.New(logger, c, oauth, userService, authService)
 	userHandler := userHandler.New(writer, validator, userService)
-	organizationHandler := organizationHandler.New(writer, organizationService)
+	organizationHandler := organizationHandler.New(writer, organizationService, validator)
 
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
 	staffAccessLv := auth.AccessLevel[auth.Staff]
+	// supervisorAccessLv := auth.AccessLevel[auth.Supervisor]
+	adminAccessLv := auth.AccessLevel[auth.Admin]
 
 	router.Handle("POST /auth/login", authHandler.Login())
 	router.Handle("POST /auth/register", authHandler.Register())
@@ -63,5 +67,6 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	router.Handle("POST /api/organizations", authMiddleware.AuthorizeUser(organizationHandler.CreateOrganization()))
 	router.Handle("GET /api/organizations/members", authMiddleware.AuthorizeUserRole(organizationHandler.FetchMembers(), staffAccessLv))
+	router.Handle("POST /api/organizations/invite", authMiddleware.AuthorizeUserRole(organizationHandler.Invite(), adminAccessLv))
 	return router
 }

@@ -3,22 +3,42 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
+	"github.com/ryanadiputraa/inventra/config"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
+	"github.com/ryanadiputraa/inventra/internal/user"
+	"github.com/ryanadiputraa/inventra/pkg/jwt"
+	"github.com/ryanadiputraa/inventra/pkg/mail"
 )
 
 type service struct {
-	logger     *slog.Logger
-	repository organization.OrganizationRepository
+	config         config.Config
+	logger         *slog.Logger
+	jwt            jwt.JWT
+	smtpMail       mail.SMTPMail
+	repository     organization.OrganizationRepository
+	userRepository user.UserRepository
 }
 
-func New(logger *slog.Logger, repository organization.OrganizationRepository) organization.OrganizationService {
+func New(
+	config config.Config,
+	logger *slog.Logger,
+	jwt jwt.JWT,
+	smtpMail mail.SMTPMail,
+	repository organization.OrganizationRepository,
+	userRepository user.UserRepository,
+) organization.OrganizationService {
 	return &service{
-		logger:     logger,
-		repository: repository,
+		config:         config,
+		logger:         logger,
+		jwt:            jwt,
+		smtpMail:       smtpMail,
+		repository:     repository,
+		userRepository: userRepository,
 	}
 }
 
@@ -76,5 +96,49 @@ func (s *service) ListMember(ctx context.Context, organizationID int) (result []
 		}
 		return
 	}
+	return
+}
+
+func (s *service) InviteUser(ctx context.Context, organizationID int, email string) (err error) {
+	user, err := s.userRepository.FindByEmail(ctx, email)
+	if err != nil {
+		s.logger.Error(
+			"Fail to fetch user data",
+			"error", err.Error(),
+			"email", email,
+		)
+		return
+	}
+
+	if user.OrganizationID != nil {
+		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.UserHasJoinedOrg)
+		return
+	}
+
+	org, err := s.repository.FindByID(ctx, organizationID)
+	if err != nil {
+		s.logger.Error(
+			"Fail to fetch organization data",
+			"error", err.Error(),
+			"organization_id", organizationID,
+		)
+		return
+	}
+
+	// organization id stored in user_id field to be used in /api/join endpoint to join sender org
+	jwt, err := s.jwt.GenerateJWTWithClaims(organizationID)
+	if err != nil {
+		s.logger.Error(
+			"Fail to generate jwt",
+			"error", err.Error(),
+		)
+		return
+	}
+
+	go func() {
+		subject := fmt.Sprintf("Undangan bergabung dengan %s di Inventra", org.Name)
+		body := organization.GenrateInvitationMailBody(org.Name, s.config.AppDomain, jwt.AccessToken)
+		s.smtpMail.SendMail(context.Background(), email, subject, body)
+	}()
 	return
 }

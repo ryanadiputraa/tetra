@@ -60,6 +60,6 @@ type UserRepository interface {
 	Save(ctx context.Context, user User) (User, error)
 	SaveOrUpdate(ctx context.Context, user User) (User, error)
 	FindByID(ctx context.Context, userID int) (UserData, error)
-	FindByEmail(ctx context.Context, email string) (User, error)
+	FindByEmail(ctx context.Context, email string) (UserData, error)
 	UpdatePassword(ctx context.Context, userID int, password string) error
 }

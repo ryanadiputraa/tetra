@@ -17,6 +17,7 @@ const (
 	MissingAuthHeader         = "missing_auth_header"
 	InvalidAuthHeader         = "invalid_auth_header"
 	OrganizationAlreadyExists = "organization_already_exists"
+	UserHasJoinedOrg          = "user_has_joined_org"
 )
 
 var HttpErrMap = map[string]int{

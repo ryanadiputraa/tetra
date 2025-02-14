@@ -17,4 +17,5 @@ export const API_MSG: Record<string, string> = {
   missing_auth_header: "Silahkan login terlebih dahulu.",
   invalid_auth_header: "Silahkan login terlebih dahulu.",
   organization_already_exists: "Organisasi sudah dibuat.",
+  user_has_joined_org: "Pengguna telah bergabung dengan organisasi.",
 };

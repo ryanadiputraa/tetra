@@ -39,7 +39,7 @@ export default function Auth() {
           </p>
           <Link href="/login">
             <Button size="large" type="link">
-              Back to Login
+              Kembali ke Login
             </Button>
           </Link>
         </div>

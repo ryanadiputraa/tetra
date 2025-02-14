@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ryanadiputraa/inventra/internal/errors"
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -32,7 +33,7 @@ func New(db *gorm.DB, rdb *redis.Client) user.UserRepository {
 func (r *repository) Save(ctx context.Context, user user.User) (result user.User, err error) {
 	err = r.db.Create(&user).Error
 	if err == gorm.ErrDuplicatedKey {
-		err = errors.NewServiceErr(errors.BadRequest, errors.EmailTaken)
+		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.EmailTaken)
 		return
 	}
 	result = user
@@ -57,8 +58,8 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 			Joins("LEFT JOIN members ON members.user_id = users.id").
 			Where("users.id = ?", userID).
 			Scan(&result).Error
-		if err == gorm.ErrRecordNotFound {
-			err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.RecordNotFound)
 			return
 		}
 		if err != nil {
@@ -80,13 +81,14 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 	return
 }
 
-func (r *repository) FindByEmail(ctx context.Context, email string) (result user.User, err error) {
-	err = r.db.Model(&user.User{}).
-		Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at").
+func (r *repository) FindByEmail(ctx context.Context, email string) (result user.UserData, err error) {
+	err = r.db.Table("users").
+		Select("users.id, users.email, users.password, users.fullname, users.created_at, members.organization_id, members.role").
+		Joins("LEFT JOIN members ON members.user_id = users.id").
 		Where("users.email = ?", email).
 		Scan(&result).Error
-	if err != gorm.ErrRecordNotFound {
-		err = errors.NewServiceErr(errors.BadRequest, errors.RecordNotFound)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.RecordNotFound)
 		return
 	}
 	return

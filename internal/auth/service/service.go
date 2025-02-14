@@ -26,7 +26,7 @@ func New(logger *slog.Logger, jwt jwt.JWT, userRepository user.UserRepository) a
 	}
 }
 
-func (s *service) Login(ctx context.Context, email, password string) (user user.User, err error) {
+func (s *service) Login(ctx context.Context, email, password string) (user user.UserData, err error) {
 	user, err = s.userRepository.FindByEmail(ctx, email)
 	if err != nil {
 		if !errors.As(err, new(*serviceErr.Error)) {
@@ -88,7 +88,7 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 }
 
 func (s *service) GenerateJWT(ctx context.Context, userID int) (tokens auth.JWT, err error) {
-	tokens, err = s.jwt.GenereateJWTWithClaims(userID)
+	tokens, err = s.jwt.GenerateJWTWithClaims(userID)
 	if err != nil {
 		s.logger.Error("Fail to generate jwt", "error", err.Error())
 	}
