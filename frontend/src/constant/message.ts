@@ -10,6 +10,11 @@ export const API_MSG: Record<string, string> = {
   not_found: "Data tidak ditemukan.",
   internal_server_error:
     "Sistem dalam perbaikan, mohon coba beberapa saat lagi.",
+  subscription_end:
+    "Masa langganan telah berakhir, silahkan lakukan pembayaran untuk kembali menggunakan aplikasi.",
+  record_not_found: "Data tidak ditemukan",
   email_taken: "Email telah terdaftar.",
+  missing_auth_header: "Silahkan login terlebih dahulu.",
+  invalid_auth_header: "Silahkan login terlebih dahulu.",
   organization_already_exists: "Organisasi sudah dibuat.",
 };
