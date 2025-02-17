@@ -17,3 +17,7 @@ export type Member = {
   email: string;
   role: string;
 };
+
+export interface InviteMemberPayload {
+  email: string;
+}

@@ -1,13 +1,19 @@
 "use client";
 
-import { Skeleton, Table, TableColumnsType } from "antd";
-
 import { ErrorPage } from "@/components";
+import { Button, Skeleton, Table, TableColumnsType } from "antd";
+import { useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
+import { InviteModal } from "./invite";
+
 import { useOrganizationMembers } from "@/queries";
 import { Member } from "@/types";
 
 export default function People() {
   const { data, isLoading, error, refetch } = useOrganizationMembers();
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const onInviteMember = () => setIsInviteModalOpen(true);
 
   const columns: TableColumnsType<Member> = [
     {
@@ -49,12 +55,22 @@ export default function People() {
 
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-end">
+          <Button
+            type="primary"
+            className="font-semibold"
+            onClick={onInviteMember}
+          >
+            <AiOutlinePlus /> Undang
+          </Button>
+        </div>
         <Table
           rowKey="id"
           dataSource={data}
           columns={columns}
           pagination={false}
+          showSorterTooltip={false}
           rowSelection={{
             onChange: (keys) => {
               console.log(keys);
@@ -62,6 +78,10 @@ export default function People() {
           }}
         />
       </div>
+      <InviteModal
+        open={isInviteModalOpen}
+        onCloseAction={() => setIsInviteModalOpen(false)}
+      />
     </>
   );
 }

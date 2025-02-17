@@ -1,5 +1,10 @@
 import { fetcher } from "@/lib";
-import { Member, Organization, OrganizationPayload } from "@/types";
+import {
+  InviteMemberPayload,
+  Member,
+  Organization,
+  OrganizationPayload,
+} from "@/types";
 
 export const createOrganization = async (
   payload: OrganizationPayload,
@@ -13,4 +18,10 @@ export const fetchOrganizationMembers = async (): Promise<Member[]> => {
     "/api/organizations/members",
   );
   return resp.data.members ?? [];
+};
+
+export const inviteMember = async (
+  payload: InviteMemberPayload,
+): Promise<void> => {
+  await fetcher.post<void>("/api/organizations/invite", payload);
 };

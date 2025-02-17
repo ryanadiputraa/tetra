@@ -18,6 +18,14 @@ const (
 	InvalidAuthHeader         = "invalid_auth_header"
 	OrganizationAlreadyExists = "organization_already_exists"
 	UserHasJoinedOrg          = "user_has_joined_org"
+
+	// Validation Err Code
+	RequiredField  = "required_field"
+	EmailField     = "email_field"
+	MinLengthField = "min_length_field"
+	MaxLengthField = "max_length_field"
+	URLField       = "url_field"
+	DateField      = "date_field"
 )
 
 var HttpErrMap = map[string]int{

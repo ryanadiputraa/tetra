@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, notification, Skeleton } from "antd";
 
 import { changePassword } from "@/api";
-import { API_MSG } from "@/constant";
+import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useUserData } from "@/queries";
 import { APIError, ChangePasswordForm } from "@/types";
 
@@ -30,7 +30,7 @@ export default function Profile() {
       if (!error.errors) {
         toast.error({
           message: "Gagal",
-          description: API_MSG[error.message],
+          description: API_MSG[error.message] || SERVER_ERR_MSG,
           placement: "bottomRight",
         });
       } else {

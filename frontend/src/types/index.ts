@@ -6,3 +6,8 @@ export type APIError = {
   message: string;
   errors?: Record<string, string>;
 };
+
+export interface ModalProps {
+  open: boolean;
+  onCloseAction: () => void;
+}

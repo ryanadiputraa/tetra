@@ -37,7 +37,7 @@ export default function Login() {
         for (const e in error.errors) {
           fields.push({
             name: e as keyof RegisterPayloadForm,
-            errors: [error.errors[e]],
+            errors: [API_MSG[error.errors[e]]],
           });
         }
         form.setFields(fields);
@@ -77,22 +77,19 @@ export default function Login() {
         </div>
         <Form form={form} onFinish={onRegister} className="mt-8 flex flex-col">
           <label className="mb-1 font-semibold">Nama Lengkap</label>
-          <Form.Item name="fullname" rules={[{ required: true, message: "" }]}>
+          <Form.Item name="fullname" rules={[{ required: true }]}>
             <Input size="large" placeholder="John Doe" type="text" />
           </Form.Item>
           <label className="mb-1 font-semibold">Email</label>
-          <Form.Item name="email" rules={[{ required: true, message: "" }]}>
+          <Form.Item name="email" rules={[{ required: true }]}>
             <Input size="large" placeholder="john@mail.com" type="email" />
           </Form.Item>
           <label className="mb-1 font-semibold">Password</label>
-          <Form.Item name="password" rules={[{ required: true, message: "" }]}>
+          <Form.Item name="password" rules={[{ required: true }]}>
             <Input size="large" placeholder="Password" type="password" />
           </Form.Item>
           <label className="mb-1 font-semibold">Konfirmasi Password</label>
-          <Form.Item
-            name="confirm_password"
-            rules={[{ required: true, message: "" }]}
-          >
+          <Form.Item name="confirm_password" rules={[{ required: true }]}>
             <Input size="large" placeholder="Password" type="password" />
           </Form.Item>
           <Button

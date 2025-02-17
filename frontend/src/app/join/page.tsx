@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 
 import { createOrganization } from "@/api/organization";
-import { API_MSG } from "@/constant";
+import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useUserData } from "@/queries";
 import { APIError, Organization, OrganizationPayload } from "@/types";
 
@@ -37,7 +37,7 @@ export default function Join() {
     onError: (err) => {
       toast.error({
         message: "Gagal Membuat Organisasi",
-        description: API_MSG[err.message],
+        description: API_MSG[err.message] || SERVER_ERR_MSG,
         placement: "bottomRight",
       });
     },

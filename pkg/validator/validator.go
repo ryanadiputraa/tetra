@@ -2,11 +2,11 @@ package validator
 
 import (
 	"errors"
-	"fmt"
 	"time"
 	"unicode"
 
 	"github.com/go-playground/validator/v10"
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 )
 
 const DateStringFormat = "2006-01-02"
@@ -47,23 +47,23 @@ func (v *validation) Validate(val any) (errDetails map[string]string, err error)
 func FieldErrMsg(err validator.FieldError) string {
 	switch err.Tag() {
 	case "required":
-		return fmt.Sprintf("is required")
+		return serviceError.RequiredField
 	case "max":
-		return fmt.Sprintf("should have a maximum length of %s", err.Param())
+		return serviceError.MaxLengthField
 	case "min":
-		return fmt.Sprintf("should have a minimum length of %s", err.Param())
+		return serviceError.MinLengthField
 	case "gt":
-		return fmt.Sprintf("should be greater than %s", err.Param())
+		return serviceError.MaxLengthField
 	case "gte":
-		return fmt.Sprintf("should be greater or equal than %s", err.Param())
+		return serviceError.MaxLengthField
 	case "email":
-		return fmt.Sprintf("should be a valid email address")
+		return serviceError.EmailField
 	case "http_url":
-		return fmt.Sprintf("should be a valid http url")
+		return serviceError.URLField
 	case "isodate":
-		return fmt.Sprintf("should be a valid ISO date format")
+		return serviceError.DateField
 	case "date":
-		return fmt.Sprintf("should be a valid date format 'YYYY-MM-DD'")
+		return serviceError.DateField
 	default:
 		return err.Error()
 	}
