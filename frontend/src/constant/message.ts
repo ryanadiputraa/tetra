@@ -18,6 +18,7 @@ export const API_MSG: Record<string, string> = {
   invalid_auth_header: "Silahkan login terlebih dahulu.",
   organization_already_exists: "Organisasi sudah dibuat.",
   user_has_joined_org: "Pengguna telah bergabung dengan organisasi.",
+  invalid_invitation_url: "Link undangan tidak valid.",
   required_field: "Wajib diisi",
   email_field: "Format email tidak valid",
   max_length_field: "Input melebihi batas maksimum",

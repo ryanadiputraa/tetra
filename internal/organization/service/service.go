@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/inventra/internal/auth"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 	"github.com/ryanadiputraa/inventra/internal/user"
@@ -102,11 +103,13 @@ func (s *service) ListMember(ctx context.Context, organizationID int) (result []
 func (s *service) InviteUser(ctx context.Context, organizationID int, email string) (err error) {
 	user, err := s.userRepository.FindByEmail(ctx, email)
 	if err != nil {
-		s.logger.Error(
-			"Fail to fetch user data",
-			"error", err.Error(),
-			"email", email,
-		)
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch user data",
+				"error", err.Error(),
+				"email", email,
+			)
+		}
 		return
 	}
 
@@ -117,11 +120,13 @@ func (s *service) InviteUser(ctx context.Context, organizationID int, email stri
 
 	org, err := s.repository.FindByID(ctx, organizationID)
 	if err != nil {
-		s.logger.Error(
-			"Fail to fetch organization data",
-			"error", err.Error(),
-			"organization_id", organizationID,
-		)
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch organization data",
+				"error", err.Error(),
+				"organization_id", organizationID,
+			)
+		}
 		return
 	}
 
@@ -137,8 +142,38 @@ func (s *service) InviteUser(ctx context.Context, organizationID int, email stri
 
 	go func() {
 		subject := fmt.Sprintf("Undangan bergabung dengan %s di Inventra", org.Name)
-		body := organization.GenrateInvitationMailBody(org.Name, s.config.AppDomain, jwt.AccessToken)
-		s.smtpMail.SendMail(context.Background(), email, subject, body)
+		body := organization.GenrateInvitationMailBody(org.Name, s.config.FrontendURL, jwt.AccessToken)
+		if err = s.smtpMail.SendMail(context.Background(), email, subject, body); err != nil {
+			s.logger.Warn(
+				"Fail to send invitation mail",
+				"error", err.Error(),
+				"organization_id", organizationID,
+				"address", email,
+			)
+		}
 	}()
+	return
+}
+
+func (s *service) Join(ctx context.Context, organizationID, userID int) (result organization.Member, err error) {
+	m := organization.NewMember(organizationID, userID, auth.Staff)
+	result, err = s.repository.AddMember(ctx, m)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to add organization member",
+				"error", err.Error(),
+				"organization_id", organizationID,
+				"user_id", userID,
+			)
+		}
+		return
+	}
+
+	s.logger.Info(
+		"New organization member joined",
+		"organization_id", result.OrganizationID,
+		"user_id", result.UserID,
+	)
 	return
 }

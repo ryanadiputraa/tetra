@@ -1,5 +1,6 @@
 import { fetcher } from "@/lib";
 import {
+  AcceptInvitationPayload,
   InviteMemberPayload,
   Member,
   Organization,
@@ -24,4 +25,11 @@ export const inviteMember = async (
   payload: InviteMemberPayload,
 ): Promise<void> => {
   await fetcher.post<void>("/api/organizations/invite", payload);
+};
+
+export const acceptInvitation = async (
+  payload: AcceptInvitationPayload,
+): Promise<Member> => {
+  const resp = await fetcher.post<Member>("/api/organizations/join", payload);
+  return resp.data;
 };

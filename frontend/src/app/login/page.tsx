@@ -17,10 +17,11 @@ import { login } from "@/api";
 import {
   API_URL,
   COOKIE_AUTH_KEY,
+  LS_INVITATION_CODE_KEY,
   SERVER_ERR,
   SERVER_ERR_MSG,
 } from "@/constant";
-import { getCookie, setCookie } from "@/lib";
+import { fetcher, getCookie, setCookie } from "@/lib";
 import { APIError, JWT, LoginPayload } from "@/types";
 
 export default function Login() {
@@ -33,7 +34,10 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       setCookie(COOKIE_AUTH_KEY, data.access_token, new Date(data.expires_at));
-      router.push("/");
+      fetcher.defaults.headers.common["Authorization"] =
+        `Bearer ${data.access_token}`;
+      const code = window.localStorage.getItem(LS_INVITATION_CODE_KEY);
+      router.push(code ? `/join/${code}` : "/");
     },
     onError: (error) => {
       const description =

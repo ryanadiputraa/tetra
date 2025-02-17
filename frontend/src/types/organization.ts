@@ -21,3 +21,7 @@ export type Member = {
 export interface InviteMemberPayload {
   email: string;
 }
+
+export interface AcceptInvitationPayload {
+  code: string;
+}

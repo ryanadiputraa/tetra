@@ -19,14 +19,14 @@ const (
 )
 
 type repository struct {
-	db  *gorm.DB
-	rdb *redis.Client
+	db    *gorm.DB
+	cache *redis.Client
 }
 
 func New(db *gorm.DB, rdb *redis.Client) user.UserRepository {
 	return &repository{
-		db:  db,
-		rdb: rdb,
+		db:    db,
+		cache: rdb,
 	}
 }
 
@@ -51,13 +51,13 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result u
 
 func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
 	id := strconv.Itoa(userID)
-	cache, err := r.rdb.Get(ctx, redisKeyUserData+id).Result()
+	cache, err := r.cache.Get(ctx, redisKeyUserData+id).Result()
 	if err == redis.Nil {
 		err = r.db.Table("users").
 			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
 			Joins("LEFT JOIN members ON members.user_id = users.id").
 			Where("users.id = ?", userID).
-			Scan(&result).Error
+			First(&result).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.RecordNotFound)
 			return
@@ -71,7 +71,7 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 		if err != nil {
 			return
 		}
-		err = r.rdb.Set(ctx, redisKeyUserData+id, val, time.Hour*6).Err()
+		err = r.cache.Set(ctx, redisKeyUserData+id, val, time.Hour*6).Err()
 		return
 	} else if err != nil {
 		return
@@ -86,7 +86,7 @@ func (r *repository) FindByEmail(ctx context.Context, email string) (result user
 		Select("users.id, users.email, users.password, users.fullname, users.created_at, members.organization_id, members.role").
 		Joins("LEFT JOIN members ON members.user_id = users.id").
 		Where("users.email = ?", email).
-		Scan(&result).Error
+		First(&result).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.RecordNotFound)
 		return
@@ -95,5 +95,5 @@ func (r *repository) FindByEmail(ctx context.Context, email string) (result user
 }
 
 func (r *repository) UpdatePassword(ctx context.Context, userID int, password string) error {
-	return r.db.Model(&user.User{}).Where("id = ?", userID).Update("password", password).Error
+	return r.db.Table("users").Where("id = ?", userID).Update("password", password).Error
 }

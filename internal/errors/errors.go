@@ -18,6 +18,7 @@ const (
 	InvalidAuthHeader         = "invalid_auth_header"
 	OrganizationAlreadyExists = "organization_already_exists"
 	UserHasJoinedOrg          = "user_has_joined_org"
+	InvalidInvitationURL      = "invalid_invitation_url"
 
 	// Validation Err Code
 	RequiredField  = "required_field"

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/user"
 )
 
@@ -117,6 +118,10 @@ type InvitePayload struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
+type AcceptInvitationPayload struct {
+	Code string `json:"code" validate:"required"`
+}
+
 func New(Name string, userID int) Organization {
 	return Organization{
 		OwnerID:           userID,
@@ -126,11 +131,11 @@ func New(Name string, userID int) Organization {
 	}
 }
 
-func NewMember(organizationID, userID int, role string) Member {
+func NewMember(organizationID, userID int, role auth.Role) Member {
 	return Member{
 		OrganizationID: organizationID,
 		UserID:         userID,
-		Role:           role,
+		Role:           string(role),
 		CreatedAt:      time.Now().UTC(),
 	}
 }
@@ -146,10 +151,12 @@ type OrganizationService interface {
 	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 	InviteUser(ctx context.Context, organizationID int, email string) error
+	Join(ctx context.Context, organizationID, userID int) (Member, error)
 }
 
 type OrganizationRepository interface {
 	Save(ctx context.Context, organization Organization) (Organization, error)
 	FindByID(ctx context.Context, organizationID int) (Organization, error)
+	AddMember(ctx context.Context, member Member) (Member, error)
 	FetchMembers(ctx context.Context, organizationID int) ([]MemberData, error)
 }

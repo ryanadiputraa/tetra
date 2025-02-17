@@ -6,12 +6,13 @@ import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { InviteModal } from "./invite";
 
-import { useOrganizationMembers } from "@/queries";
+import { useOrganizationMembers, useUserData } from "@/queries";
 import { Member } from "@/types";
 
 export default function People() {
   const { data, isLoading, error, refetch } = useOrganizationMembers();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const { data: user } = useUserData();
 
   const onInviteMember = () => setIsInviteModalOpen(true);
 
@@ -57,13 +58,15 @@ export default function People() {
     <>
       <div className="flex flex-col gap-3">
         <div className="flex justify-end">
-          <Button
-            type="primary"
-            className="font-semibold"
-            onClick={onInviteMember}
-          >
-            <AiOutlinePlus /> Undang
-          </Button>
+          {user?.role !== "staff" && (
+            <Button
+              type="primary"
+              className="font-semibold"
+              onClick={onInviteMember}
+            >
+              <AiOutlinePlus /> Undang
+            </Button>
+          )}
         </div>
         <Table
           rowKey="id"

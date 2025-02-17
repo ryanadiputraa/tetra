@@ -4,24 +4,30 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
+	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 )
 
 type handler struct {
+	config    config.Config
 	writer    writer.HTTPWriter
 	service   organization.OrganizationService
 	validator validator.Validator
+	jwt       jwt.JWT
 }
 
-func New(writer writer.HTTPWriter, service organization.OrganizationService, validator validator.Validator) *handler {
+func New(config config.Config, writer writer.HTTPWriter, service organization.OrganizationService, validator validator.Validator, jwt jwt.JWT) *handler {
 	return &handler{
+		config:    config,
 		writer:    writer,
 		service:   service,
 		validator: validator,
+		jwt:       jwt,
 	}
 }
 
@@ -95,5 +101,36 @@ func (h *handler) Invite() http.HandlerFunc {
 		}
 
 		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
+	}
+}
+
+func (h *handler) AcceptInvitation() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		var p organization.AcceptInvitationPayload
+		err := json.NewDecoder(r.Body).Decode(&p)
+		if err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		// organization id was stored on userID field in jwt claims
+		claims, err := h.jwt.ParseJWTClaims(p.Code)
+		if err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.InvalidInvitationURL)
+			return
+		}
+
+		member, err := h.service.Join(r.Context(), claims.UserID, c.UserID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusCreated, member)
 	}
 }

@@ -9,7 +9,7 @@ import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
-import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
+import { COOKIE_AUTH_KEY, LS_INVITATION_CODE_KEY, mainMenu } from "@/constant";
 import { removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
 
@@ -20,7 +20,8 @@ interface Props {
 export const DashboardLayout = ({ children }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  const excludedRoutes = ["/auth", "/login", "/register", "/join"];
+  const excludedRoutes = ["/auth", "/login", "/register"];
+  const isIgnorePath = pathname.startsWith("/join");
   const headerTitle = pathname.split("/").filter(Boolean).pop() ?? "dashboard";
 
   const onLogout = () => {
@@ -45,14 +46,18 @@ export const DashboardLayout = ({ children }: Props) => {
   ];
 
   const { data, isLoading, error, refetch } = useUserData(
-    !excludedRoutes.includes(pathname),
+    !excludedRoutes.includes(pathname) || isIgnorePath,
   );
   useEffect(() => {
-    if (data && !data?.organization_id) router.push("/join");
-  }, [data, router]);
+    if (data && !data?.organization_id && !isIgnorePath) {
+      router.push("/join");
+    } else {
+      window.localStorage.removeItem(LS_INVITATION_CODE_KEY);
+    }
+  }, [data, router, isIgnorePath]);
 
   // Pages that not using dashboard layout component
-  if (excludedRoutes.includes(pathname)) {
+  if (excludedRoutes.includes(pathname) || isIgnorePath) {
     return children;
   }
   if (isLoading) {

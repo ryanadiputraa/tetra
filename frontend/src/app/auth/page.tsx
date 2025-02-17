@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { API_MSG, COOKIE_AUTH_KEY } from "@/constant";
+import { API_MSG, COOKIE_AUTH_KEY, LS_INVITATION_CODE_KEY } from "@/constant";
 import { Button } from "antd";
 
 export default function Auth() {
@@ -22,7 +22,8 @@ export default function Auth() {
       setCookie(COOKIE_AUTH_KEY, accessToken, new Date(expiresAt));
       fetcher.defaults.headers.common["Authorization"] =
         `Bearer ${accessToken}`;
-      router.push("/");
+      const code = window.localStorage.getItem(LS_INVITATION_CODE_KEY);
+      router.push(code ? `/join/${code}` : "/");
     } else if (authErr) {
       setIsAuthError(true);
     } else {
