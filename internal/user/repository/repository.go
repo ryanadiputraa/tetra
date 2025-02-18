@@ -14,10 +14,6 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-const (
-	redisKeyUserData = "users:"
-)
-
 type repository struct {
 	db    *gorm.DB
 	cache *redis.Client
@@ -51,7 +47,7 @@ func (r *repository) SaveOrUpdate(ctx context.Context, user user.User) (result u
 
 func (r *repository) FindByID(ctx context.Context, userID int) (result user.UserData, err error) {
 	id := strconv.Itoa(userID)
-	cache, err := r.cache.Get(ctx, redisKeyUserData+id).Result()
+	cache, err := r.cache.Get(ctx, "users:"+id).Result()
 	if err == redis.Nil {
 		err = r.db.Table("users").
 			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
@@ -71,7 +67,7 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 		if err != nil {
 			return
 		}
-		err = r.cache.Set(ctx, redisKeyUserData+id, val, time.Hour*6).Err()
+		err = r.cache.Set(ctx, "users:"+id, val, time.Hour*6).Err()
 		return
 	} else if err != nil {
 		return

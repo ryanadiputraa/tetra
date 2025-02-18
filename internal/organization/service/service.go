@@ -177,3 +177,19 @@ func (s *service) Join(ctx context.Context, organizationID, userID int) (result 
 	)
 	return
 }
+
+func (s *service) RemoveMember(ctx context.Context, organizationID, memberID int) (err error) {
+	err = s.repository.DeleteMember(ctx, organizationID, memberID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to remove member",
+				"error", err.Error(),
+				"organization_id", organizationID,
+				"memberID", memberID,
+			)
+		}
+		return
+	}
+	return
+}

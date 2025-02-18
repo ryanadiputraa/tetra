@@ -67,6 +67,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	router.Handle("POST /api/organizations", authMiddleware.AuthorizeUser(organizationHandler.CreateOrganization()))
 	router.Handle("GET /api/organizations/members", authMiddleware.AuthorizeUserRole(organizationHandler.FetchMembers(), staffAccessLv))
+	router.Handle("DELETE /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.RemoveMember(), adminAccessLv))
 	router.Handle("POST /api/organizations/invite", authMiddleware.AuthorizeUserRole(organizationHandler.Invite(), adminAccessLv))
 	router.Handle("POST /api/organizations/join", authMiddleware.AuthorizeUser(organizationHandler.AcceptInvitation()))
 	return router

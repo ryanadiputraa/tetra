@@ -13,10 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	redisKeyOrganizationData = "organization:"
-)
-
 type repository struct {
 	db    *gorm.DB
 	cache *redis.Client
@@ -53,7 +49,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 
 func (r *repository) FindByID(ctx context.Context, organizationID int) (result organization.Organization, err error) {
 	id := strconv.Itoa(organizationID)
-	cache, err := r.cache.Get(ctx, redisKeyOrganizationData+id).Result()
+	cache, err := r.cache.Get(ctx, "organizations:"+id).Result()
 	if err == redis.Nil {
 		err = r.db.Table("organizations").
 			Select("organizations.id, organizations.owner_id, organizations.name, organizations.created_at, organizations.subscription_end_at").
@@ -68,7 +64,7 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result o
 		if err != nil {
 			return
 		}
-		err = r.cache.Set(ctx, redisKeyOrganizationData+id, val, time.Hour*6).Err()
+		err = r.cache.Set(ctx, "organizations:"+id, val, time.Hour*6).Err()
 		return
 	}
 	if err != nil {
@@ -114,4 +110,14 @@ func (r *repository) FetchMembers(ctx context.Context, organizationID int) (resu
 		Order("users.fullname ASC").
 		Find(&result).Error
 	return
+}
+
+func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID int) (err error) {
+	err = r.db.Where("organization_id = ? AND id = ?").Delete(&organization.Member{}).Error
+	if err != nil {
+		return
+	}
+
+	id := strconv.Itoa(memberID)
+	return r.cache.Del(ctx, "users:"+id).Err()
 }
