@@ -27,7 +27,7 @@ func New(db *gorm.DB, rdb *redis.Client) organization.OrganizationRepository {
 
 func (r *repository) Save(ctx context.Context, data organization.Organization) (result organization.Organization, err error) {
 	err = r.db.Transaction(func(tx *gorm.DB) error {
-		err = r.db.Create(&data).Error
+		err = tx.Create(&data).Error
 		if err == gorm.ErrDuplicatedKey {
 			err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.OrganizationAlreadyExists)
 			return err
@@ -37,7 +37,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 		}
 
 		owner := organization.NewMember(data.ID, data.OwnerID, auth.Admin)
-		if err = r.db.Create(&owner).Error; err != nil {
+		if err = tx.Create(&owner).Error; err != nil {
 			return err
 		}
 
@@ -112,12 +112,21 @@ func (r *repository) FetchMembers(ctx context.Context, organizationID int) (resu
 	return
 }
 
-func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID int) (err error) {
-	err = r.db.Where("organization_id = ? AND id = ?").Delete(&organization.Member{}).Error
-	if err != nil {
-		return
-	}
+func (r *repository) DeleteMember(ctx context.Context, organizationID int, memberID []int) (err error) {
+	err = r.db.Transaction(func(tx *gorm.DB) error {
+		err = tx.Where("organization_id = ? AND id IN (?)", organizationID, memberID).Delete(&organization.Member{}).Error
+		if err != nil {
+			return err
+		}
 
-	id := strconv.Itoa(memberID)
-	return r.cache.Del(ctx, "users:"+id).Err()
+		for _, v := range memberID {
+			id := strconv.Itoa(v)
+			if err = r.cache.Del(ctx, "users:"+id).Err(); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}, nil)
+	return
 }

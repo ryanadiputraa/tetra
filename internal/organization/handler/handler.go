@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/auth"
@@ -139,14 +140,24 @@ func (h *handler) AcceptInvitation() http.HandlerFunc {
 func (h *handler) RemoveMember() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		c := r.Context().(*auth.AppContext)
-		id := r.PathValue("id")
-		memberID, err := strconv.Atoi(id)
-		if err != nil {
+		param := r.URL.Query().Get("ids")
+		if param == "" {
 			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
 			return
 		}
 
-		err = h.service.RemoveMember(c, *c.OrganizationID, memberID)
+		idsStr := strings.Split(param, ",")
+		var ids []int
+		for _, id := range idsStr {
+			i, err := strconv.Atoi(id)
+			if err != nil {
+				h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+				return
+			}
+			ids = append(ids, i)
+		}
+
+		err := h.service.RemoveMember(c, *c.OrganizationID, ids)
 		if err != nil {
 			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
