@@ -62,7 +62,7 @@ export const DashboardLayout = ({ children }: Props) => {
     return <Loader />;
   }
   if (error) {
-    return <ErrorPage onRetry={() => refetch()} />;
+    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
   }
   // Push to join page when user hasn't join an organization
   if (!data?.organization_id) {

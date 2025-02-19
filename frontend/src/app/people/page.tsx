@@ -99,7 +99,7 @@ export default function People() {
     );
   }
   if (error) {
-    return <ErrorPage onRetry={() => refetch()} />;
+    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
   }
 
   return (
