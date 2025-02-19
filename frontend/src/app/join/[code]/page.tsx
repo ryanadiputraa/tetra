@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { API_MSG, SERVER_ERR_MSG } from "@/constant";
+import { API_MSG, LS_INVITATION_CODE_KEY, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useAcceptInvitation } from "@/queries";
 
 export default function AcceptInvitation() {
@@ -16,6 +16,7 @@ export default function AcceptInvitation() {
   useEffect(() => {
     if (data) {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userData });
+      window.localStorage.removeItem(LS_INVITATION_CODE_KEY);
       router.push("/");
     }
   }, [data, router, queryClient]);

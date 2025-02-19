@@ -9,7 +9,7 @@ import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
-import { COOKIE_AUTH_KEY, LS_INVITATION_CODE_KEY, mainMenu } from "@/constant";
+import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
 import { removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
 
@@ -51,8 +51,6 @@ export const DashboardLayout = ({ children }: Props) => {
   useEffect(() => {
     if (data && !data?.organization_id && !isIgnorePath) {
       router.push("/join");
-    } else {
-      window.localStorage.removeItem(LS_INVITATION_CODE_KEY);
     }
   }, [data, router, isIgnorePath]);
 

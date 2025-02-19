@@ -1,5 +1,6 @@
 "use client";
 
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConfigProvider } from "antd";
 import idID from "antd/locale/id_ID";
@@ -9,25 +10,27 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        locale={idID}
-        theme={{
-          token: {
-            colorPrimary: "#4682ab",
-            borderRadius: 8,
-          },
-          components: {
-            Button: {
-              controlHeightLG: 45,
+      <AntdRegistry>
+        <ConfigProvider
+          locale={idID}
+          theme={{
+            token: {
+              colorPrimary: "#4682ab",
+              borderRadius: 8,
             },
-            Input: {
-              controlHeightLG: 45,
+            components: {
+              Button: {
+                controlHeightLG: 45,
+              },
+              Input: {
+                controlHeightLG: 45,
+              },
             },
-          },
-        }}
-      >
-        {children}
-      </ConfigProvider>
+          }}
+        >
+          {children}
+        </ConfigProvider>
+      </AntdRegistry>
     </QueryClientProvider>
   );
 };

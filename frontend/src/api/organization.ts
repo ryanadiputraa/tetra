@@ -24,7 +24,7 @@ export const fetchOrganizationMembers = async (): Promise<Member[]> => {
 export const inviteMember = async (
   payload: InviteMemberPayload,
 ): Promise<void> => {
-  await fetcher.post<void>("/api/organizations/invite", payload);
+  await fetcher.post("/api/organizations/invite", payload);
 };
 
 export const acceptInvitation = async (
@@ -32,4 +32,8 @@ export const acceptInvitation = async (
 ): Promise<Member> => {
   const resp = await fetcher.post<Member>("/api/organizations/join", payload);
   return resp.data;
+};
+
+export const removeMember = async (ids: string): Promise<void> => {
+  await fetcher.delete(`/api/organizations/members?ids=${ids}`);
 };
