@@ -11,6 +11,7 @@ import (
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type repository struct {
@@ -112,21 +113,15 @@ func (r *repository) FetchMembers(ctx context.Context, organizationID int) (resu
 	return
 }
 
-func (r *repository) DeleteMember(ctx context.Context, organizationID int, memberID []int) (err error) {
-	err = r.db.Transaction(func(tx *gorm.DB) error {
-		err = tx.Where("organization_id = ? AND id IN (?)", organizationID, memberID).Delete(&organization.Member{}).Error
-		if err != nil {
-			return err
-		}
+func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID int) (err error) {
+	var member organization.Member
+	err = r.db.Clauses(clause.Returning{Columns: []clause.Column{{Name: "user_id"}}}).
+		Where("organization_id = ? AND id = ?", organizationID, memberID).
+		Delete(&member).Error
+	if err != nil {
+		return
+	}
 
-		for _, v := range memberID {
-			id := strconv.Itoa(v)
-			if err = r.cache.Del(ctx, "users:"+id).Err(); err != nil {
-				return err
-			}
-		}
-
-		return nil
-	}, nil)
-	return
+	userID := strconv.Itoa(member.UserID)
+	return r.cache.Del(ctx, "users:"+userID).Err()
 }

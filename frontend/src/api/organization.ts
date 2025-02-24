@@ -34,6 +34,6 @@ export const acceptInvitation = async (
   return resp.data;
 };
 
-export const removeMember = async (ids: string): Promise<void> => {
-  await fetcher.delete(`/api/organizations/members?ids=${ids}`);
+export const removeMember = async (id: number): Promise<void> => {
+  await fetcher.delete(`/api/organizations/members/${id}`);
 };

@@ -4,6 +4,7 @@ import { ErrorPage } from "@/components";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
+  Dropdown,
   Modal,
   notification,
   Skeleton,
@@ -11,13 +12,13 @@ import {
   TableColumnsType,
 } from "antd";
 import { useState } from "react";
-import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineMore, AiOutlinePlus } from "react-icons/ai";
 import { InviteModal } from "./invite";
 
 import { removeMember } from "@/api/organization";
+import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useOrganizationMembers, useUserData } from "@/queries";
 import { Member } from "@/types";
-import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 
 export default function People() {
   const { data, isLoading, error, refetch } = useOrganizationMembers();
@@ -27,7 +28,6 @@ export default function People() {
   const queryClient = useQueryClient();
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<React.Key[]>([]);
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["removeMember"],
@@ -36,11 +36,11 @@ export default function People() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.organizationMembers,
       });
-      toast.success({ message: "Anggota dihapus" });
+      toast.success({ message: "Anggota dikeluarkan" });
     },
     onError: (error) => {
       toast.error({
-        message: "Gagal menghapus anggota",
+        message: "Gagal mengeluarkan anggota",
         description: API_MSG[error.message] || SERVER_ERR_MSG,
         placement: "bottomRight",
       });
@@ -48,18 +48,17 @@ export default function People() {
   });
 
   const onInviteMember = () => setIsInviteModalOpen(true);
-  const onRemoveMember = () => {
+  const onRemoveMember = (id: number) => {
     modal.confirm({
-      title: "Hapus Anggota",
-      content: "Apa kamu yakin ingin menghapus anggota?",
-      okText: "Hapus",
+      title: "Keluarkan Anggota",
+      content: "Apa kamu yakin ingin mengeluarkan anggota?",
+      okText: "Keluarkan",
       okButtonProps: {
         danger: true,
         loading: isPending,
       },
       onOk: () => {
-        const ids = selectedMember.join(",");
-        mutate(ids);
+        mutate(id);
       },
     });
   };
@@ -86,6 +85,30 @@ export default function People() {
       render: (role: string) => <span className="capitalize">{role}</span>,
       sorter: (a, b) => a.role.localeCompare(b.role),
     },
+    {
+      render: (_, member) => (
+        <Dropdown
+          disabled={user?.role !== "admin"}
+          trigger={["click"]}
+          menu={{
+            items: [
+              {
+                key: "1",
+                disabled: user?.id === member.user_id || isPending,
+                onClick: () => onRemoveMember(member.id),
+                icon: <AiOutlineDelete />,
+                label: "Keluarkan",
+              },
+            ],
+          }}
+          placement="topRight"
+        >
+          <button className="hover:bg-gray-200 p-2 rounded-md">
+            <AiOutlineMore className="text-xl font-bold size-full" />
+          </button>
+        </Dropdown>
+      ),
+    },
   ];
 
   if (isLoading) {
@@ -108,17 +131,6 @@ export default function People() {
       {toastContextHolder}
       <div className="flex flex-col gap-3">
         <div className="flex justify-end gap-3">
-          {user?.role === "admin" && (
-            <Button
-              disabled={!selectedMember.length}
-              danger
-              variant="outlined"
-              onClick={onRemoveMember}
-            >
-              <AiOutlineDelete />
-              Hapus
-            </Button>
-          )}
           {user?.role !== "staff" && (
             <Button
               type="primary"
@@ -135,12 +147,6 @@ export default function People() {
           columns={columns}
           pagination={false}
           showSorterTooltip={false}
-          rowSelection={{
-            getCheckboxProps: (member) => ({
-              disabled: member.user_id === user?.id,
-            }),
-            onChange: (keys) => setSelectedMember(keys),
-          }}
         />
       </div>
       <InviteModal

@@ -152,7 +152,7 @@ type OrganizationService interface {
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 	InviteUser(ctx context.Context, organizationID int, email string) error
 	Join(ctx context.Context, organizationID, userID int) (Member, error)
-	RemoveMember(ctx context.Context, organizationID int, userID []int) error
+	RemoveMember(ctx context.Context, organizationID, userID int) error
 }
 
 type OrganizationRepository interface {
@@ -160,5 +160,5 @@ type OrganizationRepository interface {
 	FindByID(ctx context.Context, organizationID int) (Organization, error)
 	AddMember(ctx context.Context, member Member) (Member, error)
 	FetchMembers(ctx context.Context, organizationID int) ([]MemberData, error)
-	DeleteMember(ctx context.Context, organizationID int, memberID []int) error
+	DeleteMember(ctx context.Context, organizationID, memberID int) error
 }
