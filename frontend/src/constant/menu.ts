@@ -1,20 +1,20 @@
 import {
-  AiFillAppstore,
-  AiOutlineAppstore,
-  AiOutlineTeam,
-} from "react-icons/ai";
+  AppstoreFilled,
+  AppstoreOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 
 export const mainMenu = [
   {
     link: "/",
-    Ico: AiOutlineAppstore,
-    IcoActive: AiFillAppstore,
+    Ico: AppstoreOutlined,
+    IcoActive: AppstoreFilled,
     label: "Dashboard",
   },
   {
     link: "/people",
-    Ico: AiOutlineTeam,
-    IcoActive: AiOutlineTeam,
+    Ico: TeamOutlined,
+    IcoActive: TeamOutlined,
     label: "People",
   },
 ];

@@ -1,11 +1,11 @@
 "use client";
 
 import { ErrorPage, Loader } from "@/components";
+import { TeamOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { AiOutlineTeam } from "react-icons/ai";
 
 import { createOrganization } from "@/api/organization";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
@@ -69,7 +69,7 @@ export default function Join() {
               <Input
                 size="large"
                 placeholder="Nama Organisasi"
-                suffix={<AiOutlineTeam />}
+                suffix={<TeamOutlined />}
               />
             </Form.Item>
             <Button

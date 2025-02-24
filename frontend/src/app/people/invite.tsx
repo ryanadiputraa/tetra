@@ -1,8 +1,8 @@
 "use client";
 
+import { UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Form, Input, Modal, notification } from "antd";
-import { AiOutlineUser } from "react-icons/ai";
 
 import { inviteMember } from "@/api/organization";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
@@ -63,7 +63,7 @@ export const InviteModal = ({ open, onCloseAction }: ModalProps) => {
             size="large"
             placeholder="Email"
             type="email"
-            suffix={<AiOutlineUser />}
+            suffix={<UserOutlined />}
           />
         </Form.Item>
       </Form>

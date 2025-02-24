@@ -1,17 +1,17 @@
 "use client";
 
+import {
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  LineOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, notification } from "antd";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import {
-  AiOutlineEye,
-  AiOutlineEyeInvisible,
-  AiOutlineLine,
-  AiOutlineUser,
-} from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
 
 import { login } from "@/api";
 import {
@@ -77,7 +77,7 @@ export default function Login() {
               size="large"
               placeholder="Email"
               type="email"
-              suffix={<AiOutlineUser />}
+              suffix={<UserOutlined />}
             />
           </Form.Item>
           <Form.Item name="password" rules={[{ required: true }]}>
@@ -85,7 +85,7 @@ export default function Login() {
               size="large"
               placeholder="Password"
               iconRender={(visible) =>
-                visible ? <AiOutlineEye /> : <AiOutlineEyeInvisible />
+                visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
               }
             />
           </Form.Item>
@@ -101,7 +101,7 @@ export default function Login() {
           </Button>
         </Form>
         <p className="my-4 flex items-center justify-center gap-2">
-          <AiOutlineLine /> Atau masuk dengan <AiOutlineLine />
+          <LineOutlined /> Atau masuk dengan <LineOutlined />
         </p>
         <a href={API_URL + "/oauth/login/google"}>
           <Button
@@ -109,7 +109,8 @@ export default function Login() {
             size="large"
             className="font-semibold w-full"
           >
-            <FcGoogle className="text-xl" /> Google
+            <Image src={"/google.svg"} alt="google" width={24} height={24} />{" "}
+            Google
           </Button>
         </a>
         <p className="text-center mt-8">

@@ -1,11 +1,11 @@
 "use client";
 
+import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Dropdown, MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { AiOutlineDown, AiOutlineLogout, AiOutlineUser } from "react-icons/ai";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
@@ -33,7 +33,7 @@ export const DashboardLayout = ({ children }: Props) => {
     {
       key: "1",
       label: <Link href="/profile">Akun Saya</Link>,
-      icon: <AiOutlineUser />,
+      icon: <UserOutlined />,
     },
     {
       type: "divider",
@@ -41,7 +41,7 @@ export const DashboardLayout = ({ children }: Props) => {
     {
       key: "2",
       label: <button onClick={onLogout}>Keluar</button>,
-      icon: <AiOutlineLogout />,
+      icon: <LogoutOutlined />,
     },
   ];
 
@@ -107,7 +107,7 @@ export const DashboardLayout = ({ children }: Props) => {
                   {data?.fullname.split("")[0]}
                 </span>
               </div>
-              <AiOutlineDown className="text-sm" />
+              <DownOutlined className="text-sm" />
             </div>
           </Dropdown>
         </header>

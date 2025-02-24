@@ -1,6 +1,7 @@
 "use client";
 
 import { ErrorPage } from "@/components";
+import { DeleteOutlined, MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
@@ -12,7 +13,6 @@ import {
   TableColumnsType,
 } from "antd";
 import { useState } from "react";
-import { AiOutlineDelete, AiOutlineMore, AiOutlinePlus } from "react-icons/ai";
 import { InviteModal } from "./invite";
 
 import { removeMember } from "@/api/organization";
@@ -96,7 +96,7 @@ export default function People() {
                 key: "1",
                 disabled: user?.id === member.user_id || isPending,
                 onClick: () => onRemoveMember(member.id),
-                icon: <AiOutlineDelete />,
+                icon: <DeleteOutlined />,
                 label: "Keluarkan",
               },
             ],
@@ -104,7 +104,7 @@ export default function People() {
           placement="topRight"
         >
           <button className="hover:bg-gray-200 p-2 rounded-md">
-            <AiOutlineMore className="text-xl font-bold size-full" />
+            <MoreOutlined className="text-xl font-bold size-full" />
           </button>
         </Dropdown>
       ),
@@ -137,7 +137,7 @@ export default function People() {
               className="font-semibold"
               onClick={onInviteMember}
             >
-              <AiOutlinePlus /> Undang
+              <PlusOutlined /> Undang
             </Button>
           )}
         </div>
