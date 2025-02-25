@@ -19,6 +19,7 @@ const (
 	OrganizationAlreadyExists = "organization_already_exists"
 	UserHasJoinedOrg          = "user_has_joined_org"
 	InvalidInvitationURL      = "invalid_invitation_url"
+	InvalidRole               = "invalid_role"
 
 	// Validation Err Code
 	RequiredField  = "required_field"

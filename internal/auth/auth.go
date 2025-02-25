@@ -47,6 +47,15 @@ type RegisterPayload struct {
 	Fullname string `json:"fullname" validate:"required"`
 }
 
+func IsValidRole(r Role) bool {
+	switch r {
+	case Admin, Supervisor, Staff:
+		return true
+	default:
+		return false
+	}
+}
+
 type AuthService interface {
 	Login(ctx context.Context, email, password string) (user.UserData, error)
 	Register(ctx context.Context, payload RegisterPayload) (user.User, error)

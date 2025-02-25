@@ -193,3 +193,24 @@ func (s *service) RemoveMember(ctx context.Context, organizationID, memberID int
 	}
 	return
 }
+
+func (s *service) ChangeMemberRole(ctx context.Context, organizationID, memberID int, role string) (err error) {
+	if !auth.IsValidRole(auth.Role(role)) {
+		return serviceError.NewServiceErr(serviceError.BadRequest, serviceError.InvalidRole)
+	}
+
+	err = s.repository.UpdateMemberRole(ctx, organizationID, memberID, role)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to change member role",
+				"error", err.Error(),
+				"organization_id", organizationID,
+				"memberID", memberID,
+				"role", role,
+			)
+		}
+		return
+	}
+	return
+}

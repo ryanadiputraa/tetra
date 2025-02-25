@@ -140,13 +140,50 @@ func (h *handler) RemoveMember() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		c := r.Context().(*auth.AppContext)
 		id := r.PathValue("id")
-		userID, err := strconv.Atoi(id)
+		memberID, err := strconv.Atoi(id)
+		if err != nil || c.UserID == memberID {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		err = h.service.RemoveMember(c, *c.OrganizationID, memberID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
+	}
+}
+
+func (h *handler) ChangeMemberRole() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		id := r.PathValue("id")
+		memberID, err := strconv.Atoi(id)
+		if err != nil || c.UserID == memberID {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		var p organization.ChangeMemberPayload
+		err = json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
 			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
 			return
 		}
 
-		err = h.service.RemoveMember(c, *c.OrganizationID, userID)
+		errMap, err := h.validator.Validate(p)
+		if err != nil {
+			h.writer.WriteErrorResponseWithDetail(w, http.StatusBadRequest, err.Error(), errMap)
+			return
+		}
+
+		err = h.service.ChangeMemberRole(c, *c.OrganizationID, memberID, p.Role)
 		if err != nil {
 			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())

@@ -125,3 +125,16 @@ func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID 
 	userID := strconv.Itoa(member.UserID)
 	return r.cache.Del(ctx, "users:"+userID).Err()
 }
+
+func (r *repository) UpdateMemberRole(ctx context.Context, organizationID, memberID int, role string) (err error) {
+	var member organization.Member
+	err = r.db.Model(&member).Clauses(clause.Returning{Columns: []clause.Column{{Name: "user_id"}}}).
+		Where("organization_id = ? AND id = ?", organizationID, memberID).
+		Update("role", role).Error
+	if err != nil {
+		return
+	}
+
+	userID := strconv.Itoa(member.UserID)
+	return r.cache.Del(ctx, "users:"+userID).Err()
+}

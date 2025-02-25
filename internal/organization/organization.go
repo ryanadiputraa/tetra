@@ -122,6 +122,10 @@ type AcceptInvitationPayload struct {
 	Code string `json:"code" validate:"required"`
 }
 
+type ChangeMemberPayload struct {
+	Role string `json:"role" validate:"required"`
+}
+
 func New(Name string, userID int) Organization {
 	return Organization{
 		OwnerID:           userID,
@@ -152,7 +156,8 @@ type OrganizationService interface {
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 	InviteUser(ctx context.Context, organizationID int, email string) error
 	Join(ctx context.Context, organizationID, userID int) (Member, error)
-	RemoveMember(ctx context.Context, organizationID, userID int) error
+	RemoveMember(ctx context.Context, organizationID, memberID int) error
+	ChangeMemberRole(ctx context.Context, organizationID, memberID int, role string) error
 }
 
 type OrganizationRepository interface {
@@ -161,4 +166,5 @@ type OrganizationRepository interface {
 	AddMember(ctx context.Context, member Member) (Member, error)
 	FetchMembers(ctx context.Context, organizationID int) ([]MemberData, error)
 	DeleteMember(ctx context.Context, organizationID, memberID int) error
+	UpdateMemberRole(ctx context.Context, organizationID, memberID int, role string) error
 }
