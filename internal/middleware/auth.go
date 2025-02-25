@@ -88,7 +88,7 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 			return
 		}
 
-		if auth.AccessLevel[auth.Role(user.Role)] > level {
+		if auth.AccessLevel[auth.Role(user.Role)] < level {
 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
 			return
 		}

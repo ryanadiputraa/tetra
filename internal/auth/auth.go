@@ -19,9 +19,9 @@ const (
 )
 
 var AccessLevel = map[Role]int{
-	Admin:      1,
+	Staff:      1,
 	Supervisor: 2,
-	Staff:      3,
+	Admin:      3,
 }
 
 type JWT struct {
