@@ -1,24 +1,17 @@
 "use client";
 
 import { ErrorPage } from "@/components";
-import { DeleteOutlined, MoreOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Button,
-  Dropdown,
-  Modal,
-  notification,
-  Skeleton,
-  Table,
-  TableColumnsType,
-} from "antd";
+import { Button, Modal, notification, Skeleton, Table } from "antd";
 import { useState } from "react";
 import { InviteModal } from "./invite";
 
-import { removeMember } from "@/api/organization";
+import { changeRole, removeMember } from "@/api/organization";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useOrganizationMembers, useUserData } from "@/queries";
-import { Member } from "@/types";
+import { APIError, ChangeRolePayload, Role } from "@/types";
+import { tableColumn } from "./data";
 
 export default function People() {
   const { data, isLoading, error, refetch } = useOrganizationMembers();
@@ -28,8 +21,28 @@ export default function People() {
   const queryClient = useQueryClient();
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const onInviteMember = () => setIsInviteModalOpen(true);
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: changeMemberRole, isPending: isChangeRolePending } =
+    useMutation<void, APIError, ChangeRolePayload>({
+      mutationKey: ["changeRole"],
+      mutationFn: changeRole,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.organizationMembers,
+        });
+        toast.success({ message: "Role Diubah" });
+      },
+      onError: (error) => {
+        toast.error({
+          message: "Gagal mengubah role",
+          description: API_MSG[error.message] || SERVER_ERR_MSG,
+          placement: "bottomRight",
+        });
+      },
+    });
+
+  const { mutate: remove, isPending: isRemovePending } = useMutation({
     mutationKey: ["removeMember"],
     mutationFn: removeMember,
     onSuccess: () => {
@@ -47,7 +60,23 @@ export default function People() {
     },
   });
 
-  const onInviteMember = () => setIsInviteModalOpen(true);
+  const onChangeRole = (memberId: number, role: Role) => {
+    modal.confirm({
+      title: "Ubah Role",
+      content: (
+        <>
+          Apa kamu yakin ingin mengubah Role anggota menjadi{" "}
+          <span className="capitalize">{role}</span>
+        </>
+      ),
+      okText: "Ubah Role",
+      okButtonProps: {
+        loading: isChangeRolePending,
+      },
+      onOk: () => changeMemberRole({ memberId, role }),
+    });
+  };
+
   const onRemoveMember = (id: number) => {
     modal.confirm({
       title: "Keluarkan Anggota",
@@ -55,61 +84,13 @@ export default function People() {
       okText: "Keluarkan",
       okButtonProps: {
         danger: true,
-        loading: isPending,
+        loading: isRemovePending,
       },
       onOk: () => {
-        mutate(id);
+        remove(id);
       },
     });
   };
-
-  const columns: TableColumnsType<Member> = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      sorter: (a, b) => a.id - b.id,
-    },
-    {
-      title: "Nama",
-      dataIndex: "fullname",
-      sorter: (a, b) => a.fullname.localeCompare(b.fullname),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      sorter: (a, b) => a.email.localeCompare(b.email),
-    },
-    {
-      title: "Role",
-      dataIndex: "role",
-      render: (role: string) => <span className="capitalize">{role}</span>,
-      sorter: (a, b) => a.role.localeCompare(b.role),
-    },
-    {
-      render: (_, member) => (
-        <Dropdown
-          disabled={user?.role !== "admin"}
-          trigger={["click"]}
-          menu={{
-            items: [
-              {
-                key: "1",
-                disabled: user?.id === member.user_id || isPending,
-                onClick: () => onRemoveMember(member.id),
-                icon: <DeleteOutlined />,
-                label: "Keluarkan",
-              },
-            ],
-          }}
-          placement="topRight"
-        >
-          <button className="hover:bg-gray-200 p-2 rounded-md">
-            <MoreOutlined className="text-xl font-bold size-full" />
-          </button>
-        </Dropdown>
-      ),
-    },
-  ];
 
   if (isLoading) {
     return (
@@ -144,7 +125,13 @@ export default function People() {
         <Table
           rowKey="id"
           dataSource={data}
-          columns={columns}
+          columns={tableColumn({
+            user,
+            onRemoveMember,
+            isRemovePending,
+            onChangeRole,
+            isChangeRolePending,
+          })}
           pagination={false}
           showSorterTooltip={false}
         />

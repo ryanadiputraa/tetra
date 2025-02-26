@@ -1,6 +1,7 @@
 import { fetcher } from "@/lib";
 import {
   AcceptInvitationPayload,
+  ChangeRolePayload,
   InviteMemberPayload,
   Member,
   Organization,
@@ -36,4 +37,11 @@ export const acceptInvitation = async (
 
 export const removeMember = async (id: number): Promise<void> => {
   await fetcher.delete(`/api/organizations/members/${id}`);
+};
+
+export const changeRole = async ({
+  memberId,
+  role,
+}: ChangeRolePayload): Promise<void> => {
+  await fetcher.put(`/api/organizations/members/${memberId}`, { role });
 };

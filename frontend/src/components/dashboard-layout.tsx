@@ -97,7 +97,7 @@ export const DashboardLayout = ({ children }: Props) => {
           </ul>
         </div>
       </nav>
-      <div className="w-full flex flex-col">
+      <div className="w-full h-screen flex flex-col">
         <header className="py-3 px-6 bg-white border-b-2 border-gray-200 flex justify-between items-center">
           <h3 className="capitalize text-lg font-medium">{headerTitle}</h3>
           <Dropdown menu={{ items: menuItems }}>
@@ -111,7 +111,7 @@ export const DashboardLayout = ({ children }: Props) => {
             </div>
           </Dropdown>
         </header>
-        <main className="grow p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
     </div>
   );

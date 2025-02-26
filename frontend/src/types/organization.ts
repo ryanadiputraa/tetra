@@ -1,3 +1,5 @@
+import { Role } from "./user";
+
 export type Organization = {
   id: number;
   owner_id: number;
@@ -15,7 +17,7 @@ export type Member = {
   user_id: number;
   fullname: string;
   email: string;
-  role: string;
+  role: Role;
 };
 
 export interface InviteMemberPayload {
@@ -24,4 +26,9 @@ export interface InviteMemberPayload {
 
 export interface AcceptInvitationPayload {
   code: string;
+}
+
+export interface ChangeRolePayload {
+  memberId: number;
+  role: Role;
 }

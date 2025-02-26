@@ -4,8 +4,10 @@ export type User = {
   fullname: string;
   created_at: string;
   organization_id: number;
-  role: "admin" | "supervisor" | "staff";
+  role: Role;
 };
+
+export type Role = "admin" | "supervisor" | "staff";
 
 export type ChangePasswordForm = {
   password: string;
