@@ -158,6 +158,7 @@ type OrganizationService interface {
 	Join(ctx context.Context, organizationID, userID int) (Member, error)
 	RemoveMember(ctx context.Context, organizationID, memberID int) error
 	ChangeMemberRole(ctx context.Context, organizationID, memberID int, role string) error
+	Leave(ctx context.Context, organizationID, memberID int) error
 }
 
 type OrganizationRepository interface {

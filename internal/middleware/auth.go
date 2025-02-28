@@ -96,6 +96,7 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 		ac := &auth.AppContext{
 			UserID:         user.ID,
 			OrganizationID: user.OrganizationID,
+			MemberID:       user.MemberID,
 			Context:        r.Context(),
 		}
 		rc := r.WithContext(ac)

@@ -45,3 +45,7 @@ export const changeRole = async ({
 }: ChangeRolePayload): Promise<void> => {
   await fetcher.put(`/api/organizations/members/${memberId}`, { role });
 };
+
+export const leaveOrganization = async (): Promise<void> => {
+  await fetcher.delete("/api/organizations/leave");
+};

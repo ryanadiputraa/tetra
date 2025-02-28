@@ -20,6 +20,7 @@ const (
 	UserHasJoinedOrg          = "user_has_joined_org"
 	InvalidInvitationURL      = "invalid_invitation_url"
 	InvalidRole               = "invalid_role"
+	NotEnoughAdmin            = "not_enough_admin"
 
 	// Validation Err Code
 	RequiredField  = "required_field"

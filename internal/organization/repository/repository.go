@@ -116,7 +116,7 @@ func (r *repository) FetchMembers(ctx context.Context, organizationID int) (resu
 func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID int) (err error) {
 	var member organization.Member
 	err = r.db.Clauses(clause.Returning{Columns: []clause.Column{{Name: "user_id"}}}).
-		Where("organization_id = ? AND id = ? AND role <> 'admin'", organizationID, memberID).
+		Where("organization_id = ? AND id = ?", organizationID, memberID).
 		Delete(&member).Error
 	if err != nil {
 		return

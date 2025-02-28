@@ -214,3 +214,35 @@ func (s *service) ChangeMemberRole(ctx context.Context, organizationID, memberID
 	}
 	return
 }
+
+func (s *service) Leave(ctx context.Context, organizationID, memberID int) (err error) {
+	members, err := s.repository.FetchMembers(ctx, organizationID)
+	if err != nil {
+		return
+	}
+
+	adminCnt := 0
+	for _, m := range members {
+		if m.Role == string(auth.Admin) {
+			adminCnt++
+		}
+	}
+	if adminCnt < 2 {
+		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.NotEnoughAdmin)
+		return
+	}
+
+	err = s.repository.DeleteMember(ctx, organizationID, memberID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to leave organization",
+				"error", err.Error(),
+				"organization_id", organizationID,
+				"memberID", memberID,
+			)
+		}
+		return
+	}
+	return
+}

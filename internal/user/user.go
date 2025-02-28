@@ -24,6 +24,7 @@ type UserData struct {
 	Fullname       string    `json:"fullname"`
 	CreatedAt      time.Time `json:"created_at"`
 	OrganizationID *int      `json:"organization_id"`
+	MemberID       *int      `json:"member_id"`
 	Role           string    `json:"role"`
 }
 

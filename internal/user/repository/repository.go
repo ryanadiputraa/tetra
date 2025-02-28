@@ -50,7 +50,7 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 	cache, err := r.cache.Get(ctx, "users:"+id).Result()
 	if err == redis.Nil {
 		err = r.db.Table("users").
-			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.role").
+			Select("users.id", "users.email", "users.password", "users.fullname", "users.created_at, members.organization_id, members.id AS member_id, members.role").
 			Joins("LEFT JOIN members ON members.user_id = users.id").
 			Where("users.id = ?", userID).
 			First(&result).Error
@@ -79,7 +79,7 @@ func (r *repository) FindByID(ctx context.Context, userID int) (result user.User
 
 func (r *repository) FindByEmail(ctx context.Context, email string) (result user.UserData, err error) {
 	err = r.db.Table("users").
-		Select("users.id, users.email, users.password, users.fullname, users.created_at, members.organization_id, members.role").
+		Select("users.id, users.email, users.password, users.fullname, users.created_at, members.organization_id, members.id AS member_id, members.role").
 		Joins("LEFT JOIN members ON members.user_id = users.id").
 		Where("users.email = ?", email).
 		First(&result).Error

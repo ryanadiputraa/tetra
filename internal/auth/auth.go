@@ -32,6 +32,7 @@ type JWT struct {
 type AppContext struct {
 	UserID         int
 	OrganizationID *int
+	MemberID       *int
 	Role           Role
 	context.Context
 }

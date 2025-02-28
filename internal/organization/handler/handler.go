@@ -196,3 +196,20 @@ func (h *handler) ChangeMemberRole() http.HandlerFunc {
 		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
 	}
 }
+
+func (h *handler) Leave() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		err := h.service.Leave(c, *c.OrganizationID, *c.MemberID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
+	}
+}

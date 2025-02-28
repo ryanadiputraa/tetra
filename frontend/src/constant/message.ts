@@ -19,6 +19,9 @@ export const API_MSG: Record<string, string> = {
   organization_already_exists: "Organisasi sudah dibuat.",
   user_has_joined_org: "Pengguna telah bergabung dengan organisasi.",
   invalid_invitation_url: "Link undangan tidak valid.",
+  not_enough_admin: "Admin organisasi tidak cukup.",
+
+  // field validation
   required_field: "Wajib diisi",
   email_field: "Format email tidak valid",
   max_length_field: "Input melebihi batas maksimum",
