@@ -8,6 +8,11 @@ import {
   OrganizationPayload,
 } from "@/types";
 
+export const fetchData = async (): Promise<Organization> => {
+  const resp = await fetcher.get<Organization>("/api/organizations");
+  return resp.data;
+};
+
 export const createOrganization = async (
   payload: OrganizationPayload,
 ): Promise<Organization> => {

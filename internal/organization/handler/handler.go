@@ -32,6 +32,24 @@ func New(config config.Config, writer writer.HTTPWriter, service organization.Or
 	}
 }
 
+func (h *handler) FetchOrganizationData() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+
+		organization, err := h.service.GetByID(c, *c.OrganizationID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusOK, organization)
+	}
+}
+
 func (h *handler) CreateOrganization() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		c := r.Context().(*auth.AppContext)

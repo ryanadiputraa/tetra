@@ -2,10 +2,15 @@ import { Role } from "./user";
 
 export type Organization = {
   id: number;
-  owner_id: number;
+  owner: {
+    id: number;
+    fullname: string;
+    email: string;
+    created_at: string;
+  };
   name: string;
   created_at: string;
-  subscription_end_date: string;
+  subscription_end_at: string;
 };
 
 export type OrganizationPayload = {

@@ -10,11 +10,11 @@ import (
 type Status string
 
 type User struct {
-	ID        int       `gorm:"primaryKey;autoIncrement"`
-	Email     string    `gorm:"type:varchar(100);unique;notNull"`
-	Password  *string   `gorm:"type:varchar(100)"`
-	Fullname  string    `gorm:"type:varchar(100);notNull"`
-	CreatedAt time.Time `gorm:"notNull"`
+	ID        int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	Email     string    `json:"email" gorm:"type:varchar(100);unique;notNull"`
+	Password  *string   `json:"-" gorm:"type:varchar(100)"`
+	Fullname  string    `json:"fullname" gorm:"type:varchar(100);notNull"`
+	CreatedAt time.Time `json:"created_at" gorm:"notNull"`
 }
 
 type UserData struct {

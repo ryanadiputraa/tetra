@@ -52,10 +52,7 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result o
 	id := strconv.Itoa(organizationID)
 	cache, err := r.cache.Get(ctx, "organizations:"+id).Result()
 	if err == redis.Nil {
-		err = r.db.Table("organizations").
-			Select("organizations.id, organizations.owner_id, organizations.name, organizations.created_at, organizations.subscription_end_at").
-			Where("organizations.id = ?", organizationID).
-			First(&result).Error
+		err = r.db.InnerJoins("Owner").First(&result, "organizations.id = ?", organizationID).Error
 		if err != nil {
 			return
 		}

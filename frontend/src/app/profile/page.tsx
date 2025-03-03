@@ -2,11 +2,9 @@
 
 import { ErrorPage } from "@/components";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Form, Input, Modal, notification, Skeleton } from "antd";
-import { useRouter } from "next/navigation";
+import { Button, Form, Input, notification, Skeleton } from "antd";
 
 import { changePassword } from "@/api";
-import { leaveOrganization } from "@/api/organization";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useUserData } from "@/queries";
 import { APIError, ChangePasswordForm } from "@/types";
@@ -14,9 +12,7 @@ import { APIError, ChangePasswordForm } from "@/types";
 export default function Profile() {
   const { data, isLoading, error, refetch } = useUserData();
   const [toast, contextHolder] = notification.useNotification();
-  const [modal, modalContextHolder] = Modal.useModal();
   const [form] = Form.useForm<ChangePasswordForm>();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { mutate: updatePassword, isPending: isUpdatePasswordPending } =
@@ -46,38 +42,6 @@ export default function Profile() {
       },
     });
 
-  const { mutate: leave, isPending: isLeavePending } = useMutation<
-    void,
-    APIError
-  >({
-    mutationKey: ["leaveOrganization"],
-    mutationFn: leaveOrganization,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.userData });
-      router.push("/join");
-    },
-    onError: (error) => {
-      toast.error({
-        message: "Gagal",
-        description: API_MSG[error.message] || SERVER_ERR_MSG,
-        placement: "bottomRight",
-      });
-    },
-  });
-
-  const onLeave = () => {
-    modal.confirm({
-      title: "Keluar Dari Organisasi",
-      content: "Apa kamu yakin ingin keluar dari organisasi",
-      okText: "Keluar",
-      okButtonProps: {
-        danger: true,
-        loading: isLeavePending,
-      },
-      onOk: () => leave(),
-    });
-  };
-
   if (isLoading) {
     return <Skeleton avatar round paragraph={{ rows: 4 }} />;
   }
@@ -96,7 +60,6 @@ export default function Profile() {
   return (
     <>
       {contextHolder}
-      {modalContextHolder}
       <div className="flex flex-col gap-4 max-w-xl py-16 mx-auto">
         <div className="flex gap-4 items-center">
           <div className="size-20 grid place-items-center bg-primary rounded-full">
@@ -143,20 +106,6 @@ export default function Profile() {
               Simpan
             </Button>
           </Form>
-        </section>
-        <section className="mt-8">
-          <h6 className="my-4 border-b-2 border-gray-200 text-lg font-medium">
-            Organisasi
-          </h6>
-          <Button
-            danger
-            size="large"
-            loading={isLeavePending}
-            onClick={onLeave}
-            className="w-full"
-          >
-            Keluar Dari Organisasi
-          </Button>
         </section>
       </div>
     </>

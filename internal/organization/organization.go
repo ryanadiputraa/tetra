@@ -85,8 +85,8 @@ const (
 
 type Organization struct {
 	ID                int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	OwnerID           int       `json:"owner_id" gorm:"notNull"`
-	Owner             user.User `json:"-"  gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	OwnerID           int       `json:"-" gorm:"notNull"`
+	Owner             user.User `json:"owner"  gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Name              string    `json:"name" gorm:"type:varchar(100);notNull"`
 	CreatedAt         time.Time `json:"created_at" gorm:"notNull"`
 	SubscriptionEndAt time.Time `json:"subscription_end_at" gorm:"notNull"`
@@ -152,6 +152,7 @@ func GenrateInvitationMailBody(organizationName, domain, inviteCode string) stri
 
 type OrganizationService interface {
 	Create(ctx context.Context, Name string, userID int) (Organization, error)
+	GetByID(ctx context.Context, organizationID int) (Organization, error)
 	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 	InviteUser(ctx context.Context, organizationID int, email string) error

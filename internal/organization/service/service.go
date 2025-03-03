@@ -62,9 +62,24 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (result o
 		"New organization registered",
 		"id", result.ID,
 		"name", result.Name,
-		"owner", result.OwnerID,
+		"owner", result.Owner.ID,
 		"created_at", result.CreatedAt,
 	)
+	return
+}
+
+func (s *service) GetByID(ctx context.Context, organizationID int) (result organization.Organization, err error) {
+	result, err = s.repository.FindByID(ctx, organizationID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch organization data",
+				"error", err.Error(),
+				"organiaztion_id", organizationID,
+			)
+		}
+		return
+	}
 	return
 }
 

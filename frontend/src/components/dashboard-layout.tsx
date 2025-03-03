@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
-import { COOKIE_AUTH_KEY, mainMenu } from "@/constant";
+import { COOKIE_AUTH_KEY, mainMenu, secondaryMenu } from "@/constant";
 import { removeCookie } from "@/lib";
 import { useUserData } from "@/queries";
 
@@ -80,6 +80,25 @@ export const DashboardLayout = ({ children }: Props) => {
           <span className="text-sm">MENU UTAMA</span>
           <ul className="mt-2 flex flex-col gap-2">
             {mainMenu.map((menu) => (
+              <li key={menu.link}>
+                <Link
+                  href={menu.link}
+                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary rounded-lg text-white" : "hover:text-primary"}`}
+                >
+                  {pathname === menu.link ? (
+                    <menu.IcoActive className="text-2xl text-white" />
+                  ) : (
+                    <menu.Ico className="text-2xl hover:text-primary" />
+                  )}
+                  {menu.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-8 px-6">
+          <ul className="pt-8 flex flex-col gap-2 border-t-2 border-gray-200">
+            {secondaryMenu.map((menu) => (
               <li key={menu.link}>
                 <Link
                   href={menu.link}
