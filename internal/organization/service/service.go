@@ -84,18 +84,10 @@ func (s *service) GetByID(ctx context.Context, organizationID int) (result organ
 }
 
 func (s *service) IsSubscriptionValid(ctx context.Context, organizationID int) (isValid bool, err error) {
-	organization, err := s.repository.FindByID(ctx, organizationID)
+	organization, err := s.GetByID(ctx, organizationID)
 	if err != nil {
-		if !errors.As(err, new(*serviceError.Error)) {
-			s.logger.Error(
-				"Fail to fetch organization data",
-				"error", err.Error(),
-				"organiaztion_id", organizationID,
-			)
-		}
 		return
 	}
-
 	isValid = time.Now().UTC().Before(organization.SubscriptionEndAt)
 	return
 }
@@ -133,15 +125,8 @@ func (s *service) InviteUser(ctx context.Context, organizationID int, email stri
 		return
 	}
 
-	org, err := s.repository.FindByID(ctx, organizationID)
+	org, err := s.GetByID(ctx, organizationID)
 	if err != nil {
-		if !errors.As(err, new(*serviceError.Error)) {
-			s.logger.Error(
-				"Fail to fetch organization data",
-				"error", err.Error(),
-				"organization_id", organizationID,
-			)
-		}
 		return
 	}
 
