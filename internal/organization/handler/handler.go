@@ -74,6 +74,22 @@ func (h *handler) CreateOrganization() http.HandlerFunc {
 	}
 }
 
+func (h *handler) DeleteOrganization() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		err := h.service.Delete(c, *c.OrganizationID, c.UserID)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
+	}
+}
+
 func (h *handler) FetchMembers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		c := r.Context().(*auth.AppContext)

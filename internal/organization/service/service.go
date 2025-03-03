@@ -92,6 +92,21 @@ func (s *service) IsSubscriptionValid(ctx context.Context, organizationID int) (
 	return
 }
 
+func (s *service) Delete(ctx context.Context, organizationID, userID int) (err error) {
+	err = s.repository.Delete(ctx, organizationID, userID)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to delete organization",
+				"error", err.Error(),
+				"organization_id", organizationID,
+			)
+		}
+		return
+	}
+	return
+}
+
 func (s *service) ListMember(ctx context.Context, organizationID int) (result []organization.MemberData, err error) {
 	result, err = s.repository.FetchMembers(ctx, organizationID)
 	if err != nil {

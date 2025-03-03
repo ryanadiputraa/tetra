@@ -73,6 +73,45 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result o
 	return
 }
 
+func (r *repository) Delete(ctx context.Context, organizationID, userID int) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		var userIDs []int
+		err := tx.Model(&organization.Member{}).
+			Where("organization_id = ?", organizationID).
+			Pluck("user_id", &userIDs).Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Where("organization_id = ?", organizationID).Delete(&organization.Member{}).Error
+		if err != nil {
+			return err
+		}
+
+		err = tx.Where("owner_id = ? AND id = ?", userID, organizationID).Delete(&organization.Organization{}).Error
+		if err != nil {
+			return err
+		}
+
+		err = r.cache.Del(ctx, "organizations:"+strconv.Itoa(organizationID)).Err()
+		if err != nil {
+			return err
+		}
+
+		if len(userIDs) > 0 {
+			pipe := r.cache.Pipeline()
+			for _, id := range userIDs {
+				pipe.Del(ctx, "users:"+strconv.Itoa(id))
+			}
+			if _, err = pipe.Exec(ctx); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}, nil)
+}
+
 func (r *repository) AddMember(ctx context.Context, member organization.Member) (result organization.Member, err error) {
 	var id int
 	err = r.db.Table("members").

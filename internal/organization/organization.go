@@ -86,7 +86,7 @@ const (
 type Organization struct {
 	ID                int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	OwnerID           int       `json:"-" gorm:"notNull"`
-	Owner             user.User `json:"owner"  gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Owner             user.User `json:"owner"  gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Name              string    `json:"name" gorm:"type:varchar(100);notNull"`
 	CreatedAt         time.Time `json:"created_at" gorm:"notNull"`
 	SubscriptionEndAt time.Time `json:"subscription_end_at" gorm:"notNull"`
@@ -154,6 +154,7 @@ type OrganizationService interface {
 	Create(ctx context.Context, Name string, userID int) (Organization, error)
 	GetByID(ctx context.Context, organizationID int) (Organization, error)
 	IsSubscriptionValid(ctx context.Context, organizationID int) (bool, error)
+	Delete(ctx context.Context, organizationID, userID int) error
 	ListMember(ctx context.Context, organizationID int) ([]MemberData, error)
 	InviteUser(ctx context.Context, organizationID int, email string) error
 	Join(ctx context.Context, organizationID, userID int) (Member, error)
@@ -165,6 +166,7 @@ type OrganizationService interface {
 type OrganizationRepository interface {
 	Save(ctx context.Context, organization Organization) (Organization, error)
 	FindByID(ctx context.Context, organizationID int) (Organization, error)
+	Delete(ctx context.Context, organizationID, userID int) error
 	AddMember(ctx context.Context, member Member) (Member, error)
 	FetchMembers(ctx context.Context, organizationID int) ([]MemberData, error)
 	DeleteMember(ctx context.Context, organizationID, memberID int) error

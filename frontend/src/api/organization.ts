@@ -20,6 +20,10 @@ export const createOrganization = async (
   return resp.data;
 };
 
+export const deleteOrganization = async (): Promise<void> => {
+  await fetcher.delete("/api/organizations");
+};
+
 export const fetchOrganizationMembers = async (): Promise<Member[]> => {
   const resp = await fetcher.get<Record<string, Member[]>>(
     "/api/organizations/members",
