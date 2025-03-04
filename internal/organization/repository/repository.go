@@ -43,7 +43,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 		}
 
 		result = data
-		return nil
+		return r.cache.Del(ctx, "users:"+strconv.Itoa(owner.UserID)).Err()
 	})
 	return
 }
