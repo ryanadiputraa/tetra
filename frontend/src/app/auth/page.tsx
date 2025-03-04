@@ -1,9 +1,10 @@
 "use client";
 
+import { Loader } from "@/components";
 import { fetcher, setCookie } from "@/lib";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 import { API_MSG, COOKIE_AUTH_KEY, LS_INVITATION_CODE_KEY } from "@/constant";
 import { Button } from "antd";
@@ -58,9 +59,5 @@ export default function Auth() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-slate-200 grid place-items-center">
-      <p>Authenticating...</p>
-    </div>
-  );
+  return <Loader />;
 }

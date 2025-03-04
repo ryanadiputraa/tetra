@@ -87,12 +87,17 @@ export default function Profile() {
             <label className="mb-1 font-semibold">Password</label>
             <Form.Item
               name="password"
-              rules={[{ required: true, message: "" }]}
+              rules={[{ required: true, message: "Masukan Password" }]}
             >
               <Input size="large" placeholder="Password" type="password" />
             </Form.Item>
             <label className="mb-1 font-semibold">Konfirmasi Password</label>
-            <Form.Item name="confirm" rules={[{ required: true, message: "" }]}>
+            <Form.Item
+              name="confirm"
+              rules={[
+                { required: true, message: "Masukan Konfirmasi Password" },
+              ]}
+            >
               <Input size="large" placeholder="Password" type="password" />
             </Form.Item>
             <Button

@@ -86,19 +86,31 @@ export default function Login() {
         </div>
         <Form form={form} onFinish={onRegister} className="mt-8 flex flex-col">
           <label className="mb-1 font-semibold">Nama Lengkap</label>
-          <Form.Item name="fullname" rules={[{ required: true }]}>
+          <Form.Item
+            name="fullname"
+            rules={[{ required: true, message: "Masukan Nama Lengkap" }]}
+          >
             <Input size="large" placeholder="John Doe" type="text" />
           </Form.Item>
           <label className="mb-1 font-semibold">Email</label>
-          <Form.Item name="email" rules={[{ required: true }]}>
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: "Masukan Email" }]}
+          >
             <Input size="large" placeholder="john@mail.com" type="email" />
           </Form.Item>
           <label className="mb-1 font-semibold">Password</label>
-          <Form.Item name="password" rules={[{ required: true }]}>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "Masukan Password" }]}
+          >
             <Input size="large" placeholder="Password" type="password" />
           </Form.Item>
           <label className="mb-1 font-semibold">Konfirmasi Password</label>
-          <Form.Item name="confirm_password" rules={[{ required: true }]}>
+          <Form.Item
+            name="confirm_password"
+            rules={[{ required: true, message: "Masukan Konfirmasi Password" }]}
+          >
             <Input size="large" placeholder="Password" type="password" />
           </Form.Item>
           <Button

@@ -72,7 +72,10 @@ export default function Login() {
           <p className="mt-2">Login untuk masuk ke dashboard Inventra.</p>
         </div>
         <Form form={form} onFinish={onLogin} className="mt-8 flex flex-col">
-          <Form.Item name="email" rules={[{ required: true }]}>
+          <Form.Item
+            name="email"
+            rules={[{ required: true, message: "Masukan Email" }]}
+          >
             <Input
               size="large"
               placeholder="Email"
@@ -80,7 +83,10 @@ export default function Login() {
               suffix={<UserOutlined />}
             />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true }]}>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "Masukan Password" }]}
+          >
             <Input.Password
               size="large"
               placeholder="Password"

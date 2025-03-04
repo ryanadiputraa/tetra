@@ -65,7 +65,10 @@ export default function Join() {
             menerima undangan atau buat organisasi untuk mulai.
           </p>
           <Form form={form} onFinish={onCreate} className="mt-8 flex flex-col">
-            <Form.Item name="name" rules={[{ required: true, message: "" }]}>
+            <Form.Item
+              name="name"
+              rules={[{ required: true, message: "Masukan nama organisasi" }]}
+            >
               <Input
                 size="large"
                 placeholder="Nama Organisasi"

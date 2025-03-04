@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader } from "@/components";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -10,7 +11,7 @@ import { QUERY_KEYS, useAcceptInvitation } from "@/queries";
 export default function AcceptInvitation() {
   const { code } = useParams();
   const router = useRouter();
-  const { data, error } = useAcceptInvitation(String(code));
+  const { data, isPending, error } = useAcceptInvitation(String(code));
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -21,11 +22,15 @@ export default function AcceptInvitation() {
     }
   }, [data, router, queryClient]);
 
-  return (
+  if (isPending) {
+    return <Loader />;
+  }
+
+  if (error) {
     <div className="min-h-screen bg-slate-200 grid place-items-center">
-      <p>
-        {error ? API_MSG[error.message] || SERVER_ERR_MSG : "Authenticating..."}
-      </p>
-    </div>
-  );
+      <p>{API_MSG[error.message] || SERVER_ERR_MSG}</p>
+    </div>;
+  }
+
+  return <></>;
 }

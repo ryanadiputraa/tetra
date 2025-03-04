@@ -58,7 +58,12 @@ export const InviteModal = ({ open, onCloseAction }: ModalProps) => {
     >
       {contextHolder}
       <Form form={form} onFinish={(payload) => mutate(payload)}>
-        <Form.Item name="email" rules={[{ required: true }]}>
+        <Form.Item
+          name="email"
+          rules={[
+            { required: true, message: "Masukan Email yang akan diundang" },
+          ]}
+        >
           <Input
             size="large"
             placeholder="Email"
