@@ -22,13 +22,19 @@ git clone git@github.com:ryanadiputraa/inventra.git
 cd inventra
 ```
 
-3. Run API Server:
+3. Setup your local env:
+
+```bash
+cp .env.example .env && cp frontend/env.example frontend/.env
+```
+
+4. Run API Server:
 
 ```bash
 make api
 ```
 
-3. Run Web Server:
+5. Run Web Server:
 
 ```bash
 make web
