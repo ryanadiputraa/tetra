@@ -46,7 +46,13 @@ export default function Profile() {
     return <Skeleton avatar round paragraph={{ rows: 4 }} />;
   }
   if (error) {
-    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
+    return (
+      <ErrorPage
+        loading={isLoading}
+        onRetryAction={() => refetch()}
+        msg={error.message}
+      />
+    );
   }
 
   const onChangePassword = ({ password, confirm }: ChangePasswordForm) => {

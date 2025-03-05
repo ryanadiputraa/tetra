@@ -48,7 +48,13 @@ export default function Join() {
   };
 
   if (error) {
-    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
+    return (
+      <ErrorPage
+        loading={isLoading}
+        onRetryAction={() => refetch()}
+        msg={error.message}
+      />
+    );
   }
   if (isLoading) {
     return <Loader />;

@@ -103,7 +103,13 @@ export default function People() {
     );
   }
   if (error) {
-    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
+    return (
+      <ErrorPage
+        loading={isLoading}
+        onRetryAction={() => refetch()}
+        msg={error.message}
+      />
+    );
   }
 
   return (

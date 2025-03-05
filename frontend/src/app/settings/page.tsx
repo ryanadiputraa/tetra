@@ -87,7 +87,13 @@ export default function Settings() {
     return <Skeleton avatar round paragraph={{ rows: 4 }} />;
   }
   if (error) {
-    return <ErrorPage loading={isLoading} onRetry={() => refetch()} />;
+    return (
+      <ErrorPage
+        loading={isLoading}
+        onRetryAction={() => refetch()}
+        msg={error.message}
+      />
+    );
   }
 
   return (
