@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { deleteOrganization, leaveOrganization } from "@/api/organization";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
-import { formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib";
 import { QUERY_KEYS, useOrganization, useUserData } from "@/queries";
 import { APIError } from "@/types";
 
@@ -110,8 +110,8 @@ export default function Settings() {
           <div className="flex flex-col">
             <p className="text-2xl font-semibold">{data?.name}</p>
             <p>Owner: {data?.owner.fullname}</p>
-            <span className="italic text-slate-400 capitalize">
-              Dibuat pada {formatDate(data?.subscription_end_at, "full")}
+            <span className="italic text-sm text-slate-400 capitalize">
+              Aktif Hingga: {formatDate(data?.subscription_end_at, "full")}
             </span>
           </div>
         </div>

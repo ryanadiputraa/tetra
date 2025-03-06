@@ -1,7 +1,7 @@
 "use client";
 
 import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps } from "antd";
+import { Button, Dropdown, MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,8 +10,8 @@ import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
 import { COOKIE_AUTH_KEY, mainMenu, secondaryMenu } from "@/constant";
-import { removeCookie } from "@/lib";
-import { useUserData } from "@/queries";
+import { formatDate, isOnFreeTrial, removeCookie } from "@/lib";
+import { useOrganization, useUserData } from "@/queries";
 
 interface Props {
   children: React.ReactNode;
@@ -23,6 +23,15 @@ export const DashboardLayout = ({ children }: Props) => {
   const excludedRoutes = ["/auth", "/login", "/register"];
   const isIgnorePath = pathname.startsWith("/join");
   const headerTitle = pathname.split("/").filter(Boolean).pop() ?? "dashboard";
+
+  const { data: organization } = useOrganization();
+  const isFreeTrial =
+    organization?.subscription_end_at && organization?.created_at
+      ? isOnFreeTrial(
+          new Date(organization.subscription_end_at),
+          new Date(organization.created_at),
+        )
+      : false;
 
   const onLogout = () => {
     removeCookie(COOKIE_AUTH_KEY);
@@ -77,7 +86,7 @@ export const DashboardLayout = ({ children }: Props) => {
 
   return (
     <div className="min-h-screen flex">
-      <nav className="w-80 bg-white text-slate-400 border-r-2 border-gray-200">
+      <nav className="relative w-80 bg-white text-slate-400 border-r-2 border-gray-200">
         <div className="flex items-center gap-2 p-6">
           <Image src="/inventra.png" alt="inventra" width={32} height={32} />
           <h1 className="text-xl text-black font-semibold">Inventra</h1>
@@ -121,6 +130,25 @@ export const DashboardLayout = ({ children }: Props) => {
             ))}
           </ul>
         </div>
+        {isFreeTrial && (
+          <div className="absolute bottom-0 p-6">
+            <div className="bg-primary rounded-lg p-3 text-white text-sm">
+              <p>
+                Anda sedang menggunakan mode uji coba gratis hingga{" "}
+                <span className="font-bold">
+                  {formatDate(organization?.subscription_end_at, "full")}.
+                </span>{" "}
+                Upgrade sekarang untuk terus menikmati fitur Inventra!
+              </p>
+              {/* TODO: handle payment */}
+              <Link href="/payment">
+                <Button className="mt-3 text-primary font-bold">
+                  Pembayaran
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
       <div className="w-full h-screen flex flex-col">
         <header className="py-3 px-6 bg-white border-b-2 border-gray-200 flex justify-between items-center">

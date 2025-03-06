@@ -18,3 +18,12 @@ export const formatDate = (
 
   return date + separator + month + separator + year;
 };
+
+export const isOnFreeTrial = (
+  subscriptionEndAt: Date,
+  createdAt: Date,
+): boolean => {
+  const oneMonthBeforeEnd = new Date(subscriptionEndAt);
+  oneMonthBeforeEnd.setUTCMonth(subscriptionEndAt.getMonth() - 1);
+  return createdAt < subscriptionEndAt && createdAt >= oneMonthBeforeEnd;
+};

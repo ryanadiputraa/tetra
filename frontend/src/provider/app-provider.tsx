@@ -15,7 +15,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           locale={idID}
           theme={{
             token: {
-              colorPrimary: "#4682ab",
+              colorPrimary: "#3E6071",
               borderRadius: 8,
             },
             components: {
