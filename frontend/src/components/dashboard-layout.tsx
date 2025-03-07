@@ -1,7 +1,7 @@
 "use client";
 
 import { DownOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Dropdown, MenuProps } from "antd";
+import { Button, Dropdown, MenuProps, Switch } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -12,12 +12,19 @@ import { Loader } from "./loader";
 import { COOKIE_AUTH_KEY, mainMenu, secondaryMenu } from "@/constant";
 import { formatDate, isOnFreeTrial, removeCookie } from "@/lib";
 import { useOrganization, useUserData } from "@/queries";
+import { Theme } from "@/types";
 
 interface Props {
+  theme: Theme;
+  toggleThemeAction: () => void;
   children: React.ReactNode;
 }
 
-export const DashboardLayout = ({ children }: Props) => {
+export const DashboardLayout = ({
+  theme,
+  toggleThemeAction,
+  children,
+}: Props) => {
   const router = useRouter();
   const pathname = usePathname();
   const excludedRoutes = ["/auth", "/login", "/register"];
@@ -86,10 +93,12 @@ export const DashboardLayout = ({ children }: Props) => {
 
   return (
     <div className="min-h-screen flex">
-      <nav className="relative w-80 bg-white text-slate-400 border-r-2 border-gray-200">
+      <nav className="relative w-80 bg-white dark:bg-neutral-900 text-neutral-400 border-r-2 border-gray-200 dark:border-gray-500">
         <div className="flex items-center gap-2 p-6">
           <Image src="/inventra.png" alt="inventra" width={32} height={32} />
-          <h1 className="text-xl text-black font-semibold">Inventra</h1>
+          <h1 className="text-xl text-black dark:text-white font-semibold">
+            Inventra
+          </h1>
         </div>
         <div className="mt-8 px-6">
           <span className="text-sm">MENU UTAMA</span>
@@ -98,12 +107,12 @@ export const DashboardLayout = ({ children }: Props) => {
               <li key={menu.link}>
                 <Link
                   href={menu.link}
-                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary rounded-lg text-white" : "hover:text-primary"}`}
+                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary dark:bg-primary-dark rounded-lg text-white" : "hover:text-primary dark:hover:text-primary"}`}
                 >
                   {pathname === menu.link ? (
                     <menu.IcoActive className="text-2xl text-white" />
                   ) : (
-                    <menu.Ico className="text-2xl hover:text-primary" />
+                    <menu.Ico className="text-2xl hover:text-primary dark:hover:text-primary" />
                   )}
                   {menu.label}
                 </Link>
@@ -112,27 +121,31 @@ export const DashboardLayout = ({ children }: Props) => {
           </ul>
         </div>
         <div className="mt-8 px-6">
-          <ul className="pt-8 flex flex-col gap-2 border-t-2 border-gray-200">
+          <ul className="pt-8 flex flex-col gap-2 border-t-2 border-gray-200 dark:border-gray-500">
             {secondaryMenu.map((menu) => (
               <li key={menu.link}>
                 <Link
                   href={menu.link}
-                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary rounded-lg text-white" : "hover:text-primary"}`}
+                  className={`p-2 flex items-center gap-2 ${pathname === menu.link ? "bg-primary rounded-lg text-white" : "hover:text-primary dark:hover:text-primary"}`}
                 >
                   {pathname === menu.link ? (
                     <menu.IcoActive className="text-2xl text-white" />
                   ) : (
-                    <menu.Ico className="text-2xl hover:text-primary" />
+                    <menu.Ico className="text-2xl hover:text-primary dark:hover:text-primary" />
                   )}
                   {menu.label}
                 </Link>
               </li>
             ))}
+            <li className="p-2 flex justify-between items-center">
+              <span>Dark Mode</span>
+              <Switch value={theme === "dark"} onChange={toggleThemeAction} />
+            </li>
           </ul>
         </div>
         {isFreeTrial && (
           <div className="absolute bottom-0 p-6">
-            <div className="bg-primary rounded-lg p-3 text-white text-sm">
+            <div className="bg-primary dark:bg-primary-dark rounded-lg p-3 text-white text-sm">
               <p>
                 Anda sedang menggunakan mode uji coba gratis hingga{" "}
                 <span className="font-bold">
@@ -142,7 +155,7 @@ export const DashboardLayout = ({ children }: Props) => {
               </p>
               {/* TODO: handle payment */}
               <Link href="/payment">
-                <Button className="mt-3 text-primary font-bold">
+                <Button className="mt-3 text-primary dark:text-primary-dark font-bold">
                   Pembayaran
                 </Button>
               </Link>
@@ -151,11 +164,11 @@ export const DashboardLayout = ({ children }: Props) => {
         )}
       </nav>
       <div className="w-full h-screen flex flex-col">
-        <header className="py-3 px-6 bg-white border-b-2 border-gray-200 flex justify-between items-center">
+        <header className="py-3 px-6 bg-white dark:bg-neutral-900 border-b-2 border-gray-200 dark:border-gray-500 flex justify-between items-center">
           <h3 className="capitalize text-lg font-medium">{headerTitle}</h3>
           <Dropdown menu={{ items: menuItems }}>
             <div className="flex items-center gap-2">
-              <div className="grid place-items-center size-10 bg-primary rounded-full">
+              <div className="grid place-items-center size-10 bg-primary dark:bg-primary-dark rounded-full">
                 <span className="text-lg text-white font-bold">
                   {data?.fullname.split("")[0]}
                 </span>

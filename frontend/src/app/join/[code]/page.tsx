@@ -27,7 +27,7 @@ export default function AcceptInvitation() {
   }
 
   if (error) {
-    <div className="min-h-screen bg-slate-200 grid place-items-center">
+    <div className="min-h-screen grid place-items-center">
       <p>{API_MSG[error.message] || SERVER_ERR_MSG}</p>
     </div>;
   }

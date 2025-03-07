@@ -79,7 +79,7 @@ export default function Login() {
   return (
     <div className="min-h-screen grid place-items-center px-8">
       {contextHolder}
-      <div className="bg-white py-16 px-8 sm:px-16 rounded-lg w-full sm:max-w-lg">
+      <div className="bg-white dark:bg-neutral-900 py-16 px-8 sm:px-16 rounded-lg w-full sm:max-w-lg">
         <div className="text-center">
           <h4 className="font-bold text-2xl">Inventra</h4>
           <p className="mt-2">Daftar akun untuk masuk ke dashboard Inventra.</p>

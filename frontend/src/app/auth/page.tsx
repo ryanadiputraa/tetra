@@ -34,7 +34,7 @@ export default function Auth() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-slate-200 grid place-items-center">
+      <div className="min-h-screen grid place-items-center">
         <div className="text-center">
           <p className="mb-2">
             Terjadi kesalahan, mohon coba beberapa saat lagi.
@@ -51,7 +51,7 @@ export default function Auth() {
 
   if (isAuthError) {
     return (
-      <div className="min-h-screen bg-slate-200 grid place-items-center">
+      <div className="min-h-screen grid place-items-center">
         <p className="max-w-screen-sm text-center">
           {API_MSG[search.get("err") ?? ""]}
         </p>

@@ -1,12 +1,22 @@
 "use client";
 
+import { DashboardLayout } from "@/components";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, theme } from "antd";
 import idID from "antd/locale/id_ID";
 
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
+import { Theme } from "@/types";
+import { useTheme } from "@/hooks";
+
+interface Props {
+  initialTheme: Theme;
+  children: React.ReactNode;
+}
+
+export const AppProvider = ({ initialTheme, children }: Props) => {
   const queryClient = new QueryClient();
+  const { theme: appTheme, toggleTheme } = useTheme(initialTheme);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -14,8 +24,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         <ConfigProvider
           locale={idID}
           theme={{
+            algorithm:
+              appTheme === "light"
+                ? theme.defaultAlgorithm
+                : theme.darkAlgorithm,
             token: {
-              colorPrimary: "#3E6071",
+              colorPrimary: appTheme === "light" ? "#3E6071" : "#759EB3",
               borderRadius: 8,
             },
             components: {
@@ -28,7 +42,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             },
           }}
         >
-          {children}
+          <DashboardLayout
+            theme={appTheme}
+            toggleThemeAction={() => toggleTheme()}
+          >
+            {children}
+          </DashboardLayout>
         </ConfigProvider>
       </AntdRegistry>
     </QueryClientProvider>

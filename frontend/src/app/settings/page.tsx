@@ -102,7 +102,7 @@ export default function Settings() {
       {modalContextHolder}
       <div className="flex flex-col gap-4 max-w-4xl py-16 mx-auto">
         <div className="flex gap-4 items-center">
-          <div className="size-20 grid place-items-center bg-primary rounded-full">
+          <div className="size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
             <span className="text-3xl text-white font-bold">
               {data?.name.split("")[0]}
             </span>
@@ -110,20 +110,20 @@ export default function Settings() {
           <div className="flex flex-col">
             <p className="text-2xl font-semibold">{data?.name}</p>
             <p>Owner: {data?.owner.fullname}</p>
-            <span className="italic text-sm text-slate-400 capitalize">
+            <span className="italic text-sm text-neutral-400 capitalize">
               Aktif Hingga: {formatDate(data?.subscription_end_at, "full")}
             </span>
           </div>
         </div>
         <section className="mt-8">
-          <h6 className="my-4 border-b-2 border-gray-200 text-lg font-medium">
+          <h6 className="my-4 border-b-2 border-gray-200 dark:border-gray-500 text-lg font-medium">
             Organisasi
           </h6>
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center gap-12">
               <div>
                 <p>Keluar Dari Organisasi</p>
-                <p className="text-slate-400 text-sm">
+                <p className="text-neutral-400 text-sm">
                   Kamu tidak dapat mengakses dashboard organisasi dan hanya
                   dapat bergabung kembali setelah mendapat undangan bergabung.
                 </p>
@@ -136,7 +136,7 @@ export default function Settings() {
               <div className="flex justify-between items-center gap-12">
                 <div>
                   <p>Hapus Organisasi</p>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-neutral-400 text-sm">
                     Seluruh data Organisasi akan dihapus dan tidak dapat
                     dikembalikan.
                   </p>

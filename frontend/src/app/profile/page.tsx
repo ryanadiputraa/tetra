@@ -68,7 +68,7 @@ export default function Profile() {
       {contextHolder}
       <div className="flex flex-col gap-4 max-w-xl py-16 mx-auto">
         <div className="flex gap-4 items-center">
-          <div className="size-20 grid place-items-center bg-primary rounded-full">
+          <div className="size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
             <span className="text-3xl text-white font-bold">
               {data?.fullname.split("")[0]}
             </span>
@@ -76,13 +76,13 @@ export default function Profile() {
           <div className="flex flex-col">
             <p className="text-2xl font-semibold">{data?.fullname}</p>
             <p>{data?.email}</p>
-            <span className="italic text-slate-400 capitalize">
+            <span className="italic text-neutral-400 capitalize">
               {data?.role}
             </span>
           </div>
         </div>
         <section className="mt-8">
-          <h6 className="my-4 border-b-2 border-gray-200 text-lg font-medium">
+          <h6 className="my-4 border-b-2 border-gray-200 dark:border-gray-500 text-lg font-medium">
             Ubah Password
           </h6>
           <Form

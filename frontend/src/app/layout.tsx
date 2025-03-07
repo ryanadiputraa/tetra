@@ -1,9 +1,11 @@
-import { DashboardLayout } from "@/components";
 import { AppProvider, AuthProvider } from "@/provider";
 import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
+
+import { Theme } from "@/types";
 
 const font = Space_Grotesk({
   subsets: ["latin"],
@@ -15,20 +17,21 @@ export const metadata: Metadata = {
   description: "Sistem management asset perusahaan",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const initialTheme = (cookieStore.get("theme")?.value as Theme) ?? "light";
+
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${initialTheme}`}>
       <body
-        className={`${font.className} antialiased bg-slate-100 text-black h-full`}
+        className={`${font.className} antialiased bg-gray-100 dark:bg-neutral-800 text-black dark:text-white h-full`}
       >
         <AuthProvider>
-          <AppProvider>
-            <DashboardLayout>{children}</DashboardLayout>
-          </AppProvider>
+          <AppProvider initialTheme={initialTheme}>{children}</AppProvider>
         </AuthProvider>
       </body>
     </html>
