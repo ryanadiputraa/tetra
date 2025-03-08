@@ -8,7 +8,9 @@ import {
 import { Member, Organization } from "@/types";
 import { QUERY_KEYS } from ".";
 
-export const useOrganization = (options?: UseQueryOptions<Organization>) => {
+export const useOrganization = (
+  options?: Partial<UseQueryOptions<Organization>>,
+) => {
   return useQuery({
     queryKey: QUERY_KEYS.organizationData,
     queryFn: fetchData,
@@ -17,7 +19,9 @@ export const useOrganization = (options?: UseQueryOptions<Organization>) => {
   });
 };
 
-export const useOrganizationMembers = (options?: UseQueryOptions<Member[]>) => {
+export const useOrganizationMembers = (
+  options?: Partial<UseQueryOptions<Member[]>>,
+) => {
   return useQuery({
     queryKey: QUERY_KEYS.organizationMembers,
     queryFn: fetchOrganizationMembers,
@@ -28,7 +32,7 @@ export const useOrganizationMembers = (options?: UseQueryOptions<Member[]>) => {
 
 export const useAcceptInvitation = (
   code: string,
-  options?: UseQueryOptions<Member>,
+  options?: Partial<UseQueryOptions<Member>>,
 ) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.acceptInvitation, code],

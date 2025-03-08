@@ -10,7 +10,7 @@ import { ErrorPage } from "./error";
 import { Loader } from "./loader";
 
 import { COOKIE_AUTH_KEY, mainMenu, secondaryMenu } from "@/constant";
-import { formatDate, isOnFreeTrial, removeCookie } from "@/lib";
+import { formatDate, getCookie, isOnFreeTrial, removeCookie } from "@/lib";
 import { useOrganization, useUserData } from "@/queries";
 import { Theme } from "@/types";
 
@@ -27,18 +27,9 @@ export const DashboardLayout = ({
 }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
-  const excludedRoutes = ["/auth", "/login", "/register"];
+  const excludedRoutes = ["/auth", "/login", "/register", "/payment"];
   const isIgnorePath = pathname.startsWith("/join");
   const headerTitle = pathname.split("/").filter(Boolean).pop() ?? "dashboard";
-
-  const { data: organization } = useOrganization();
-  const isFreeTrial =
-    organization?.subscription_end_at && organization?.created_at
-      ? isOnFreeTrial(
-          new Date(organization.subscription_end_at),
-          new Date(organization.created_at),
-        )
-      : false;
 
   const onLogout = () => {
     removeCookie(COOKIE_AUTH_KEY);
@@ -48,27 +39,40 @@ export const DashboardLayout = ({
   const menuItems: MenuProps["items"] = [
     {
       key: "1",
-      label: <Link href="/profile">Akun Saya</Link>,
+      label: "Akun Saya",
       icon: <UserOutlined />,
+      onClick: () => router.push("/profile"),
     },
     {
       type: "divider",
     },
     {
       key: "2",
-      label: <button onClick={onLogout}>Keluar</button>,
+      label: "Keluar",
       icon: <LogoutOutlined />,
+      onClick: () => onLogout(),
     },
   ];
 
-  const { data, isLoading, error, refetch } = useUserData(
-    !excludedRoutes.includes(pathname) || isIgnorePath,
-  );
+  const { data, isLoading, error, refetch } = useUserData({
+    enabled: !excludedRoutes.includes(pathname) || isIgnorePath,
+  });
   useEffect(() => {
-    if (data && !data?.organization_id && !isIgnorePath) {
+    if (getCookie(COOKIE_AUTH_KEY) && !data?.organization_id && !isIgnorePath) {
       router.push("/join");
     }
   }, [data, router, isIgnorePath]);
+
+  const { data: organization } = useOrganization({
+    enabled: Boolean(data?.organization_id),
+  });
+  const isFreeTrial =
+    organization?.subscription_end_at && organization?.created_at
+      ? isOnFreeTrial(
+          new Date(organization.subscription_end_at),
+          new Date(organization.created_at),
+        )
+      : false;
 
   // Pages that not using dashboard layout component
   if (excludedRoutes.includes(pathname) || isIgnorePath) {

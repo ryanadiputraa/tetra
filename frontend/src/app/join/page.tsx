@@ -1,14 +1,15 @@
 "use client";
 
 import { ErrorPage, Loader } from "@/components";
-import { TeamOutlined } from "@ant-design/icons";
+import { LogoutOutlined, TeamOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { createOrganization } from "@/api/organization";
-import { API_MSG, SERVER_ERR_MSG } from "@/constant";
+import { API_MSG, COOKIE_AUTH_KEY, SERVER_ERR_MSG } from "@/constant";
+import { removeCookie } from "@/lib";
 import { QUERY_KEYS, useUserData } from "@/queries";
 import { APIError, Organization, OrganizationPayload } from "@/types";
 
@@ -18,7 +19,7 @@ export default function Join() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data, isLoading, error, refetch } = useUserData(true);
+  const { data, isLoading, error, refetch } = useUserData();
   useEffect(() => {
     if (data && data.organization_id) router.push("/");
   }, [data, router]);
@@ -43,6 +44,11 @@ export default function Join() {
     },
   });
 
+  const onLogout = () => {
+    removeCookie(COOKIE_AUTH_KEY);
+    router.push("/login");
+  };
+
   const onCreate = (payload: OrganizationPayload) => {
     mutate(payload);
   };
@@ -60,10 +66,17 @@ export default function Join() {
     return <Loader />;
   }
 
-  // TODO: add logout
   return (
     <div className="min-h-screen grid place-items-center px-8">
       {contextHolder}
+      <Button
+        size="large"
+        icon={<LogoutOutlined />}
+        className="absolute top-8 right-8"
+        onClick={onLogout}
+      >
+        Logout
+      </Button>
       <div className="bg-white dark:bg-neutral-900 py-16 px-8 sm:px-16 rounded-lg w-full sm:max-w-xl">
         <div className="text-center">
           <h4 className="font-bold text-2xl">Inventra</h4>

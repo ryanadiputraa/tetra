@@ -4,15 +4,11 @@ import { fetchUserData } from "@/api";
 import { User } from "@/types";
 import { QUERY_KEYS } from ".";
 
-export const useUserData = (
-  enabled = true,
-  options?: UseQueryOptions<User>,
-) => {
+export const useUserData = (options?: Partial<UseQueryOptions<User>>) => {
   return useQuery({
     queryKey: QUERY_KEYS.userData,
     queryFn: fetchUserData,
     staleTime: Infinity,
-    enabled,
     ...options,
   });
 };
