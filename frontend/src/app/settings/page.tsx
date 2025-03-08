@@ -100,15 +100,15 @@ export default function Settings() {
     <>
       {contextHolder}
       {modalContextHolder}
-      <div className="flex flex-col gap-4 max-w-4xl py-16 mx-auto">
+      <div className="flex flex-col gap-4 max-w-4xl py-4 md:py-16 mx-auto">
         <div className="flex gap-4 items-center">
-          <div className="size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
+          <div className="size-16 md:size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
             <span className="text-3xl text-white font-bold">
               {data?.name.split("")[0]}
             </span>
           </div>
           <div className="flex flex-col">
-            <p className="text-2xl font-semibold">{data?.name}</p>
+            <p className="text-xl md:text-2xl font-semibold">{data?.name}</p>
             <p>Owner: {data?.owner.fullname}</p>
             <span className="italic text-sm text-neutral-400 capitalize">
               Aktif Hingga: {formatDate(data?.subscription_end_at, "full")}
@@ -120,7 +120,7 @@ export default function Settings() {
             Organisasi
           </h6>
           <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center gap-12">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-12">
               <div>
                 <p>Keluar Dari Organisasi</p>
                 <p className="text-neutral-400 text-sm">
@@ -133,7 +133,7 @@ export default function Settings() {
               </Button>
             </div>
             {user?.id === data?.owner.id && (
-              <div className="flex justify-between items-center gap-12">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-12">
                 <div>
                   <p>Hapus Organisasi</p>
                   <p className="text-neutral-400 text-sm">

@@ -66,15 +66,17 @@ export default function Profile() {
   return (
     <>
       {contextHolder}
-      <div className="flex flex-col gap-4 max-w-xl py-16 mx-auto">
+      <div className="flex flex-col gap-4 max-w-xl py-4 md:py-16 mx-auto">
         <div className="flex gap-4 items-center">
-          <div className="size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
+          <div className="size-16 md:size-20 grid place-items-center bg-primary dark:bg-primary-dark rounded-full">
             <span className="text-3xl text-white font-bold">
               {data?.fullname.split("")[0]}
             </span>
           </div>
           <div className="flex flex-col">
-            <p className="text-2xl font-semibold">{data?.fullname}</p>
+            <p className="text-xl md:text-2xl font-semibold">
+              {data?.fullname}
+            </p>
             <p>{data?.email}</p>
             <span className="italic text-neutral-400 capitalize">
               {data?.role}

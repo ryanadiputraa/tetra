@@ -111,13 +111,13 @@ export const DashboardLayout = ({
 
   const NavMenu = () => (
     <>
-      <div className="hidden sm:flex items-center gap-2 p-6">
+      <div className="hidden md:flex items-center gap-2 p-6">
         <Image src="/inventra.png" alt="inventra" width={32} height={32} />
         <h1 className="text-xl text-black dark:text-white font-semibold">
           Inventra
         </h1>
       </div>
-      <div className="sm:mt-8 px-6">
+      <div className="md:mt-8 px-6">
         <span className="text-sm">MENU UTAMA</span>
         <ul className="mt-2 flex flex-col gap-2">
           {mainMenu.map((menu) => (
@@ -190,7 +190,7 @@ export const DashboardLayout = ({
 
   return (
     <div className="min-h-screen flex">
-      <nav className="hidden sm:inline-block relative w-80 bg-white dark:bg-neutral-900 text-neutral-400 border-r-2 border-gray-200 dark:border-gray-500">
+      <nav className="hidden md:inline-block relative w-80 bg-white dark:bg-neutral-900 text-neutral-400 border-r-2 border-gray-200 dark:border-gray-500">
         <NavMenu />
       </nav>
       <Drawer
@@ -214,7 +214,7 @@ export const DashboardLayout = ({
         <header className="py-3 px-6 bg-white dark:bg-neutral-900 border-b-2 border-gray-200 dark:border-gray-500 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Button
-              className="inline-block sm:hidden"
+              className="inline-block md:hidden"
               onClick={() => setIsDrawerOpen(true)}
             >
               <MenuOutlined />

@@ -128,19 +128,22 @@ export default function People() {
             </Button>
           )}
         </div>
-        <Table
-          rowKey="id"
-          dataSource={data}
-          columns={tableColumn({
-            user,
-            onRemoveMember,
-            isRemovePending,
-            onChangeRole,
-            isChangeRolePending,
-          })}
-          pagination={false}
-          showSorterTooltip={false}
-        />
+        <div className="w-full overflow-auto">
+          <Table
+            rowKey="id"
+            dataSource={data}
+            columns={tableColumn({
+              user,
+              onRemoveMember,
+              isRemovePending,
+              onChangeRole,
+              isChangeRolePending,
+            })}
+            pagination={false}
+            showSorterTooltip={false}
+            className="min-w-[40rem] md:min-w-full"
+          />
+        </div>
       </div>
       <InviteModal
         open={isInviteModalOpen}

@@ -77,7 +77,7 @@ export default function Join() {
       >
         Logout
       </Button>
-      <div className="bg-white dark:bg-neutral-900 py-16 px-8 sm:px-16 rounded-lg w-full sm:max-w-xl">
+      <div className="bg-white dark:bg-neutral-900 py-16 px-8 md:px-16 rounded-lg w-full md:max-w-xl">
         <div className="text-center">
           <h4 className="font-bold text-2xl">Inventra</h4>
           <p className="mt-2">
