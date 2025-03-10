@@ -23,12 +23,13 @@ const (
 	NotEnoughAdmin            = "not_enough_admin"
 
 	// Validation Err Code
-	RequiredField  = "required_field"
-	EmailField     = "email_field"
-	MinLengthField = "min_length_field"
-	MaxLengthField = "max_length_field"
-	URLField       = "url_field"
-	DateField      = "date_field"
+	RequiredField   = "required_field"
+	EmailField      = "email_field"
+	MinLengthField  = "min_length_field"
+	MaxLengthField  = "max_length_field"
+	URLField        = "url_field"
+	DateField       = "date_field"
+	InvalidItemType = "invalid_item_type"
 )
 
 var HttpErrMap = map[string]int{

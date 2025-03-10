@@ -28,4 +28,5 @@ export const API_MSG: Record<string, string> = {
   min_length_field: "Input tidak mencapai batas minimum",
   url_field: "Format URL tidak valid",
   date_field: "Format tanggal tidak valid",
+  invalid_item_type: "Tipe item tidak valid",
 };
