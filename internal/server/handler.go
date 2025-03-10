@@ -9,6 +9,7 @@ import (
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	authHandler "github.com/ryanadiputraa/inventra/internal/auth/handler"
 	authService "github.com/ryanadiputraa/inventra/internal/auth/service"
+	inventoryHandler "github.com/ryanadiputraa/inventra/internal/inventory/handler"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
 	oauthHandler "github.com/ryanadiputraa/inventra/internal/oauth/handler"
 	organizationHandler "github.com/ryanadiputraa/inventra/internal/organization/handler"
@@ -51,6 +52,8 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
 
+	inventoryHandler := inventoryHandler.New(writer, validator)
+
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
 	staffAccessLv := auth.AccessLevel[auth.Staff]
@@ -74,5 +77,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	router.Handle("GET /api/organizations/members", authMiddleware.AuthorizeUserRole(organizationHandler.FetchMembers(), staffAccessLv))
 	router.Handle("DELETE /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.RemoveMember(), adminAccessLv))
 	router.Handle("PUT /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.ChangeMemberRole(), adminAccessLv))
+
+	router.Handle("POST /api/inventory", authMiddleware.AuthorizeUserRole(inventoryHandler.AddInventoryItem(), staffAccessLv))
 	return router
 }

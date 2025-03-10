@@ -37,7 +37,7 @@ type ItemPrice struct {
 type ItemPayload struct {
 	ItemName string         `json:"item_name" validate:"required"`
 	Type     string         `json:"type" validate:"required"`
-	Prices   []PricePayload `json:"prices" validate:"required,dive"`
+	Prices   []PricePayload `json:"prices" validate:"required,min=1,dive"`
 }
 
 type PricePayload struct {

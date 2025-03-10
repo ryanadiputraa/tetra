@@ -2,6 +2,7 @@ package validator
 
 import (
 	"errors"
+	"log"
 	"time"
 	"unicode"
 
@@ -35,6 +36,7 @@ func (v *validation) Validate(val any) (errDetails map[string]string, err error)
 	if err != nil {
 		validationErrors := err.(validator.ValidationErrors)
 		for _, fieldErr := range validationErrors {
+			log.Println(fieldErr)
 			field := fieldToSnakeCase(fieldErr.Field())
 			errDetails[field] = FieldErrMsg(fieldErr)
 		}
