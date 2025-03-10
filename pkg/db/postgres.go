@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/inventra/internal/inventory"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"gorm.io/driver/postgres"
@@ -51,5 +52,7 @@ func runMigration(db *gorm.DB) error {
 		&user.User{},
 		&organization.Organization{},
 		&organization.Member{},
+		&inventory.Item{},
+		&inventory.ItemPrice{},
 	)
 }

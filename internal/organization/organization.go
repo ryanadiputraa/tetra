@@ -86,7 +86,7 @@ const (
 type Organization struct {
 	ID                int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	OwnerID           int       `json:"-" gorm:"notNull"`
-	Owner             user.User `json:"owner"  gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Owner             user.User `json:"owner" gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Name              string    `json:"name" gorm:"type:varchar(100);notNull"`
 	CreatedAt         time.Time `json:"created_at" gorm:"notNull"`
 	SubscriptionEndAt time.Time `json:"subscription_end_at" gorm:"notNull"`
@@ -97,7 +97,7 @@ type Member struct {
 	ID             int       `json:"id" gorm:"primaryKey;autoIncrement"`
 	OrganizationID int       `json:"organization_id" gorm:"notNull;constraint:OnDelete:CASCADE"`
 	UserID         int       `json:"user_id" gorm:"notNull"`
-	User           user.User `json:"-" gorm:"constraint:OnDelete:CASCADE"`
+	User           user.User `json:"-" gorm:"constraint:OnUpdate:CASCADE;OnDelete:CASCADE"`
 	Role           string    `json:"role" gorm:"type:varchar(10);notNull"`
 	CreatedAt      time.Time `json:"created_at" gorm:"notNull"`
 }
