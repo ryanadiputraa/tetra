@@ -10,6 +10,8 @@ import (
 	authHandler "github.com/ryanadiputraa/inventra/internal/auth/handler"
 	authService "github.com/ryanadiputraa/inventra/internal/auth/service"
 	inventoryHandler "github.com/ryanadiputraa/inventra/internal/inventory/handler"
+	inventoryRepository "github.com/ryanadiputraa/inventra/internal/inventory/repository"
+	inventoryService "github.com/ryanadiputraa/inventra/internal/inventory/service"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
 	oauthHandler "github.com/ryanadiputraa/inventra/internal/oauth/handler"
 	organizationHandler "github.com/ryanadiputraa/inventra/internal/organization/handler"
@@ -52,7 +54,9 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
 
-	inventoryHandler := inventoryHandler.New(writer, validator)
+	inventoryRepository := inventoryRepository.New(db)
+	inventoryService := inventoryService.New(logger, inventoryRepository)
+	inventoryHandler := inventoryHandler.New(writer, validator, inventoryService)
 
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 

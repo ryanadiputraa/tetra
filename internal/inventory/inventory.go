@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	// serviceError "github.com/ryanadiputraa/inventra/internal/errors"
+	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 )
 
@@ -45,6 +45,38 @@ type PricePayload struct {
 	Quantity int `json:"quantity" validate:"required,min=1"`
 }
 
+func NewItem(organizationID int, p ItemPayload) (i Item, s []ItemPrice, err error) {
+	switch p.Type {
+	case string(Consumable), string(FixedAsset):
+		break
+	default:
+		err = serviceError.NewServiceErr(serviceError.BadRequest, serviceError.InvalidItemType)
+		return
+	}
+
+	now := time.Now().UTC()
+	i = Item{
+		OrganizationID: organizationID,
+		ItemName:       p.ItemName,
+		ItemType:       ItemType(p.Type),
+		CreatedAt:      now,
+	}
+
+	s = make([]ItemPrice, 0)
+	for _, price := range p.Prices {
+		s = append(s, ItemPrice{
+			Price:     price.Price,
+			Quantity:  price.Quantity,
+			CreatedAt: now,
+		})
+	}
+	return
+}
+
 type InventoryService interface {
 	AddItem(ctx context.Context, organizationID int, payload ItemPayload) (Item, error)
+}
+
+type InventoryRepository interface {
+	SaveItem(ctx context.Context, item Item, prices []ItemPrice) (Item, error)
 }
