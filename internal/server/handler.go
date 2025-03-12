@@ -23,6 +23,7 @@ import (
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/mail"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
+	"github.com/ryanadiputraa/inventra/pkg/pagination"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 	"gorm.io/gorm"
@@ -33,6 +34,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	writer := writer.NewHTTPWriter()
 	validator := validator.NewValidator()
+	pagination := pagination.New()
 	jwt := jwt.NewJWT(c.JWTSecret)
 	oauth := oauth.NewGoogleOauth(&oauth.GoogleOauthConfig{
 		State:        c.OauthState,
@@ -56,7 +58,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	inventoryRepository := inventoryRepository.New(db)
 	inventoryService := inventoryService.New(logger, inventoryRepository)
-	inventoryHandler := inventoryHandler.New(writer, validator, inventoryService)
+	inventoryHandler := inventoryHandler.New(writer, validator, pagination, inventoryService)
 
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 

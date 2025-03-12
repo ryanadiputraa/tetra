@@ -86,6 +86,7 @@ func (h *handler) DeleteOrganization() http.HandlerFunc {
 			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
 			return
 		}
+
 		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
 	}
 }

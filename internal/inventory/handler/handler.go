@@ -3,26 +3,28 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/inventory"
+	"github.com/ryanadiputraa/inventra/pkg/pagination"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 )
 
 type handler struct {
-	writer    writer.HTTPWriter
-	validator validator.Validator
-	service   inventory.InventoryService
+	writer     writer.HTTPWriter
+	validator  validator.Validator
+	pagination pagination.Pagination
+	service    inventory.InventoryService
 }
 
-func New(writer writer.HTTPWriter, validator validator.Validator, service inventory.InventoryService) *handler {
+func New(writer writer.HTTPWriter, validator validator.Validator, pagination pagination.Pagination, service inventory.InventoryService) *handler {
 	return &handler{
-		writer:    writer,
-		validator: validator,
-		service:   service,
+		writer:     writer,
+		validator:  validator,
+		pagination: pagination,
+		service:    service,
 	}
 }
 
@@ -33,14 +35,9 @@ func (h *handler) FetchItems() http.HandlerFunc {
 		p := q.Get("page")
 		s := q.Get("size")
 
-		page, err := strconv.Atoi(p)
+		page, size, errMap, err := h.pagination.ValidateParam(p, s)
 		if err != nil {
-			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
-			return
-		}
-		size, err := strconv.Atoi(s)
-		if err != nil {
-			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			h.writer.WriteErrorResponseWithDetail(w, http.StatusBadRequest, errors.BadRequest, errMap)
 			return
 		}
 

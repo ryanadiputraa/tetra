@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ryanadiputraa/inventra/internal/errors"
+	"github.com/ryanadiputraa/inventra/pkg/pagination"
 )
 
 type HTTPWriter interface {
@@ -15,13 +16,6 @@ type HTTPWriter interface {
 }
 
 type httpWriter struct{}
-
-type Pagination struct {
-	CurrentPage int   `json:"current_page"`
-	TotalPages  int   `json:"total_pages"`
-	Size        int   `json:"size"`
-	TotalData   int64 `json:"total_data"`
-}
 
 type ErrorMessage struct {
 	Message string `json:"message"`
@@ -52,7 +46,7 @@ func (wr *httpWriter) WriteResponseData(w http.ResponseWriter, code int, data an
 
 func (wr *httpWriter) WriteResponseDataWithPagination(w http.ResponseWriter, code int, data any, dataKey string, page, size int, total int64) {
 	w.Header().Set("Content-Type", "application/json")
-	m := Pagination{
+	m := pagination.Meta{
 		CurrentPage: page,
 		TotalPages:  int((total + int64(size) - 1) / int64(size)),
 		Size:        size,
