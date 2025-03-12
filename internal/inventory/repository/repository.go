@@ -43,3 +43,17 @@ func (r *repository) SaveItem(ctx context.Context, item inventory.Item, prices [
 	}, nil)
 	return
 }
+
+func (r *repository) FetchItems(ctx context.Context, organizationID, page, size int) (result []inventory.Item, total int64, err error) {
+	err = r.db.Model(&inventory.Item{}).Count(&total).Error
+	if err != nil {
+		return
+	}
+
+	err = r.db.Preload("Stock").
+		Where("organization_id = ?", organizationID).
+		Order("created_at DESC").
+		Limit(size).Offset((page - 1) * size).
+		Find(&result).Error
+	return
+}

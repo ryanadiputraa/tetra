@@ -82,6 +82,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	router.Handle("DELETE /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.RemoveMember(), adminAccessLv))
 	router.Handle("PUT /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.ChangeMemberRole(), adminAccessLv))
 
+	router.Handle("GET /api/inventory", authMiddleware.AuthorizeUserRole(inventoryHandler.FetchItems(), staffAccessLv))
 	router.Handle("POST /api/inventory", authMiddleware.AuthorizeUserRole(inventoryHandler.AddInventoryItem(), staffAccessLv))
 	return router
 }

@@ -17,7 +17,7 @@ const (
 
 type Item struct {
 	ID             int                       `json:"id" gorm:"primaryKey;autoIncrement"`
-	OrganizationID int                       `json:"organization_id" gorm:"notNull"`
+	OrganizationID int                       `json:"-" gorm:"notNull"`
 	Organization   organization.Organization `json:"-"  gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	ItemName       string                    `json:"item_name" gorm:"type:varchar(100);notNull"`
 	ItemType       ItemType                  `json:"item_type" gorm:"type:varchar(50);notNull"`
@@ -75,8 +75,10 @@ func NewItem(organizationID int, p ItemPayload) (i Item, s []ItemPrice, err erro
 
 type InventoryService interface {
 	AddItem(ctx context.Context, organizationID int, payload ItemPayload) (Item, error)
+	ListItems(ctx context.Context, organizationID, page, size int) ([]Item, int64, error)
 }
 
 type InventoryRepository interface {
 	SaveItem(ctx context.Context, item Item, prices []ItemPrice) (Item, error)
+	FetchItems(ctx context.Context, organizationID, page, size int) ([]Item, int64, error)
 }

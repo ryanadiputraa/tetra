@@ -37,6 +37,22 @@ func (s *service) AddItem(ctx context.Context, organizationID int, payload inven
 				"item_name", item.ItemName,
 			)
 		}
+		return
+	}
+	return
+}
+
+func (s *service) ListItems(ctx context.Context, organizationID, page, size int) (result []inventory.Item, total int64, err error) {
+	result, total, err = s.repository.FetchItems(ctx, organizationID, page, size)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to fetch inventory item",
+				"error", err.Error(),
+				"organization_id", organizationID,
+			)
+		}
+		return
 	}
 	return
 }

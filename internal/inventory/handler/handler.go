@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
@@ -22,6 +23,39 @@ func New(writer writer.HTTPWriter, validator validator.Validator, service invent
 		writer:    writer,
 		validator: validator,
 		service:   service,
+	}
+}
+
+func (h *handler) FetchItems() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		q := r.URL.Query()
+		p := q.Get("page")
+		s := q.Get("size")
+
+		page, err := strconv.Atoi(p)
+		if err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+		size, err := strconv.Atoi(s)
+		if err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		items, total, err := h.service.ListItems(c, *c.OrganizationID, page, size)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			} else {
+				h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+				return
+			}
+		}
+
+		h.writer.WriteResponseDataWithPagination(w, http.StatusOK, items, "items", page, size, total)
 	}
 }
 
