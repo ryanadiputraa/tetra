@@ -35,9 +35,14 @@ export const AppProvider = ({ initialTheme, children }: Props) => {
             components: {
               Button: {
                 controlHeightLG: 45,
+                boxShadow: "none",
+                primaryShadow: "none",
+                boxShadowSecondary: "none",
+                dangerShadow: "none",
               },
               Input: {
                 controlHeightLG: 45,
+                activeBorderColor: "transparent",
               },
             },
           }}

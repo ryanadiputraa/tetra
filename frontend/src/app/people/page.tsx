@@ -119,11 +119,7 @@ export default function People() {
       <div className="flex flex-col gap-3">
         <div className="flex justify-end gap-3">
           {user?.role !== "staff" && (
-            <Button
-              type="primary"
-              className="font-semibold"
-              onClick={onInviteMember}
-            >
+            <Button type="primary" onClick={onInviteMember}>
               <PlusOutlined /> Undang
             </Button>
           )}

@@ -94,7 +94,7 @@ export const tableColumn = ({
             }}
             placement="topRight"
           >
-            <button className="hover:bg-gray-200 p-2 rounded-md">
+            <button className="hover:bg-gray-200 dark:hover:bg-gray-500 p-2 rounded-md">
               <MoreOutlined className="text-xl font-bold size-full" />
             </button>
           </Dropdown>

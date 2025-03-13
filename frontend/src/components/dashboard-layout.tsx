@@ -130,9 +130,9 @@ export const DashboardLayout = ({
                 }}
               >
                 {pathname === menu.link ? (
-                  <menu.IcoActive className="text-2xl text-white" />
+                  <menu.IcoActive className="text-xl text-white" />
                 ) : (
-                  <menu.Ico className="text-2xl hover:text-primary dark:hover:text-primary" />
+                  <menu.Ico className="text-xl hover:text-primary dark:hover:text-primary" />
                 )}
                 {menu.label}
               </Link>
@@ -156,9 +156,9 @@ export const DashboardLayout = ({
                 }}
               >
                 {pathname === menu.link ? (
-                  <menu.IcoActive className="text-2xl text-white" />
+                  <menu.IcoActive className="text-xl text-white" />
                 ) : (
-                  <menu.Ico className="text-2xl hover:text-primary dark:hover:text-primary" />
+                  <menu.Ico className="text-xl hover:text-primary dark:hover:text-primary" />
                 )}
                 {menu.label}
               </Link>
@@ -190,7 +190,7 @@ export const DashboardLayout = ({
 
   return (
     <div className="min-h-screen flex">
-      <nav className="hidden md:inline-block relative w-80 bg-white dark:bg-neutral-900 text-neutral-400 border-r-2 border-gray-200 dark:border-gray-500">
+      <nav className="hidden md:inline-block relative w-72 bg-white dark:bg-neutral-900 text-neutral-400 border-r-2 border-gray-200 dark:border-gray-500">
         <NavMenu />
       </nav>
       <Drawer
