@@ -7,7 +7,7 @@ import { Button, Modal, notification, Skeleton, Table } from "antd";
 import { useState } from "react";
 import { InviteModal } from "./invite";
 
-import { changeRole, removeMember } from "@/api/organization";
+import { changeRole, removeMember } from "@/api";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { QUERY_KEYS, useOrganizationMembers, useUserData } from "@/queries";
 import { APIError, ChangeRolePayload, Role } from "@/types";

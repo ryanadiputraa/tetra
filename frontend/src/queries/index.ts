@@ -6,4 +6,5 @@ export const QUERY_KEYS = {
   organizationData: ["organizationData"],
   organizationMembers: ["organizationMembers"],
   acceptInvitation: ["acceptInvitation"],
+  inventoryItems: ["inventoryItems"],
 };

@@ -1,6 +1,7 @@
 import {
   AppstoreFilled,
   AppstoreOutlined,
+  InboxOutlined,
   SettingFilled,
   SettingOutlined,
   TeamOutlined,
@@ -12,6 +13,12 @@ export const mainMenu = [
     Ico: AppstoreOutlined,
     IcoActive: AppstoreFilled,
     label: "Dashboard",
+  },
+  {
+    link: "/inventory",
+    Ico: InboxOutlined,
+    IcoActive: InboxOutlined,
+    label: "Inventory",
   },
   {
     link: "/people",

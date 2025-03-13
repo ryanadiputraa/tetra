@@ -4,7 +4,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Form, Input, Modal, notification } from "antd";
 
-import { inviteMember } from "@/api/organization";
+import { inviteMember } from "@/api";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { APIError, InviteMemberPayload, ModalProps } from "@/types";
 

@@ -1,10 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 
-import {
-  acceptInvitation,
-  fetchData,
-  fetchOrganizationMembers,
-} from "@/api/organization";
+import { acceptInvitation, fetchData, fetchOrganizationMembers } from "@/api";
 import { Member, Organization } from "@/types";
 import { QUERY_KEYS } from ".";
 

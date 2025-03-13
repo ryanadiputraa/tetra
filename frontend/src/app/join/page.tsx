@@ -7,7 +7,7 @@ import { Button, Form, Input, notification } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { createOrganization } from "@/api/organization";
+import { createOrganization } from "@/api";
 import { API_MSG, COOKIE_AUTH_KEY, SERVER_ERR_MSG } from "@/constant";
 import { removeCookie } from "@/lib";
 import { QUERY_KEYS, useUserData } from "@/queries";

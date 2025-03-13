@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Modal, notification, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 
-import { deleteOrganization, leaveOrganization } from "@/api/organization";
+import { deleteOrganization, leaveOrganization } from "@/api";
 import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { formatDate } from "@/lib";
 import { QUERY_KEYS, useOrganization, useUserData } from "@/queries";

@@ -21,13 +21,13 @@ type Item struct {
 	Organization   organization.Organization `json:"-"  gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	ItemName       string                    `json:"item_name" gorm:"type:varchar(100);notNull"`
 	ItemType       ItemType                  `json:"item_type" gorm:"type:varchar(50);notNull"`
-	Stock          []ItemPrice               `json:"stocks"`
+	Stock          []ItemPrice               `json:"stock"`
 	CreatedAt      time.Time                 `json:"created_at" gorm:"notNull"`
 }
 
 type ItemPrice struct {
-	ID        int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	ItemID    int       `json:"item_id" gorm:"notNull"`
+	ID        int       `json:"-" gorm:"primaryKey;autoIncrement"`
+	ItemID    int       `json:"-" gorm:"notNull"`
 	Item      Item      `json:"-"  gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Price     int       `json:"price" gorm:"notNull"`
 	Quantity  int       `json:"quantity" gorm:"notNull"`
