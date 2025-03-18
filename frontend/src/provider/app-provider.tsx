@@ -2,12 +2,13 @@
 
 import { DashboardLayout } from "@/components";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import "@ant-design/v5-patch-for-react-19";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConfigProvider, theme } from "antd";
 import idID from "antd/locale/id_ID";
 
-import { Theme } from "@/types";
 import { useTheme } from "@/hooks";
+import { Theme } from "@/types";
 
 interface Props {
   initialTheme: Theme;
@@ -34,15 +35,10 @@ export const AppProvider = ({ initialTheme, children }: Props) => {
             },
             components: {
               Button: {
-                controlHeightLG: 45,
                 boxShadow: "none",
                 primaryShadow: "none",
                 boxShadowSecondary: "none",
                 dangerShadow: "none",
-              },
-              Input: {
-                controlHeightLG: 45,
-                activeBorderColor: "transparent",
               },
             },
           }}

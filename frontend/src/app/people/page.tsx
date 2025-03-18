@@ -21,7 +21,6 @@ export default function People() {
   const queryClient = useQueryClient();
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
-  const onInviteMember = () => setIsInviteModalOpen(true);
 
   const { mutate: changeMemberRole, isPending: isChangeRolePending } =
     useMutation<void, APIError, ChangeRolePayload>({
@@ -119,8 +118,12 @@ export default function People() {
       <div className="flex flex-col gap-3">
         <div className="flex justify-end gap-3">
           {user?.role !== "staff" && (
-            <Button type="primary" onClick={onInviteMember}>
-              <PlusOutlined /> Undang
+            <Button
+              type="primary"
+              onClick={() => setIsInviteModalOpen(true)}
+              icon={<PlusOutlined />}
+            >
+              Undang
             </Button>
           )}
         </div>

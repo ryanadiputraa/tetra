@@ -1,5 +1,4 @@
 import { AppProvider, AuthProvider } from "@/provider";
-import "@ant-design/v5-patch-for-react-19";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";

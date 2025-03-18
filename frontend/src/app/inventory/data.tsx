@@ -1,7 +1,8 @@
 import { TableColumnsType } from "antd";
 import dayjs from "dayjs";
 
-import { Item, ItemPrice } from "@/types";
+import { Item, ItemPrice, ItemType } from "@/types";
+import { getAssetType } from "@/lib";
 
 export const tableColumn = (): TableColumnsType<Item> => {
   return [
@@ -18,9 +19,7 @@ export const tableColumn = (): TableColumnsType<Item> => {
     {
       title: "Tipe Item",
       dataIndex: "item_type",
-      render: (type: string) => (
-        <span className="capitalize">{type.split("_").join(" ")}</span>
-      ),
+      render: (type: ItemType) => getAssetType(type),
       sorter: (a, b) => a.item_type.localeCompare(b.item_type),
     },
     {
@@ -41,9 +40,7 @@ export const tableColumn = (): TableColumnsType<Item> => {
     {
       title: "Tanggal Dibuat",
       dataIndex: "created_at",
-      render: (createdAt: string) => (
-        <span>{dayjs(createdAt).format("DD/MM/YYYY")}</span>
-      ),
+      render: (createdAt: string) => dayjs(createdAt).format("DD/MM/YYYY"),
       sorter: (a, b) => dayjs(a.created_at).unix() - dayjs(b.created_at).unix(),
     },
   ];

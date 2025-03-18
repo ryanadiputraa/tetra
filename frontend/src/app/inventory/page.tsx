@@ -1,12 +1,15 @@
 "use client";
 
 import { ErrorPage } from "@/components";
-import { Skeleton, Table } from "antd";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Button, Skeleton, Table } from "antd";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { tableColumn } from "./data";
 
 import { QUERY_KEYS } from "@/queries";
 import { useInventoryItem } from "@/queries/inventory";
+import { AddItemModal } from "./add";
+import { PlusOutlined } from "@ant-design/icons";
 
 export default function Inventory() {
   const searchParams = useSearchParams();
@@ -20,6 +23,8 @@ export default function Inventory() {
     },
     { queryKey: [...QUERY_KEYS.inventoryItems, page] },
   );
+
+  const [isAddItemOpen, setIsAddItemOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -47,11 +52,13 @@ export default function Inventory() {
       {/* {toastContextHolder} */}
       <div className="flex flex-col gap-3">
         <div className="flex justify-end gap-3">
-          {/* {user?.role !== "staff" && ( */}
-          {/*   <Button type="primary" onClick={onInviteMember}> */}
-          {/*     <PlusOutlined /> Undang */}
-          {/*   </Button> */}
-          {/* )} */}
+          <Button
+            type="primary"
+            onClick={() => setIsAddItemOpen(true)}
+            icon={<PlusOutlined />}
+          >
+            Tambah
+          </Button>
         </div>
         <div className="w-full overflow-auto">
           <Table
@@ -73,6 +80,10 @@ export default function Inventory() {
           />
         </div>
       </div>
+      <AddItemModal
+        open={isAddItemOpen}
+        onCloseAction={() => setIsAddItemOpen(false)}
+      />
     </>
   );
 }

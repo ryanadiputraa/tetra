@@ -1,3 +1,6 @@
+import { ItemType } from "@/types";
+import { valueType } from "antd/lib/statistic/utils";
+
 const DEFAULT_DATE = "2025-01-01";
 
 export type DateFormat = "short" | "full" | "shortTime" | "fullTime";
@@ -26,4 +29,20 @@ export const isOnFreeTrial = (
   const oneMonthBeforeEnd = new Date(subscriptionEndAt);
   oneMonthBeforeEnd.setUTCMonth(subscriptionEndAt.getMonth() - 1);
   return createdAt < subscriptionEndAt && createdAt >= oneMonthBeforeEnd;
+};
+
+export const getAssetType = (itemType: ItemType) => {
+  if (itemType === "fixed_asset") return "Aset Tetap";
+  return "Barang Habis Pakai";
+};
+
+export const formatCurrency = (value: valueType | undefined) => {
+  if (value) return `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return "Rp 0";
+};
+
+export const parseCurrency = (value: string | undefined) => {
+  if (!value) return 0; // Ensure a number is always returned
+  const parsed = value.replace(/[^\d]/g, ""); // Remove all non-numeric characters
+  return parsed ? Number(parsed) : 0;
 };

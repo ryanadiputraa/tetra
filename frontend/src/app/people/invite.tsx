@@ -57,7 +57,7 @@ export const InviteModal = ({ open, onCloseAction }: ModalProps) => {
       okText="Kirim Undangan"
     >
       {contextHolder}
-      <Form form={form} onFinish={(payload) => mutate(payload)}>
+      <Form form={form} onFinish={mutate}>
         <Form.Item
           name="email"
           rules={[
