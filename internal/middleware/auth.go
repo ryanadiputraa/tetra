@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ryanadiputraa/inventra/domain"
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
@@ -15,12 +16,12 @@ import (
 
 type Middleware struct {
 	writer              writer.HTTPWriter
-	jwt                 jwt.JWT
+	jwt                 jwt.JWTService
 	userService         user.UserService
 	organizationService organization.OrganizationService
 }
 
-func NewAuthMiddleware(writer writer.HTTPWriter, jwt jwt.JWT, userService user.UserService, organizationService organization.OrganizationService) *Middleware {
+func NewAuthMiddleware(writer writer.HTTPWriter, jwt jwt.JWTService, userService user.UserService, organizationService organization.OrganizationService) *Middleware {
 	return &Middleware{
 		writer:              writer,
 		jwt:                 jwt,
@@ -88,7 +89,7 @@ func (m *Middleware) AuthorizeUserRole(h http.Handler, level int) http.Handler {
 			return
 		}
 
-		if auth.AccessLevel[auth.Role(user.Role)] < level {
+		if domain.AccessLevel[domain.Role(user.Role)] < level {
 			m.writer.WriteErrorResponse(w, http.StatusUnauthorized, serviceError.Unauthorized)
 			return
 		}

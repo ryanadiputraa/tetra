@@ -5,7 +5,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/ryanadiputraa/inventra/internal/auth"
+)
+
+const (
+	JWTExpiresTime = time.Hour * 24
 )
 
 type Claims struct {
@@ -13,8 +16,13 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-type JWT interface {
-	GenerateJWTWithClaims(userID int) (auth.JWT, error)
+type JWT struct {
+	AccessToken string `json:"access_token"`
+	ExpiresAt   string `json:"expires_at"`
+}
+
+type JWTService interface {
+	GenerateJWTWithClaims(userID int) (JWT, error)
 	ParseJWTClaims(accessToken string) (*Claims, error)
 }
 
@@ -22,17 +30,17 @@ type service struct {
 	secretKey string
 }
 
-func NewJWT(secretKey string) JWT {
+func NewJWT(secretKey string) JWTService {
 	return &service{
 		secretKey: secretKey,
 	}
 }
 
-func (s *service) GenerateJWTWithClaims(userID int) (tokens auth.JWT, err error) {
+func (s *service) GenerateJWTWithClaims(userID int) (tokens JWT, err error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		userID,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(auth.JWTExpiresTime)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(JWTExpiresTime)),
 		},
 	})
 	accessToken, err := token.SignedString([]byte(s.secretKey))
@@ -40,9 +48,9 @@ func (s *service) GenerateJWTWithClaims(userID int) (tokens auth.JWT, err error)
 		return
 	}
 
-	tokens = auth.JWT{
+	tokens = JWT{
 		AccessToken: accessToken,
-		ExpiresAt:   time.Now().Add(auth.JWTExpiresTime).Format(time.RFC3339Nano),
+		ExpiresAt:   time.Now().Add(JWTExpiresTime).Format(time.RFC3339Nano),
 	}
 	return
 }

@@ -5,9 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/inventory"
-	"github.com/ryanadiputraa/inventra/internal/organization"
-	"github.com/ryanadiputraa/inventra/internal/user"
+	"github.com/ryanadiputraa/inventra/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -49,10 +47,10 @@ func NewPostgres(c config.Config) (db *gorm.DB, sqlDB *sql.DB, err error) {
 
 func runMigration(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&user.User{},
-		&organization.Organization{},
-		&organization.Member{},
-		&inventory.Item{},
-		&inventory.ItemPrice{},
+		&domain.User{},
+		&domain.Organization{},
+		&domain.Member{},
+		&domain.Item{},
+		&domain.ItemPrice{},
 	)
 }

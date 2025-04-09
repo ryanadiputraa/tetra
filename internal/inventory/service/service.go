@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/ryanadiputraa/inventra/domain"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/inventory"
 )
@@ -21,8 +22,16 @@ func New(logger *slog.Logger, repository inventory.InventoryRepository) inventor
 	}
 }
 
-func (s *service) AddItem(ctx context.Context, organizationID int, payload inventory.ItemPayload) (result inventory.Item, err error) {
-	item, prices, err := inventory.NewItem(organizationID, payload)
+func (s *service) AddItem(ctx context.Context, organizationID int, payload inventory.ItemPayload) (result domain.Item, err error) {
+	prices := make([]domain.ItemPrice, 0)
+	for _, p := range payload.Prices {
+		prices = append(prices, domain.ItemPrice{
+			Price:    p.Price,
+			Quantity: p.Quantity,
+		})
+	}
+
+	item, prices, err := domain.NewItem(organizationID, payload.ItemName, payload.Type, prices)
 	if err != nil {
 		return
 	}
@@ -42,7 +51,7 @@ func (s *service) AddItem(ctx context.Context, organizationID int, payload inven
 	return
 }
 
-func (s *service) ListItems(ctx context.Context, organizationID, page, size int) (result []inventory.Item, total int64, err error) {
+func (s *service) ListItems(ctx context.Context, organizationID, page, size int) (result []domain.Item, total int64, err error) {
 	result, total, err = s.repository.FetchItems(ctx, organizationID, page, size)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {

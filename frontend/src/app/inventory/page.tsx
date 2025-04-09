@@ -48,8 +48,6 @@ export default function Inventory() {
 
   return (
     <>
-      {/* {modalContextHolder} */}
-      {/* {toastContextHolder} */}
       <div className="flex flex-col gap-3">
         <div className="flex justify-end gap-3">
           <Button

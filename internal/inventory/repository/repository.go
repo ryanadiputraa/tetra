@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/ryanadiputraa/inventra/domain"
 	"github.com/ryanadiputraa/inventra/internal/inventory"
 	"gorm.io/gorm"
 )
@@ -18,7 +19,7 @@ func New(db *gorm.DB) inventory.InventoryRepository {
 	}
 }
 
-func (r *repository) SaveItem(ctx context.Context, item inventory.Item, prices []inventory.ItemPrice) (result inventory.Item, err error) {
+func (r *repository) SaveItem(ctx context.Context, item domain.Item, prices []domain.ItemPrice) (result domain.Item, err error) {
 	err = r.db.Transaction(func(tx *gorm.DB) error {
 		err = tx.Create(&item).Error
 		if err != nil {
@@ -44,8 +45,8 @@ func (r *repository) SaveItem(ctx context.Context, item inventory.Item, prices [
 	return
 }
 
-func (r *repository) FetchItems(ctx context.Context, organizationID, page, size int) (result []inventory.Item, total int64, err error) {
-	err = r.db.Model(&inventory.Item{}).Count(&total).Error
+func (r *repository) FetchItems(ctx context.Context, organizationID, page, size int) (result []domain.Item, total int64, err error) {
+	err = r.db.Model(&domain.Item{}).Count(&total).Error
 	if err != nil {
 		return
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/ryanadiputraa/inventra/domain"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"golang.org/x/crypto/bcrypt"
@@ -22,8 +23,8 @@ func New(logger *slog.Logger, repository user.UserRepository) user.UserService {
 	}
 }
 
-func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password string) (result user.User, err error) {
-	u, err := user.New(fullname, email, password)
+func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password string) (result domain.User, err error) {
+	u, err := domain.NewUser(fullname, email, password)
 	if err != nil {
 		s.logger.Error(
 			"Fail to save user data",
@@ -49,7 +50,7 @@ func (s *service) CreateOrUpdate(ctx context.Context, fullname, email, password 
 	return
 }
 
-func (s *service) GetByID(ctx context.Context, userID int) (user user.UserData, err error) {
+func (s *service) GetByID(ctx context.Context, userID int) (user domain.UserData, err error) {
 	user, err = s.repository.FindByID(ctx, userID)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {

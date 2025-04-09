@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ryanadiputraa/inventra/internal/auth"
+	"github.com/ryanadiputraa/inventra/domain"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 	"gorm.io/gorm"
@@ -26,7 +26,7 @@ func New(db *gorm.DB, rdb *redis.Client) organization.OrganizationRepository {
 	}
 }
 
-func (r *repository) Save(ctx context.Context, data organization.Organization) (result organization.Organization, err error) {
+func (r *repository) Save(ctx context.Context, data domain.Organization) (result domain.Organization, err error) {
 	err = r.db.Transaction(func(tx *gorm.DB) error {
 		err = tx.Create(&data).Error
 		if err == gorm.ErrDuplicatedKey {
@@ -37,7 +37,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 			return err
 		}
 
-		owner := organization.NewMember(data.ID, data.OwnerID, auth.Admin)
+		owner := domain.NewMember(data.ID, data.OwnerID, domain.Admin)
 		if err = tx.Create(&owner).Error; err != nil {
 			return err
 		}
@@ -48,7 +48,7 @@ func (r *repository) Save(ctx context.Context, data organization.Organization) (
 	return
 }
 
-func (r *repository) FindByID(ctx context.Context, organizationID int) (result organization.Organization, err error) {
+func (r *repository) FindByID(ctx context.Context, organizationID int) (result domain.Organization, err error) {
 	id := strconv.Itoa(organizationID)
 	cache, err := r.cache.Get(ctx, "organizations:"+id).Result()
 	if err == redis.Nil {
@@ -76,19 +76,19 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result o
 func (r *repository) Delete(ctx context.Context, organizationID, userID int) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		var userIDs []int
-		err := tx.Model(&organization.Member{}).
+		err := tx.Model(&domain.Member{}).
 			Where("organization_id = ?", organizationID).
 			Pluck("user_id", &userIDs).Error
 		if err != nil {
 			return err
 		}
 
-		err = tx.Where("organization_id = ?", organizationID).Delete(&organization.Member{}).Error
+		err = tx.Where("organization_id = ?", organizationID).Delete(&domain.Member{}).Error
 		if err != nil {
 			return err
 		}
 
-		err = tx.Where("owner_id = ? AND id = ?", userID, organizationID).Delete(&organization.Organization{}).Error
+		err = tx.Where("owner_id = ? AND id = ?", userID, organizationID).Delete(&domain.Organization{}).Error
 		if err != nil {
 			return err
 		}
@@ -112,7 +112,7 @@ func (r *repository) Delete(ctx context.Context, organizationID, userID int) err
 	}, nil)
 }
 
-func (r *repository) AddMember(ctx context.Context, member organization.Member) (result organization.Member, err error) {
+func (r *repository) AddMember(ctx context.Context, member domain.Member) (result domain.Member, err error) {
 	var id int
 	err = r.db.Table("members").
 		Select("user_id").
@@ -138,8 +138,8 @@ func (r *repository) AddMember(ctx context.Context, member organization.Member) 
 	return
 }
 
-func (r *repository) FetchMembers(ctx context.Context, organizationID int) (result []organization.MemberData, err error) {
-	result = make([]organization.MemberData, 0)
+func (r *repository) FetchMembers(ctx context.Context, organizationID int) (result []domain.MemberData, err error) {
+	result = make([]domain.MemberData, 0)
 	err = r.db.Table("members").
 		Select("members.id, members.user_id, users.fullname, users.email, members.role").
 		Joins("LEFT JOIN users ON users.id = members.user_id").
@@ -150,7 +150,7 @@ func (r *repository) FetchMembers(ctx context.Context, organizationID int) (resu
 }
 
 func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID int) (err error) {
-	var member organization.Member
+	var member domain.Member
 	err = r.db.Clauses(clause.Returning{Columns: []clause.Column{{Name: "user_id"}}}).
 		Where("organization_id = ? AND id = ?", organizationID, memberID).
 		Delete(&member).Error
@@ -163,7 +163,7 @@ func (r *repository) DeleteMember(ctx context.Context, organizationID, memberID 
 }
 
 func (r *repository) UpdateMemberRole(ctx context.Context, organizationID, memberID int, role string) (err error) {
-	var member organization.Member
+	var member domain.Member
 	err = r.db.Model(&member).Clauses(clause.Returning{Columns: []clause.Column{{Name: "user_id"}}}).
 		Where("organization_id = ? AND id = ? AND role <> 'admin'", organizationID, memberID).
 		Update("role", role).Error

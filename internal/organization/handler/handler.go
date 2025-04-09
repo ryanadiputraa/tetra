@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/inventra/domain"
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	"github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
@@ -19,10 +20,10 @@ type handler struct {
 	writer    writer.HTTPWriter
 	service   organization.OrganizationService
 	validator validator.Validator
-	jwt       jwt.JWT
+	jwt       jwt.JWTService
 }
 
-func New(config config.Config, writer writer.HTTPWriter, service organization.OrganizationService, validator validator.Validator, jwt jwt.JWT) *handler {
+func New(config config.Config, writer writer.HTTPWriter, service organization.OrganizationService, validator validator.Validator, jwt jwt.JWTService) *handler {
 	return &handler{
 		config:    config,
 		writer:    writer,
@@ -105,7 +106,7 @@ func (h *handler) FetchMembers() http.HandlerFunc {
 			return
 		}
 
-		h.writer.WriteResponseData(w, http.StatusOK, map[string][]organization.MemberData{"members": members})
+		h.writer.WriteResponseData(w, http.StatusOK, map[string][]domain.MemberData{"members": members})
 	}
 }
 

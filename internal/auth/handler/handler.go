@@ -14,11 +14,11 @@ import (
 type handler struct {
 	writer    writer.HTTPWriter
 	validator validator.Validator
-	jwt       jwt.JWT
+	jwt       jwt.JWTService
 	service   auth.AuthService
 }
 
-func New(writer writer.HTTPWriter, validator validator.Validator, jwt jwt.JWT, service auth.AuthService) *handler {
+func New(writer writer.HTTPWriter, validator validator.Validator, jwt jwt.JWTService, service auth.AuthService) *handler {
 	return &handler{
 		writer:    writer,
 		validator: validator,
@@ -51,7 +51,7 @@ func (h *handler) Login() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := h.service.GenerateJWT(r.Context(), user.ID)
+		jwt, err := h.jwt.GenerateJWTWithClaims(user.ID)
 		if err != nil {
 			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())
@@ -89,7 +89,7 @@ func (h *handler) Register() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := h.service.GenerateJWT(r.Context(), u.ID)
+		jwt, err := h.jwt.GenerateJWTWithClaims(u.ID)
 		if err != nil {
 			if sErr, ok := err.(*errors.Error); ok {
 				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], err.Error())

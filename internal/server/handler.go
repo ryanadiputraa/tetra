@@ -6,7 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/auth"
+	"github.com/ryanadiputraa/inventra/domain"
 	authHandler "github.com/ryanadiputraa/inventra/internal/auth/handler"
 	authService "github.com/ryanadiputraa/inventra/internal/auth/service"
 	inventoryHandler "github.com/ryanadiputraa/inventra/internal/inventory/handler"
@@ -48,11 +48,11 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	organizationRepository := organizationRepository.New(db, rdb)
 
 	userService := userService.New(logger, userRepository)
-	authService := authService.New(logger, jwt, userRepository)
+	authService := authService.New(logger, userRepository)
 	organizationService := organizationService.New(c, logger, jwt, smtpMail, organizationRepository, userRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
-	oauthHandler := oauthHandler.New(logger, c, oauth, userService, authService)
+	oauthHandler := oauthHandler.New(logger, c, oauth, jwt, userService)
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
 
@@ -62,9 +62,9 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
-	staffAccessLv := auth.AccessLevel[auth.Staff]
+	staffAccessLv := domain.AccessLevel[domain.Staff]
 	// supervisorAccessLv := auth.AccessLevel[auth.Supervisor]
-	adminAccessLv := auth.AccessLevel[auth.Admin]
+	adminAccessLv := domain.AccessLevel[domain.Admin]
 
 	router.Handle("POST /auth/login", authHandler.Login())
 	router.Handle("POST /auth/register", authHandler.Register())

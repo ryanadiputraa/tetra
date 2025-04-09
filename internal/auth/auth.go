@@ -2,38 +2,15 @@ package auth
 
 import (
 	"context"
-	"time"
 
-	"github.com/ryanadiputraa/inventra/internal/user"
+	"github.com/ryanadiputraa/inventra/domain"
 )
-
-type Role string
-
-const (
-	JWTExpiresTime = time.Hour * 24
-
-	// Role
-	Admin      Role = "admin"
-	Supervisor Role = "supervisor"
-	Staff      Role = "staff"
-)
-
-var AccessLevel = map[Role]int{
-	Staff:      1,
-	Supervisor: 2,
-	Admin:      3,
-}
-
-type JWT struct {
-	AccessToken string `json:"access_token"`
-	ExpiresAt   string `json:"expires_at"`
-}
 
 type AppContext struct {
 	UserID         int
 	OrganizationID *int
 	MemberID       *int
-	Role           Role
+	Role           domain.Role
 	context.Context
 }
 
@@ -48,17 +25,7 @@ type RegisterPayload struct {
 	Fullname string `json:"fullname" validate:"required"`
 }
 
-func IsValidRole(r Role) bool {
-	switch r {
-	case Admin, Supervisor, Staff:
-		return true
-	default:
-		return false
-	}
-}
-
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (user.UserData, error)
-	Register(ctx context.Context, payload RegisterPayload) (user.User, error)
-	GenerateJWT(ctx context.Context, userID int) (JWT, error)
+	Login(ctx context.Context, email, password string) (domain.UserData, error)
+	Register(ctx context.Context, payload RegisterPayload) (domain.User, error)
 }

@@ -30,7 +30,7 @@ export default function People() {
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.organizationMembers,
         });
-        toast.success({ message: "Role Diubah" });
+        toast.success({ message: "Role Diubah", placement: "bottomRight" });
       },
       onError: (error) => {
         toast.error({
@@ -48,7 +48,10 @@ export default function People() {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.organizationMembers,
       });
-      toast.success({ message: "Anggota dikeluarkan" });
+      toast.success({
+        message: "Anggota dikeluarkan",
+        placement: "bottomRight",
+      });
     },
     onError: (error) => {
       toast.error({

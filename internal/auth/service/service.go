@@ -5,28 +5,26 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/ryanadiputraa/inventra/domain"
 	"github.com/ryanadiputraa/inventra/internal/auth"
 	serviceErr "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type service struct {
 	logger         *slog.Logger
-	jwt            jwt.JWT
 	userRepository user.UserRepository
 }
 
-func New(logger *slog.Logger, jwt jwt.JWT, userRepository user.UserRepository) auth.AuthService {
+func New(logger *slog.Logger, userRepository user.UserRepository) auth.AuthService {
 	return &service{
 		logger:         logger,
-		jwt:            jwt,
 		userRepository: userRepository,
 	}
 }
 
-func (s *service) Login(ctx context.Context, email, password string) (user user.UserData, err error) {
+func (s *service) Login(ctx context.Context, email, password string) (user domain.UserData, err error) {
 	user, err = s.userRepository.FindByEmail(ctx, email)
 	if err != nil {
 		if !errors.As(err, new(*serviceErr.Error)) {
@@ -53,8 +51,8 @@ func (s *service) Login(ctx context.Context, email, password string) (user user.
 	return
 }
 
-func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (result user.User, err error) {
-	u, err := user.New(payload.Fullname, payload.Email, payload.Password)
+func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (result domain.User, err error) {
+	u, err := domain.NewUser(payload.Fullname, payload.Email, payload.Password)
 	if err != nil {
 		s.logger.Error(
 			"Fail to create new user",
@@ -84,13 +82,5 @@ func (s *service) Register(ctx context.Context, payload auth.RegisterPayload) (r
 		"email", result.Email,
 		"created_at", result.CreatedAt,
 	)
-	return
-}
-
-func (s *service) GenerateJWT(ctx context.Context, userID int) (tokens auth.JWT, err error) {
-	tokens, err = s.jwt.GenerateJWTWithClaims(userID)
-	if err != nil {
-		s.logger.Error("Fail to generate jwt", "error", err.Error())
-	}
 	return
 }

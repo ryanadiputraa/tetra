@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/auth"
+	"github.com/ryanadiputraa/inventra/domain"
 	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
 	"github.com/ryanadiputraa/inventra/internal/organization"
 	"github.com/ryanadiputraa/inventra/internal/user"
@@ -19,7 +19,7 @@ import (
 type service struct {
 	config         config.Config
 	logger         *slog.Logger
-	jwt            jwt.JWT
+	jwt            jwt.JWTService
 	smtpMail       mail.SMTPMail
 	repository     organization.OrganizationRepository
 	userRepository user.UserRepository
@@ -28,7 +28,7 @@ type service struct {
 func New(
 	config config.Config,
 	logger *slog.Logger,
-	jwt jwt.JWT,
+	jwt jwt.JWTService,
 	smtpMail mail.SMTPMail,
 	repository organization.OrganizationRepository,
 	userRepository user.UserRepository,
@@ -43,8 +43,8 @@ func New(
 	}
 }
 
-func (s *service) Create(ctx context.Context, Name string, userID int) (result organization.Organization, err error) {
-	o := organization.New(Name, userID)
+func (s *service) Create(ctx context.Context, Name string, userID int) (result domain.Organization, err error) {
+	o := domain.NewOrganization(Name, userID)
 	result, err = s.repository.Save(ctx, o)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
@@ -68,7 +68,7 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (result o
 	return
 }
 
-func (s *service) GetByID(ctx context.Context, organizationID int) (result organization.Organization, err error) {
+func (s *service) GetByID(ctx context.Context, organizationID int) (result domain.Organization, err error) {
 	result, err = s.repository.FindByID(ctx, organizationID)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
@@ -107,7 +107,7 @@ func (s *service) Delete(ctx context.Context, organizationID, userID int) (err e
 	return
 }
 
-func (s *service) ListMember(ctx context.Context, organizationID int) (result []organization.MemberData, err error) {
+func (s *service) ListMember(ctx context.Context, organizationID int) (result []domain.MemberData, err error) {
 	result, err = s.repository.FetchMembers(ctx, organizationID)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
@@ -157,9 +157,9 @@ func (s *service) InviteUser(ctx context.Context, organizationID int, email stri
 
 	go func() {
 		subject := fmt.Sprintf("Undangan bergabung dengan %s di Inventra", org.Name)
-		body := organization.GenrateInvitationMailBody(org.Name, s.config.FrontendURL, jwt.AccessToken)
+		body := domain.GenrateInvitationMailBody(org.Name, s.config.FrontendURL, jwt.AccessToken)
 		if err = s.smtpMail.SendMail(context.Background(), email, subject, body); err != nil {
-			s.logger.Warn(
+			s.logger.Error(
 				"Fail to send invitation mail",
 				"error", err.Error(),
 				"organization_id", organizationID,
@@ -170,8 +170,8 @@ func (s *service) InviteUser(ctx context.Context, organizationID int, email stri
 	return
 }
 
-func (s *service) Join(ctx context.Context, organizationID, userID int) (result organization.Member, err error) {
-	m := organization.NewMember(organizationID, userID, auth.Staff)
+func (s *service) Join(ctx context.Context, organizationID, userID int) (result domain.Member, err error) {
+	m := domain.NewMember(organizationID, userID, domain.Staff)
 	result, err = s.repository.AddMember(ctx, m)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
@@ -210,7 +210,7 @@ func (s *service) RemoveMember(ctx context.Context, organizationID, memberID int
 }
 
 func (s *service) ChangeMemberRole(ctx context.Context, organizationID, memberID int, role string) (err error) {
-	if !auth.IsValidRole(auth.Role(role)) {
+	if !domain.IsValidRole(domain.Role(role)) {
 		return serviceError.NewServiceErr(serviceError.BadRequest, serviceError.InvalidRole)
 	}
 
@@ -238,7 +238,7 @@ func (s *service) Leave(ctx context.Context, organizationID, memberID int) (err 
 
 	adminCnt := 0
 	for _, m := range members {
-		if m.Role == string(auth.Admin) {
+		if m.Role == string(domain.Admin) {
 			adminCnt++
 		}
 	}
