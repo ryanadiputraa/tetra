@@ -1,5 +1,5 @@
 import { fetcher } from "@/lib";
-import { DataWithPagination, Item } from "@/types";
+import { AddItemPayload, DataWithPagination, Item } from "@/types";
 
 export const fetchItems = async ({
   page = 1,
@@ -9,5 +9,10 @@ export const fetchItems = async ({
     "/api/inventory",
     { params: { page, size } },
   );
+  return resp.data;
+};
+
+export const addItem = async (payload: AddItemPayload): Promise<Item> => {
+  const resp = await fetcher.post<Item>("/api/inventory", payload);
   return resp.data;
 };

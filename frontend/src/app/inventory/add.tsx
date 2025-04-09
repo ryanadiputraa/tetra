@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  MinusCircleOutlined,
-  PlusOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Form,
@@ -15,25 +12,64 @@ import {
   Select,
 } from "antd";
 
+import { addItem } from "@/api";
+import { API_MSG, SERVER_ERR_MSG } from "@/constant";
 import { formatCurrency, getAssetType, parseCurrency } from "@/lib";
-import { AddItemPayload, ModalProps } from "@/types";
+import { QUERY_KEYS } from "@/queries";
+import { AddItemPayload, APIError, Item, ModalProps } from "@/types";
 
 export const AddItemModal = ({ open, onCloseAction }: ModalProps) => {
   const [form] = Form.useForm<AddItemPayload>();
   const [toast, contextHolder] = notification.useNotification();
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation<Item, APIError, AddItemPayload>({
+    mutationKey: ["addInventoryItem"],
+    mutationFn: addItem,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.inventoryItems,
+      });
+      form.resetFields();
+      onCloseAction();
+      toast.success({
+        message: "Item ditambahkan",
+        placement: "bottomRight",
+      });
+    },
+    onError: (error) => {
+      if (!error.errors) {
+        toast.error({
+          message: "Gagal menambahkan item",
+          description: API_MSG[error.message] || SERVER_ERR_MSG,
+          placement: "bottomRight",
+        });
+      } else {
+        const fields = [];
+        for (const e in error.errors) {
+          fields.push({
+            name: e as keyof AddItemPayload,
+            errors: [API_MSG[error.errors[e]]],
+          });
+        }
+        form.setFields(fields);
+      }
+    },
+  });
 
   return (
     <Modal
       open={open}
       title="Tambah Item"
       onCancel={onCloseAction}
-      // confirmLoading={isPending}
+      confirmLoading={isPending}
       onOk={() => form.submit()}
       okText="Simpan"
     >
       {contextHolder}
       <Form
         form={form}
+        onFinish={mutate}
         initialValues={{ prices: [{ price: 0, quantity: 1 }] }}
         className="my-4 flex flex-col"
       >
@@ -42,11 +78,7 @@ export const AddItemModal = ({ open, onCloseAction }: ModalProps) => {
           name="item_name"
           rules={[{ required: true, message: "Masukan name item" }]}
         >
-          <Input
-            size="large"
-            placeholder="Nama Item"
-            suffix={<UserOutlined />}
-          />
+          <Input size="large" placeholder="Nama Item" />
         </Form.Item>
         <label className="mb-1">Tipe Item</label>
         <Form.Item
@@ -104,11 +136,13 @@ export const AddItemModal = ({ open, onCloseAction }: ModalProps) => {
                       />
                     </Form.Item>
                   </div>
-                  <Button
-                    danger
-                    icon={<MinusCircleOutlined />}
-                    onClick={() => remove(name)}
-                  />
+                  {fields.length > 1 && (
+                    <Button
+                      danger
+                      icon={<MinusCircleOutlined />}
+                      onClick={() => remove(name)}
+                    />
+                  )}
                 </div>
               ))}
               <Button onClick={() => add()} icon={<PlusOutlined />}>
