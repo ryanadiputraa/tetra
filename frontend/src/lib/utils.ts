@@ -22,13 +22,11 @@ export const formatDate = (
   return date + separator + month + separator + year;
 };
 
-export const isOnFreeTrial = (
-  subscriptionEndAt: Date,
-  createdAt: Date,
-): boolean => {
-  const oneMonthBeforeEnd = new Date(subscriptionEndAt);
-  oneMonthBeforeEnd.setUTCMonth(subscriptionEndAt.getMonth() - 1);
-  return createdAt < subscriptionEndAt && createdAt >= oneMonthBeforeEnd;
+export const isOnFreeTrial = (createdAt: Date): boolean => {
+  const oneMonthAfterCreated = new Date(createdAt.getTime());
+  oneMonthAfterCreated.setUTCMonth(oneMonthAfterCreated.getUTCMonth() + 1);
+  const now = new Date();
+  return now >= createdAt && now < oneMonthAfterCreated;
 };
 
 export const getAssetType = (itemType: ItemType) => {

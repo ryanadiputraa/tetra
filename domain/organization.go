@@ -86,7 +86,7 @@ type Organization struct {
 	Name              string    `json:"name" gorm:"type:varchar(100);notNull"`
 	CreatedAt         time.Time `json:"created_at" gorm:"notNull"`
 	SubscriptionEndAt time.Time `json:"subscription_end_at" gorm:"notNull"`
-	Members           []Member  `json:"-" `
+	Members           []Member  `json:"-"`
 }
 
 type Member struct {

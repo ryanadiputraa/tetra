@@ -80,13 +80,9 @@ export const DashboardLayout = ({
   const { data: organization } = useOrganization({
     enabled: Boolean(data?.organization_id),
   });
-  const isFreeTrial =
-    organization?.subscription_end_at && organization?.created_at
-      ? isOnFreeTrial(
-          new Date(organization.subscription_end_at),
-          new Date(organization.created_at),
-        )
-      : false;
+  const isFreeTrial = organization?.created_at
+    ? isOnFreeTrial(new Date(organization.created_at))
+    : false;
 
   // Pages that not using dashboard layout component
   if (excludedRoutes.includes(pathname) || isIgnorePath) {
@@ -170,7 +166,7 @@ export const DashboardLayout = ({
         <div className="absolute bottom-0 left-0 p-6">
           <div className="bg-primary dark:bg-primary-dark rounded-lg p-3 text-white text-sm">
             <p>
-              Anda sedang menggunakan mode uji coba gratis hingga{" "}
+              Anda sedang menggunakan Free Trial Plan hingga{" "}
               <span className="font-bold">
                 {formatDate(organization?.subscription_end_at, "full")}.
               </span>{" "}
