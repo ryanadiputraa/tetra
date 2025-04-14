@@ -68,8 +68,8 @@ func (s *service) Create(ctx context.Context, Name string, userID int) (result d
 	return
 }
 
-func (s *service) GetByID(ctx context.Context, organizationID int) (result domain.Organization, err error) {
-	result, err = s.repository.FindByID(ctx, organizationID)
+func (s *service) GetByID(ctx context.Context, organizationID int) (result domain.OrganizationData, err error) {
+	org, err := s.repository.FindByID(ctx, organizationID)
 	if err != nil {
 		if !errors.As(err, new(*serviceError.Error)) {
 			s.logger.Error(
@@ -79,6 +79,18 @@ func (s *service) GetByID(ctx context.Context, organizationID int) (result domai
 			)
 		}
 		return
+	}
+
+	result.ID = org.ID
+	result.Owner = org.Owner
+	result.Name = org.Name
+	result.CreatedAt = org.CreatedAt
+	result.SubscriptionEndAt = org.SubscriptionEndAt
+	result.Features.Dashboard = false
+
+	if *org.OdooUsername != "" && *org.OdooPassword != "" &&
+		*org.IntellitrackUsername != "" && *org.IntellitrackPassword != "" {
+		result.Features.Dashboard = true
 	}
 	return
 }

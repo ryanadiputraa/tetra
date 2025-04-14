@@ -49,6 +49,7 @@ func (r *repository) Save(ctx context.Context, data domain.Organization) (result
 }
 
 func (r *repository) FindByID(ctx context.Context, organizationID int) (result domain.Organization, err error) {
+	var orgCache organization.OrganizationCache
 	id := strconv.Itoa(organizationID)
 	cache, err := r.cache.Get(ctx, "organizations:"+id).Result()
 	if err == redis.Nil {
@@ -57,8 +58,10 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result d
 			return
 		}
 
+		orgCache = organization.CacheFromOrg(result)
+
 		var val []byte
-		val, err = json.Marshal(result)
+		val, err = json.Marshal(orgCache)
 		if err != nil {
 			return
 		}
@@ -69,7 +72,12 @@ func (r *repository) FindByID(ctx context.Context, organizationID int) (result d
 		return
 	}
 
-	err = json.Unmarshal([]byte(cache), &result)
+	err = json.Unmarshal([]byte(cache), &orgCache)
+	if err != nil {
+		return
+	}
+
+	result = organization.OrgFromCache(orgCache)
 	return
 }
 

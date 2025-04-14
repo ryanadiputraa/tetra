@@ -24,7 +24,7 @@ export const formatDate = (
 
 export const isOnFreeTrial = (createdAt: Date): boolean => {
   const oneMonthAfterCreated = new Date(createdAt.getTime());
-  oneMonthAfterCreated.setUTCMonth(oneMonthAfterCreated.getUTCMonth() + 1);
+  oneMonthAfterCreated.setUTCMonth(oneMonthAfterCreated.getUTCMonth() + 3);
   const now = new Date();
   return now >= createdAt && now < oneMonthAfterCreated;
 };

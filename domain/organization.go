@@ -80,13 +80,27 @@ const (
 )
 
 type Organization struct {
-	ID                int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	OwnerID           int       `json:"-" gorm:"notNull"`
-	Owner             User      `json:"owner" gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Name              string    `json:"name" gorm:"type:varchar(100);notNull"`
-	CreatedAt         time.Time `json:"created_at" gorm:"notNull"`
-	SubscriptionEndAt time.Time `json:"subscription_end_at" gorm:"notNull"`
-	Members           []Member  `json:"-"`
+	ID                   int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	OwnerID              int       `json:"-" gorm:"notNull"`
+	Owner                User      `json:"owner" gorm:"foreignKey:OwnerID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Name                 string    `json:"name" gorm:"type:varchar(100);notNull"`
+	CreatedAt            time.Time `json:"created_at" gorm:"notNull"`
+	SubscriptionEndAt    time.Time `json:"subscription_end_at" gorm:"notNull"`
+	Members              []Member  `json:"-"`
+	Features             Features  `json:"features" gorm:"-"`
+	OdooUsername         *string   `json:"-" gorm:"type:varchar(100)"`
+	OdooPassword         *string   `json:"-" gorm:"type:varchar(100)"`
+	IntellitrackUsername *string   `json:"-" gorm:"type:varchar(100)"`
+	IntellitrackPassword *string   `json:"-" gorm:"type:varchar(100)"`
+}
+
+type OrganizationData struct {
+	ID                int       `json:"id"`
+	Owner             User      `json:"owner"`
+	Name              string    `json:"name"`
+	CreatedAt         time.Time `json:"created_at"`
+	SubscriptionEndAt time.Time `json:"subscription_end_at"`
+	Features          Features  `json:"features"`
 }
 
 type Member struct {
@@ -106,12 +120,16 @@ type MemberData struct {
 	Role     string `json:"role"`
 }
 
+type Features struct {
+	Dashboard bool `json:"dashboard"`
+}
+
 func NewOrganization(Name string, userID int) Organization {
 	return Organization{
 		OwnerID:           userID,
 		Name:              Name,
 		CreatedAt:         time.Now().UTC(),
-		SubscriptionEndAt: time.Now().AddDate(0, 1, 0).UTC(),
+		SubscriptionEndAt: time.Now().AddDate(0, 3, 0).UTC(),
 	}
 }
 
