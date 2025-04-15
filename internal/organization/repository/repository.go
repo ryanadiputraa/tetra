@@ -182,3 +182,20 @@ func (r *repository) UpdateMemberRole(ctx context.Context, organizationID, membe
 	userID := strconv.Itoa(member.UserID)
 	return r.cache.Del(ctx, "users:"+userID).Err()
 }
+
+func (r *repository) UpdateDashboardSettings(ctx context.Context, organizationID int, settings organization.DashboardSettings) (err error) {
+	err = r.db.Model(&domain.Organization{}).
+		Where("id = ?", organizationID).
+		Updates(domain.Organization{
+			OdooUsername:         settings.OdooUsername,
+			OdooPassword:         settings.OdooPassword,
+			IntellitrackUsername: settings.IntellitrackUsername,
+			IntellitrackPassword: settings.IntellitrackPassword,
+		}).Error
+	if err != nil {
+		return
+	}
+
+	err = r.cache.Del(ctx, "organizations:"+strconv.Itoa(organizationID)).Err()
+	return
+}

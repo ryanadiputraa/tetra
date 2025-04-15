@@ -8,11 +8,12 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/ryanadiputraa/inventra/config"
 	"github.com/ryanadiputraa/inventra/internal/middleware"
+	"github.com/ryanadiputraa/inventra/pkg/secure"
 	"gorm.io/gorm"
 )
 
-func New(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client) *http.Server {
-	handler := setupHandler(c, logger, db, rdb)
+func New(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client, secure secure.Secure) *http.Server {
+	handler := setupHandler(c, logger, db, rdb, secure)
 	handler = registerMiddlewares(
 		handler,
 		middleware.CORSMiddleware,

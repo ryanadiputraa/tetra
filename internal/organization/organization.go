@@ -35,6 +35,13 @@ type ChangeMemberPayload struct {
 	Role string `json:"role" validate:"required"`
 }
 
+type DashboardSettings struct {
+	OdooUsername         *string `json:"odoo_username"`
+	OdooPassword         *string `json:"odoo_password"`
+	IntellitrackUsername *string `json:"intellitrack_username"`
+	IntellitrackPassword *string `json:"intellitrack_password"`
+}
+
 func CacheFromOrg(org domain.Organization) OrganizationCache {
 	return OrganizationCache{
 		ID:                   org.ID,
@@ -74,6 +81,7 @@ type OrganizationService interface {
 	RemoveMember(ctx context.Context, organizationID, memberID int) error
 	ChangeMemberRole(ctx context.Context, organizationID, memberID int, role string) error
 	Leave(ctx context.Context, organizationID, memberID int) error
+	UpdateDashboardSettings(ctx context.Context, organizationID int, settings DashboardSettings) error
 }
 
 type OrganizationRepository interface {
@@ -84,4 +92,5 @@ type OrganizationRepository interface {
 	FetchMembers(ctx context.Context, organizationID int) ([]domain.MemberData, error)
 	DeleteMember(ctx context.Context, organizationID, memberID int) error
 	UpdateMemberRole(ctx context.Context, organizationID, memberID int, role string) error
+	UpdateDashboardSettings(ctx context.Context, organizationID int, settings DashboardSettings) error
 }

@@ -24,12 +24,13 @@ import (
 	"github.com/ryanadiputraa/inventra/pkg/mail"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
 	"github.com/ryanadiputraa/inventra/pkg/pagination"
+	"github.com/ryanadiputraa/inventra/pkg/secure"
 	"github.com/ryanadiputraa/inventra/pkg/validator"
 	"github.com/ryanadiputraa/inventra/pkg/writer"
 	"gorm.io/gorm"
 )
 
-func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client) http.Handler {
+func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.Client, secure secure.Secure) http.Handler {
 	router := http.NewServeMux()
 
 	writer := writer.NewHTTPWriter()
@@ -49,7 +50,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	userService := userService.New(logger, userRepository)
 	authService := authService.New(logger, userRepository)
-	organizationService := organizationService.New(c, logger, jwt, smtpMail, organizationRepository, userRepository)
+	organizationService := organizationService.New(c, logger, jwt, smtpMail, secure, organizationRepository, userRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
 	oauthHandler := oauthHandler.New(logger, c, oauth, jwt, userService)
@@ -63,7 +64,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
 	staffAccessLv := domain.AccessLevel[domain.Staff]
-	// supervisorAccessLv := auth.AccessLevel[auth.Supervisor]
+	supervisorAccessLv := domain.AccessLevel[domain.Supervisor]
 	adminAccessLv := domain.AccessLevel[domain.Admin]
 
 	router.Handle("POST /auth/login", authHandler.Login())
@@ -83,6 +84,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	router.Handle("GET /api/organizations/members", authMiddleware.AuthorizeUserRole(organizationHandler.FetchMembers(), staffAccessLv))
 	router.Handle("DELETE /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.RemoveMember(), adminAccessLv))
 	router.Handle("PUT /api/organizations/members/{id}", authMiddleware.AuthorizeUserRole(organizationHandler.ChangeMemberRole(), adminAccessLv))
+	router.Handle("PUT /api/organizations/dashboard", authMiddleware.AuthorizeUserRole(organizationHandler.UpdateDashboardSettings(), supervisorAccessLv))
 
 	router.Handle("GET /api/inventory", authMiddleware.AuthorizeUserRole(inventoryHandler.FetchItems(), staffAccessLv))
 	router.Handle("POST /api/inventory", authMiddleware.AuthorizeUserRole(inventoryHandler.AddInventoryItem(), staffAccessLv))

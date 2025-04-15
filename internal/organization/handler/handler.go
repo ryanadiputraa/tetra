@@ -249,3 +249,33 @@ func (h *handler) Leave() http.HandlerFunc {
 		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
 	}
 }
+
+func (h *handler) UpdateDashboardSettings() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c := r.Context().(*auth.AppContext)
+		var p organization.DashboardSettings
+		err := json.NewDecoder(r.Body).Decode(&p)
+		if err != nil {
+			h.writer.WriteErrorResponse(w, http.StatusBadRequest, errors.BadRequest)
+			return
+		}
+
+		errMap, err := h.validator.Validate(p)
+		if err != nil {
+			h.writer.WriteErrorResponseWithDetail(w, http.StatusBadRequest, err.Error(), errMap)
+			return
+		}
+
+		err = h.service.UpdateDashboardSettings(c, *c.OrganizationID, p)
+		if err != nil {
+			if sErr, ok := err.(*errors.Error); ok {
+				h.writer.WriteErrorResponse(w, errors.HttpErrMap[sErr.ErrCode], sErr.Error())
+				return
+			}
+			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
+			return
+		}
+
+		h.writer.WriteResponseData(w, http.StatusNoContent, nil)
+	}
+}

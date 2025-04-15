@@ -13,6 +13,7 @@ import (
 	"github.com/ryanadiputraa/inventra/internal/server"
 	"github.com/ryanadiputraa/inventra/pkg/cache"
 	"github.com/ryanadiputraa/inventra/pkg/db"
+	"github.com/ryanadiputraa/inventra/pkg/secure"
 )
 
 func main() {
@@ -39,7 +40,14 @@ func main() {
 		return
 	}
 
-	s := server.New(c, logger, db, rdb)
+	secure, err := secure.New(c.EncryptionKey)
+	if err != nil {
+		logger.Error("Fail to setup encryption", "error", err.Error())
+		os.Exit(1)
+		return
+	}
+
+	s := server.New(c, logger, db, rdb, secure)
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 

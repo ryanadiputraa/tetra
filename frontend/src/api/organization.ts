@@ -6,6 +6,7 @@ import {
   Member,
   Organization,
   OrganizationPayload,
+  UpdateDashboardSettingsPayload,
 } from "@/types";
 
 export const fetchData = async (): Promise<Organization> => {
@@ -57,4 +58,10 @@ export const changeRole = async ({
 
 export const leaveOrganization = async (): Promise<void> => {
   await fetcher.delete("/api/organizations/leave");
+};
+
+export const updateDashboardSettings = async (
+  payload: UpdateDashboardSettingsPayload,
+): Promise<void> => {
+  await fetcher.put("/api/organizations/dashboard", payload);
 };

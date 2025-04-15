@@ -14,6 +14,7 @@ import (
 	"github.com/ryanadiputraa/inventra/internal/user"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/mail"
+	"github.com/ryanadiputraa/inventra/pkg/secure"
 )
 
 type service struct {
@@ -21,6 +22,7 @@ type service struct {
 	logger         *slog.Logger
 	jwt            jwt.JWTService
 	smtpMail       mail.SMTPMail
+	secure         secure.Secure
 	repository     organization.OrganizationRepository
 	userRepository user.UserRepository
 }
@@ -30,6 +32,7 @@ func New(
 	logger *slog.Logger,
 	jwt jwt.JWTService,
 	smtpMail mail.SMTPMail,
+	secure secure.Secure,
 	repository organization.OrganizationRepository,
 	userRepository user.UserRepository,
 ) organization.OrganizationService {
@@ -38,6 +41,7 @@ func New(
 		logger:         logger,
 		jwt:            jwt,
 		smtpMail:       smtpMail,
+		secure:         secure,
 		repository:     repository,
 		userRepository: userRepository,
 	}
@@ -267,6 +271,39 @@ func (s *service) Leave(ctx context.Context, organizationID, memberID int) (err 
 				"error", err.Error(),
 				"organization_id", organizationID,
 				"memberID", memberID,
+			)
+		}
+		return
+	}
+	return
+}
+
+func (s *service) UpdateDashboardSettings(ctx context.Context, organizationID int, settings organization.DashboardSettings) (err error) {
+	odooEncPass, err := s.secure.Encrypt(*settings.OdooPassword)
+	if err != nil {
+		s.logger.Error(
+			"Fail to encrypt Odoo password",
+			"error", err.Error(),
+		)
+	}
+	intellitrackEncPass, err := s.secure.Encrypt(*settings.IntellitrackPassword)
+	if err != nil {
+		s.logger.Error(
+			"Fail to encrypt Intellitrack password",
+			"error", err.Error(),
+		)
+	}
+
+	settings.OdooPassword = &odooEncPass
+	settings.IntellitrackPassword = &intellitrackEncPass
+
+	err = s.repository.UpdateDashboardSettings(ctx, organizationID, settings)
+	if err != nil {
+		if !errors.As(err, new(*serviceError.Error)) {
+			s.logger.Error(
+				"Fail to update organization dashboard settgins",
+				"error", err.Error(),
+				"organization_id", organizationID,
 			)
 		}
 		return

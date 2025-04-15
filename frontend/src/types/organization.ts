@@ -11,6 +11,11 @@ export type Organization = {
   name: string;
   created_at: string;
   subscription_end_at: string;
+  features: Features;
+};
+
+export type Features = {
+  dashboard: boolean;
 };
 
 export type OrganizationPayload = {
@@ -36,4 +41,11 @@ export interface AcceptInvitationPayload {
 export interface ChangeRolePayload {
   memberId: number;
   role: Role;
+}
+
+export interface UpdateDashboardSettingsPayload {
+  odoo_username: string;
+  odoo_password: string;
+  intellitrack_username: string;
+  intellitrack_password: string;
 }

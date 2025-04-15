@@ -6,6 +6,7 @@ type Config struct {
 	Port               string `mapstructure:"PORT"`
 	FrontendURL        string `mapstructure:"FRONTEND_URL"`
 	JWTSecret          string `mapstructure:"JWT_SECRET"`
+	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
 	DBHost             string `mapstructure:"DB_HOST"`
 	DBUser             string `mapstructure:"DB_USER"`
 	DBPassword         string `mapstructure:"DB_PASSWORD"`
