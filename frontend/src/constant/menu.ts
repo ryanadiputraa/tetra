@@ -1,7 +1,7 @@
 import {
   AppstoreFilled,
   AppstoreOutlined,
-  InboxOutlined,
+  // InboxOutlined,
   SettingFilled,
   SettingOutlined,
   TeamOutlined,
@@ -14,17 +14,17 @@ export const mainMenu = [
     IcoActive: AppstoreFilled,
     label: "Dashboard",
   },
-  {
-    link: "/inventory",
-    Ico: InboxOutlined,
-    IcoActive: InboxOutlined,
-    label: "Inventory",
-  },
+  // {
+  //   link: "/inventory",
+  //   Ico: InboxOutlined,
+  //   IcoActive: InboxOutlined,
+  //   label: "Inventory",
+  // },
   {
     link: "/people",
     Ico: TeamOutlined,
     IcoActive: TeamOutlined,
-    label: "People",
+    label: "Anggota",
   },
 ];
 
@@ -33,6 +33,6 @@ export const secondaryMenu = [
     link: "/settings",
     Ico: SettingOutlined,
     IcoActive: SettingFilled,
-    label: "Settings",
+    label: "Pengaturan",
   },
 ];

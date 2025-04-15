@@ -139,7 +139,7 @@ export const DashboardLayout = ({
       <div className="mt-8 px-6">
         <ul className="pt-8 flex flex-col gap-2 border-t-2 border-gray-200 dark:border-gray-500">
           <li className="p-2 flex justify-between items-center">
-            <span>Dark Mode</span>
+            <span>Mode Gelap</span>
             <Switch value={theme === "dark"} onChange={toggleThemeAction} />
           </li>
           {secondaryMenu.map((menu) => (
@@ -170,7 +170,7 @@ export const DashboardLayout = ({
               <span className="font-bold">
                 {formatDate(organization?.subscription_end_at, "full")}.
               </span>{" "}
-              Upgrade sekarang untuk terus menikmati fitur Inventra!
+              Upgrade sekarang untuk menggunakan fitur selengkapnya.
             </p>
             {/* TODO: handle payment */}
             <Link href="/payment">
