@@ -20,6 +20,9 @@ import (
 	userHandler "github.com/ryanadiputraa/inventra/internal/user/handler"
 	userRepository "github.com/ryanadiputraa/inventra/internal/user/repository"
 	userService "github.com/ryanadiputraa/inventra/internal/user/service"
+	utilizationHandler "github.com/ryanadiputraa/inventra/internal/utilization/handler"
+	utilizationRepository "github.com/ryanadiputraa/inventra/internal/utilization/repository"
+	utilizationService "github.com/ryanadiputraa/inventra/internal/utilization/service"
 	"github.com/ryanadiputraa/inventra/pkg/jwt"
 	"github.com/ryanadiputraa/inventra/pkg/mail"
 	"github.com/ryanadiputraa/inventra/pkg/oauth"
@@ -47,20 +50,22 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	userRepository := userRepository.New(db, rdb)
 	organizationRepository := organizationRepository.New(db, rdb)
+	utilizationRepository := utilizationRepository.New(db)
 
 	userService := userService.New(logger, userRepository)
 	authService := authService.New(logger, userRepository)
 	organizationService := organizationService.New(c, logger, jwt, smtpMail, secure, organizationRepository, userRepository)
+	utilizationService := utilizationService.New(logger, utilizationRepository)
 
 	authHandler := authHandler.New(writer, validator, jwt, authService)
 	oauthHandler := oauthHandler.New(logger, c, oauth, jwt, userService)
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
+	utilizationHandler := utilizationHandler.New(writer, utilizationService)
 
 	inventoryRepository := inventoryRepository.New(db)
 	inventoryService := inventoryService.New(logger, inventoryRepository)
 	inventoryHandler := inventoryHandler.New(writer, validator, pagination, inventoryService)
-
 	authMiddleware := middleware.NewAuthMiddleware(writer, jwt, userService, organizationService)
 
 	staffAccessLv := domain.AccessLevel[domain.Staff]
@@ -74,6 +79,8 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 
 	router.Handle("GET /api/users/profile", authMiddleware.AuthorizeUser(userHandler.GetUserData()))
 	router.Handle("POST /api/users/password", authMiddleware.AuthorizeUser(userHandler.ChangePassword()))
+
+	router.Handle("POST /api/utilizations/import", authMiddleware.AuthorizeUserRole(utilizationHandler.Import(), staffAccessLv))
 
 	router.Handle("GET /api/organizations", authMiddleware.AuthorizeUserRole(organizationHandler.FetchOrganizationData(), staffAccessLv))
 	router.Handle("POST /api/organizations", authMiddleware.AuthorizeUser(organizationHandler.CreateOrganization()))

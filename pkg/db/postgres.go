@@ -52,5 +52,6 @@ func runMigration(db *gorm.DB) error {
 		&domain.Member{},
 		&domain.Item{},
 		&domain.ItemPrice{},
+		&domain.Utilization{},
 	)
 }

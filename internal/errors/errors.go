@@ -21,6 +21,7 @@ const (
 	InvalidInvitationURL      = "invalid_invitation_url"
 	InvalidRole               = "invalid_role"
 	NotEnoughAdmin            = "not_enough_admin"
+	Max10MBFileSize           = "max_10mb_file_size"
 
 	// Validation Err Code
 	RequiredField   = "required_field"

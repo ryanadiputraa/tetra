@@ -20,6 +20,7 @@ export const API_MSG: Record<string, string> = {
   user_has_joined_org: "Pengguna telah bergabung dengan organisasi.",
   invalid_invitation_url: "Link undangan tidak valid.",
   not_enough_admin: "Admin organisasi tidak cukup.",
+  max_10mb_file_size: "Ukuran maksimal file: 10MB.",
 
   // field validation
   required_field: "Wajib diisi",

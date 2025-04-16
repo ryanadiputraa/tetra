@@ -1,9 +1,8 @@
 "use client";
 
-import { Button, DatePicker, Skeleton } from "antd";
-
 import { PlusOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import { Button, DatePicker, Skeleton, TimePicker } from "antd";
+import dayjs, { Dayjs } from "dayjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,10 +11,14 @@ import { ErrorPage } from "@/components";
 import { useOrganization } from "@/queries";
 import { InputModal } from "./input";
 
+const { RangePicker } = TimePicker;
+
 export default function Home() {
   const { data, isLoading, error, refetch } = useOrganization();
-  const [date, setDate] = useState(dayjs());
   const [isInputOpen, setIsInputOpen] = useState(false);
+  const [date, setDate] = useState(dayjs());
+  const [startTime, setStartTIme] = useState<Dayjs | null>(null);
+  const [endTime, setEndTIme] = useState<Dayjs | null>(null);
 
   if (isLoading) {
     return (
@@ -55,7 +58,24 @@ export default function Home() {
   return (
     <>
       <div className="flex justify-between items-center">
-        <DatePicker size="large" value={date} onChange={setDate} />
+        <div className="flex items-center gap-3">
+          <DatePicker
+            size="large"
+            value={date}
+            onChange={setDate}
+            allowClear={false}
+          />
+          <RangePicker
+            size="large"
+            value={[startTime, endTime]}
+            onChange={(dates) => {
+              if (dates?.length && dates.length >= 2) {
+                if (dates[0]) setStartTIme(dates[0]);
+                if (dates[1]) setEndTIme(dates[1]);
+              }
+            }}
+          />
+        </div>
         <Button
           type="primary"
           icon={<PlusOutlined />}
