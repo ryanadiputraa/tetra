@@ -52,20 +52,21 @@ func (s *service) Import(ctx context.Context, file multipart.File) error {
 			return err
 		}
 
+		// TODO: validate column
 		date, err := time.Parse("02/01/2006", record[0])
 		if err != nil {
 			return err
 		}
 
 		u := domain.Utilization{
-			Date:          date,
-			Contract:      record[1],
-			MoveType:      record[2],
-			UnitCategory:  record[3],
-			UnitName:      record[4],
-			Operator:      record[5],
-			UnitCondition: record[6],
-			CreatedAt:     time.Now().UTC(),
+			Date:         date,
+			Contract:     record[1],
+			MoveType:     record[2],
+			UnitCategory: record[3],
+			UnitName:     record[4],
+			Unit:         record[5],
+			Condition:    record[6],
+			CreatedAt:    time.Now().UTC(),
 		}
 		data = append(data, u)
 	}

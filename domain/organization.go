@@ -88,6 +88,7 @@ type Organization struct {
 	SubscriptionEndAt    time.Time `json:"subscription_end_at" gorm:"notNull"`
 	Members              []Member  `json:"-"`
 	Features             Features  `json:"features" gorm:"-"`
+	OdooURL              *string   `json:"-" gorm:"type:varchar(100)"`
 	OdooUsername         *string   `json:"-" gorm:"type:varchar(100)"`
 	OdooPassword         *string   `json:"-" gorm:"type:varchar(100)"`
 	IntellitrackUsername *string   `json:"-" gorm:"type:varchar(100)"`

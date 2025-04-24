@@ -36,6 +36,7 @@ type ChangeMemberPayload struct {
 }
 
 type DashboardSettings struct {
+	OdooURL              *string `json:"odoo_url"`
 	OdooUsername         *string `json:"odoo_username"`
 	OdooPassword         *string `json:"odoo_password"`
 	IntellitrackUsername *string `json:"intellitrack_username"`
