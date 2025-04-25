@@ -44,6 +44,8 @@ export interface ChangeRolePayload {
 }
 
 export interface UpdateDashboardSettingsPayload {
+  odoo_url: string;
+  odoo_db: string;
   odoo_username: string;
   odoo_password: string;
   intellitrack_username: string;

@@ -172,6 +172,26 @@ export default function Settings() {
           >
             <div className="flex justify-between items-center gap-6">
               <div className="w-full">
+                <label className="mb-1">Odoo URL</label>
+                <Form.Item
+                  name="odoo_url"
+                  rules={[{ required: true, message: "Masukan Odoo URL" }]}
+                >
+                  <Input size="large" placeholder="Odoo URL" />
+                </Form.Item>
+              </div>
+              <div className="w-full">
+                <label className="mb-1">Odoo Database</label>
+                <Form.Item
+                  name="odoo_db"
+                  rules={[{ required: true, message: "Masukan Odoo Database" }]}
+                >
+                  <Input size="large" placeholder="Odoo Database" />
+                </Form.Item>
+              </div>
+            </div>
+            <div className="flex justify-between items-center gap-6">
+              <div className="w-full">
                 <label className="mb-1">Odoo Username</label>
                 <Form.Item
                   name="odoo_username"

@@ -13,6 +13,8 @@ type OrganizationCache struct {
 	Name                 string      `json:"name"`
 	CreatedAt            time.Time   `json:"created_at"`
 	SubscriptionEndAt    time.Time   `json:"subscription_end_at"`
+	OdooURL              *string     `json:"odoo_url"`
+	OdooDB               *string     `json:"odoo_db"`
 	OdooUsername         *string     `json:"odoo_username"`
 	OdooPassword         *string     `json:"odoo_password"`
 	IntellitrackUsername *string     `json:"intellitrack_username"`
@@ -37,6 +39,7 @@ type ChangeMemberPayload struct {
 
 type DashboardSettings struct {
 	OdooURL              *string `json:"odoo_url"`
+	OdooBD               *string `json:"odoo_db"`
 	OdooUsername         *string `json:"odoo_username"`
 	OdooPassword         *string `json:"odoo_password"`
 	IntellitrackUsername *string `json:"intellitrack_username"`
@@ -50,6 +53,8 @@ func CacheFromOrg(org domain.Organization) OrganizationCache {
 		Name:                 org.Name,
 		CreatedAt:            org.CreatedAt,
 		SubscriptionEndAt:    org.SubscriptionEndAt,
+		OdooURL:              org.OdooURL,
+		OdooDB:               org.OdooDB,
 		OdooUsername:         org.OdooUsername,
 		OdooPassword:         org.OdooPassword,
 		IntellitrackUsername: org.IntellitrackUsername,
@@ -64,6 +69,8 @@ func OrgFromCache(cache OrganizationCache) domain.Organization {
 		Name:                 cache.Name,
 		CreatedAt:            cache.CreatedAt,
 		SubscriptionEndAt:    cache.SubscriptionEndAt,
+		OdooURL:              cache.OdooURL,
+		OdooDB:               cache.OdooDB,
 		OdooUsername:         cache.OdooUsername,
 		OdooPassword:         cache.OdooPassword,
 		IntellitrackUsername: cache.IntellitrackUsername,

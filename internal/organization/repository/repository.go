@@ -188,6 +188,7 @@ func (r *repository) UpdateDashboardSettings(ctx context.Context, organizationID
 		Where("id = ?", organizationID).
 		Updates(domain.Organization{
 			OdooURL:              settings.OdooURL,
+			OdooDB:               settings.OdooBD,
 			OdooUsername:         settings.OdooUsername,
 			OdooPassword:         settings.OdooPassword,
 			IntellitrackUsername: settings.IntellitrackUsername,

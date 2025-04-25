@@ -92,8 +92,8 @@ func (s *service) GetByID(ctx context.Context, organizationID int) (result domai
 	result.SubscriptionEndAt = org.SubscriptionEndAt
 	result.Features.Dashboard = false
 
-	if *org.OdooUsername != "" && *org.OdooPassword != "" &&
-		*org.IntellitrackUsername != "" && *org.IntellitrackPassword != "" {
+	if org.OdooURL != nil && org.OdooDB != nil && org.OdooUsername != nil && org.OdooPassword != nil &&
+		org.IntellitrackUsername != nil && org.IntellitrackPassword != nil {
 		result.Features.Dashboard = true
 	}
 	return
