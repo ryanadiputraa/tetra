@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ryanadiputraa/inventra/domain"
-	"github.com/ryanadiputraa/inventra/internal/inventory"
+	"github.com/ryanadiputraa/tetra/domain"
+	"github.com/ryanadiputraa/tetra/internal/inventory"
 	"gorm.io/gorm"
 )
 

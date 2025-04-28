@@ -9,9 +9,9 @@ import (
 	"mime/multipart"
 	"time"
 
-	"github.com/ryanadiputraa/inventra/domain"
-	serviceErr "github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/utilization"
+	"github.com/ryanadiputraa/tetra/domain"
+	serviceErr "github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/utilization"
 )
 
 type service struct {

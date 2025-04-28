@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/ryanadiputraa/inventra/internal/auth"
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/validator"
-	"github.com/ryanadiputraa/inventra/pkg/writer"
+	"github.com/ryanadiputraa/tetra/internal/auth"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/user"
+	"github.com/ryanadiputraa/tetra/pkg/validator"
+	"github.com/ryanadiputraa/tetra/pkg/writer"
 )
 
 type handler struct {

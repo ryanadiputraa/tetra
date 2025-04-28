@@ -1,4 +1,4 @@
-module github.com/ryanadiputraa/inventra
+module github.com/ryanadiputraa/tetra
 
 go 1.23.5
 

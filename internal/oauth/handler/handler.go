@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/oauth"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/user"
+	"github.com/ryanadiputraa/tetra/pkg/jwt"
+	"github.com/ryanadiputraa/tetra/pkg/oauth"
 )
 
 type handler struct {

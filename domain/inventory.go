@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
+	serviceError "github.com/ryanadiputraa/tetra/internal/errors"
 )
 
 type ItemType string

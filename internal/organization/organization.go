@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/domain"
 )
 
 type OrganizationCache struct {

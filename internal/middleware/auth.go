@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ryanadiputraa/inventra/domain"
-	"github.com/ryanadiputraa/inventra/internal/auth"
-	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/organization"
-	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/writer"
+	"github.com/ryanadiputraa/tetra/domain"
+	"github.com/ryanadiputraa/tetra/internal/auth"
+	serviceError "github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/organization"
+	"github.com/ryanadiputraa/tetra/internal/user"
+	"github.com/ryanadiputraa/tetra/pkg/jwt"
+	"github.com/ryanadiputraa/tetra/pkg/writer"
 )
 
 type Middleware struct {

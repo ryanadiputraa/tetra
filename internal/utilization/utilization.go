@@ -4,7 +4,7 @@ import (
 	"context"
 	"mime/multipart"
 
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/domain"
 )
 
 type UtilizationService interface {

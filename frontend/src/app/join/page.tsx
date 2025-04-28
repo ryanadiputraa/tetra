@@ -79,7 +79,7 @@ export default function Join() {
       </Button>
       <div className="bg-white dark:bg-neutral-900 py-16 px-8 md:px-16 rounded-lg w-full md:max-w-xl">
         <div className="text-center">
-          <h4 className="font-bold text-2xl">Inventra</h4>
+          <h4 className="font-bold text-2xl">Tetra</h4>
           <p className="mt-2">
             Kamu belum bergabung ke dalam organisasi. Cek email kamu untuk
             menerima undangan atau buat organisasi untuk mulai.

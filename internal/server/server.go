@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/middleware"
-	"github.com/ryanadiputraa/inventra/pkg/secure"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/internal/middleware"
+	"github.com/ryanadiputraa/tetra/pkg/secure"
 	"gorm.io/gorm"
 )
 

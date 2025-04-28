@@ -81,8 +81,8 @@ export default function Login() {
       {contextHolder}
       <div className="bg-white dark:bg-neutral-900 py-16 px-8 md:px-16 rounded-lg w-full md:max-w-lg">
         <div className="text-center">
-          <h4 className="font-bold text-2xl">Inventra</h4>
-          <p className="mt-2">Daftar akun untuk masuk ke dashboard Inventra.</p>
+          <h4 className="font-bold text-2xl">Tetra</h4>
+          <p className="mt-2">Daftar akun untuk masuk ke dashboard Tetra.</p>
         </div>
         <Form form={form} onFinish={onRegister} className="mt-8 flex flex-col">
           <label className="mb-1 font-semibold">Nama Lengkap</label>

@@ -12,7 +12,7 @@ const font = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Inventra",
+  title: "Tetra",
   description: "Sistem management asset perusahaan",
 };
 

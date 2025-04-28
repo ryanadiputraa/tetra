@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ryanadiputraa/inventra/config"
+	"github.com/ryanadiputraa/tetra/config"
 )
 
 func NewRedis(c config.Config) (rdb *redis.Client, err error) {

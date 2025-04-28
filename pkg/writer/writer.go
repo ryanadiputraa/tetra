@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/pkg/pagination"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/pkg/pagination"
 )
 
 type HTTPWriter interface {

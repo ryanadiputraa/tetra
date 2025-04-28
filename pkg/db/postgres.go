@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

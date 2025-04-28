@@ -108,9 +108,9 @@ export const DashboardLayout = ({
   const NavMenu = () => (
     <>
       <div className="hidden md:flex items-center gap-2 p-6">
-        <Image src="/inventra.png" alt="inventra" width={32} height={32} />
+        <Image src="/tetra.png" alt="tetra" width={32} height={32} />
         <h1 className="text-xl text-black dark:text-white font-semibold">
-          Inventra
+          Tetra
         </h1>
       </div>
       <div className="md:mt-8 px-6">
@@ -196,9 +196,9 @@ export const DashboardLayout = ({
         placement="left"
         title={
           <div className="flex items-center gap-2">
-            <Image src="/inventra.png" alt="inventra" width={32} height={32} />
+            <Image src="/tetra.png" alt="tetra" width={32} height={32} />
             <h1 className="text-xl text-black dark:text-white font-semibold">
-              Inventra
+              Tetra
             </h1>
           </div>
         }

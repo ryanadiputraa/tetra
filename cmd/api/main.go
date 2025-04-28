@@ -9,11 +9,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/internal/server"
-	"github.com/ryanadiputraa/inventra/pkg/cache"
-	"github.com/ryanadiputraa/inventra/pkg/db"
-	"github.com/ryanadiputraa/inventra/pkg/secure"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/internal/server"
+	"github.com/ryanadiputraa/tetra/pkg/cache"
+	"github.com/ryanadiputraa/tetra/pkg/db"
+	"github.com/ryanadiputraa/tetra/pkg/secure"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package inventory
 import (
 	"context"
 
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/domain"
 )
 
 type ItemPayload struct {

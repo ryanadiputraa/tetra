@@ -6,7 +6,7 @@ import (
 	"unicode"
 
 	"github.com/go-playground/validator/v10"
-	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
+	serviceError "github.com/ryanadiputraa/tetra/internal/errors"
 )
 
 const DateStringFormat = "2006-01-02"

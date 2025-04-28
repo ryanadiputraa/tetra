@@ -5,14 +5,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/domain"
-	"github.com/ryanadiputraa/inventra/internal/auth"
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/organization"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/validator"
-	"github.com/ryanadiputraa/inventra/pkg/writer"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/domain"
+	"github.com/ryanadiputraa/tetra/internal/auth"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/organization"
+	"github.com/ryanadiputraa/tetra/pkg/jwt"
+	"github.com/ryanadiputraa/tetra/pkg/validator"
+	"github.com/ryanadiputraa/tetra/pkg/writer"
 )
 
 type handler struct {

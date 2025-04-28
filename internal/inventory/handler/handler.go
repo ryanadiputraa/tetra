@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/ryanadiputraa/inventra/internal/auth"
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/inventory"
-	"github.com/ryanadiputraa/inventra/pkg/pagination"
-	"github.com/ryanadiputraa/inventra/pkg/validator"
-	"github.com/ryanadiputraa/inventra/pkg/writer"
+	"github.com/ryanadiputraa/tetra/internal/auth"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/inventory"
+	"github.com/ryanadiputraa/tetra/pkg/pagination"
+	"github.com/ryanadiputraa/tetra/pkg/validator"
+	"github.com/ryanadiputraa/tetra/pkg/writer"
 )
 
 type handler struct {

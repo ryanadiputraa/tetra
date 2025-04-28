@@ -5,10 +5,10 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/ryanadiputraa/inventra/domain"
-	"github.com/ryanadiputraa/inventra/internal/auth"
-	serviceErr "github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/user"
+	"github.com/ryanadiputraa/tetra/domain"
+	"github.com/ryanadiputraa/tetra/internal/auth"
+	serviceErr "github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/user"
 	"golang.org/x/crypto/bcrypt"
 )
 

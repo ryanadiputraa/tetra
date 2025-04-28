@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/ryanadiputraa/inventra/domain"
-	"github.com/ryanadiputraa/inventra/internal/utilization"
+	"github.com/ryanadiputraa/tetra/domain"
+	"github.com/ryanadiputraa/tetra/internal/utilization"
 	"gorm.io/gorm"
 )
 

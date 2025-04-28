@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/domain"
 )
 
 type AppContext struct {

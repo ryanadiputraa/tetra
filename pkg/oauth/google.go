@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/ryanadiputraa/inventra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/errors"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )

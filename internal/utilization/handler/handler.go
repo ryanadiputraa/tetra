@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/utilization"
-	"github.com/ryanadiputraa/inventra/pkg/writer"
+	"github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/utilization"
+	"github.com/ryanadiputraa/tetra/pkg/writer"
 )
 
 type handler struct {

@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 
-	"github.com/ryanadiputraa/inventra/domain"
+	"github.com/ryanadiputraa/tetra/domain"
 )
 
 type ChangePassowrdPayload struct {

@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ryanadiputraa/inventra/domain"
-	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/organization"
+	"github.com/ryanadiputraa/tetra/domain"
+	serviceError "github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/organization"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

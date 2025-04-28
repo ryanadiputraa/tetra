@@ -7,14 +7,14 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/ryanadiputraa/inventra/config"
-	"github.com/ryanadiputraa/inventra/domain"
-	serviceError "github.com/ryanadiputraa/inventra/internal/errors"
-	"github.com/ryanadiputraa/inventra/internal/organization"
-	"github.com/ryanadiputraa/inventra/internal/user"
-	"github.com/ryanadiputraa/inventra/pkg/jwt"
-	"github.com/ryanadiputraa/inventra/pkg/mail"
-	"github.com/ryanadiputraa/inventra/pkg/secure"
+	"github.com/ryanadiputraa/tetra/config"
+	"github.com/ryanadiputraa/tetra/domain"
+	serviceError "github.com/ryanadiputraa/tetra/internal/errors"
+	"github.com/ryanadiputraa/tetra/internal/organization"
+	"github.com/ryanadiputraa/tetra/internal/user"
+	"github.com/ryanadiputraa/tetra/pkg/jwt"
+	"github.com/ryanadiputraa/tetra/pkg/mail"
+	"github.com/ryanadiputraa/tetra/pkg/secure"
 )
 
 type service struct {
