@@ -14,6 +14,33 @@ type Utilization struct {
 	CreatedAt    time.Time `json:"created_at" gorm:"notNull"`
 }
 
+type Utilizations struct {
+	Data []Contract `json:"data"`
+}
+
+type Contract struct {
+	Contract  string     `json:"contract"`
+	MoveTypes []MoveType `json:"move_types"`
+}
+
+type MoveType struct {
+	MoveType string `json:"move_type"`
+	Units    []Unit `json:"units"`
+}
+
+type Unit struct {
+	TotalAvailable   int      `json:"total_available"`
+	AlocationFromMPE int      `json:"alocation_from_mpe"`
+	Realization      int      `json:"realization"`
+	AdditionalInfo   []string `json:"additional_info"`
+	BD               int      `json:"bd"`
+	Accident         int      `json:"accident"`
+	TLO              int      `json:"tlo"`
+	CMS              int      `json:"cms"`
+	GassDiff         int      `json:"gas_diff"`
+	Standby          int      `json:"standby"`
+}
+
 func NewUtilization(date time.Time, contract, moveType, unitCategory, unitName, unit, condition string) Utilization {
 	return Utilization{
 		Date:         date,

@@ -61,7 +61,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	oauthHandler := oauthHandler.New(logger, c, oauth, jwt, userService)
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
-	utilizationHandler := utilizationHandler.New(writer, utilizationService)
+	utilizationHandler := utilizationHandler.New(c, writer, utilizationService)
 
 	inventoryRepository := inventoryRepository.New(db)
 	inventoryService := inventoryService.New(logger, inventoryRepository)
@@ -80,6 +80,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	router.Handle("GET /api/users/profile", authMiddleware.AuthorizeUser(userHandler.GetUserData()))
 	router.Handle("POST /api/users/password", authMiddleware.AuthorizeUser(userHandler.ChangePassword()))
 
+	router.Handle("GET /api/utilizations/dashboard", authMiddleware.AuthorizeUserRole(utilizationHandler.GetUtilizations(), staffAccessLv))
 	router.Handle("POST /api/utilizations/import", authMiddleware.AuthorizeUserRole(utilizationHandler.Import(), staffAccessLv))
 
 	router.Handle("GET /api/organizations", authMiddleware.AuthorizeUserRole(organizationHandler.FetchOrganizationData(), staffAccessLv))

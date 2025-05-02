@@ -5,7 +5,7 @@ docker:
 	docker-compose up -d
 
 web: 
-	cd frontend && npm run dev 	
+	cd frontend && npm install && npm run dev 	
 
 stop:
 	docker-compose down

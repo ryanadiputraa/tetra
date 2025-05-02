@@ -7,6 +7,10 @@ import (
 	"github.com/ryanadiputraa/tetra/domain"
 )
 
+type UtilizationServiceError struct {
+	Message string `json:"message"`
+}
+
 type UtilizationService interface {
 	Import(ctx context.Context, file multipart.File) error
 }
