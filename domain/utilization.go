@@ -25,6 +25,7 @@ type MoveType struct {
 }
 
 type Unit struct {
+	UnitName         string   `json:"unit_name"`
 	TotalAvailable   int      `json:"total_available"`
 	AlocationFromMPE int      `json:"alocation_from_mpe"`
 	Realization      int      `json:"realization"`

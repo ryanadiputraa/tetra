@@ -9,6 +9,7 @@ export type MoveType = {
 };
 
 export type Unit = {
+  unit_name: string;
   total_available: number;
   alocation_from_mpe: number;
   realization: number;
