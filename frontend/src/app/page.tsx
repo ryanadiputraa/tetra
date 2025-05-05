@@ -10,6 +10,7 @@ import { useState } from "react";
 import { ErrorPage } from "@/components";
 import { useOrganization } from "@/queries";
 import { InputModal } from "./input";
+import { Dashboard } from "./dashboard";
 
 const { RangePicker } = TimePicker;
 
@@ -17,8 +18,8 @@ export default function Home() {
   const { data, isLoading, error, refetch } = useOrganization();
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [date, setDate] = useState(dayjs());
-  const [startTime, setStartTIme] = useState<Dayjs | null>(null);
-  const [endTime, setEndTIme] = useState<Dayjs | null>(null);
+  const [startTime, setStartTIme] = useState<Dayjs>(dayjs().startOf("day"));
+  const [endTime, setEndTIme] = useState<Dayjs>(dayjs().endOf("day"));
 
   if (isLoading) {
     return (
@@ -84,6 +85,11 @@ export default function Home() {
           Input Data
         </Button>
       </div>
+      <Dashboard
+        date={date.format("YYYY-MM-DD")}
+        startTime={startTime.format("HH:mm:ss")}
+        endTime={endTime.format("HH:mm:ss")}
+      />
       <InputModal
         open={isInputOpen}
         onCloseAction={() => setIsInputOpen(false)}

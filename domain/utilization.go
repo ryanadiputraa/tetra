@@ -15,16 +15,12 @@ type Utilization struct {
 }
 
 type Utilizations struct {
-	Data []Contract `json:"data"`
-}
-
-type Contract struct {
-	Contract  string     `json:"contract"`
-	MoveTypes []MoveType `json:"move_types"`
+	Data []MoveType `json:"data"`
 }
 
 type MoveType struct {
 	MoveType string `json:"move_type"`
+	Contract string `json:"contract"`
 	Units    []Unit `json:"units"`
 }
 

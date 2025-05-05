@@ -7,4 +7,5 @@ export const QUERY_KEYS = {
   organizationMembers: ["organizationMembers"],
   acceptInvitation: ["acceptInvitation"],
   inventoryItems: ["inventoryItems"],
+  utilizationDashboard: ["utilizationDashboard"],
 };
