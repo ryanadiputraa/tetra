@@ -15,6 +15,9 @@ export default {
         secondary: "#54A6CF",
         accent: "#BADFF2",
       },
+      screens: {
+        "3xl": "2560px",
+      },
     },
   },
   plugins: [],

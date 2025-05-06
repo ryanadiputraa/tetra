@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,13 +15,15 @@ import (
 )
 
 type handler struct {
+	logger  *slog.Logger
 	config  config.Config
 	writer  writer.HTTPWriter
 	service utilization.UtilizationService
 }
 
-func New(c config.Config, writer writer.HTTPWriter, service utilization.UtilizationService) *handler {
+func New(logger *slog.Logger, c config.Config, writer writer.HTTPWriter, service utilization.UtilizationService) *handler {
 	return &handler{
+		logger:  logger,
 		config:  c,
 		writer:  writer,
 		service: service,
@@ -119,6 +122,7 @@ func (h *handler) GetUtilizations() http.HandlerFunc {
 
 		var data domain.Utilizations
 		if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
+			h.logger.Info("DEBUG", "err", err)
 			h.writer.WriteErrorResponse(w, http.StatusInternalServerError, errors.ServerError)
 			return
 		}

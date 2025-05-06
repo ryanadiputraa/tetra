@@ -61,7 +61,7 @@ func setupHandler(c config.Config, logger *slog.Logger, db *gorm.DB, rdb *redis.
 	oauthHandler := oauthHandler.New(logger, c, oauth, jwt, userService)
 	userHandler := userHandler.New(writer, validator, userService)
 	organizationHandler := organizationHandler.New(c, writer, organizationService, validator, jwt)
-	utilizationHandler := utilizationHandler.New(c, writer, utilizationService)
+	utilizationHandler := utilizationHandler.New(logger, c, writer, utilizationService)
 
 	inventoryRepository := inventoryRepository.New(db)
 	inventoryService := inventoryService.New(logger, inventoryRepository)

@@ -19,12 +19,13 @@ type Utilizations struct {
 }
 
 type MoveType struct {
-	MoveType string `json:"move_type"`
-	Contract string `json:"contract"`
-	Units    []Unit `json:"units"`
+	MoveType    string        `json:"move_type"`
+	Contract    string        `json:"contract"`
+	Realization []Realization `json:"realization"`
+	Units       UnitData      `json:"units"`
 }
 
-type Unit struct {
+type Realization struct {
 	UnitName         string   `json:"unit_name"`
 	TotalAvailable   int      `json:"total_available"`
 	AlocationFromMPE int      `json:"alocation_from_mpe"`
@@ -36,6 +37,18 @@ type Unit struct {
 	CMS              int      `json:"cms"`
 	GassDiff         int      `json:"gas_diff"`
 	Standby          int      `json:"standby"`
+}
+
+type UnitData struct {
+	OprEngineOn              int `json:"opr_engine_on"`
+	IdleEngineOn             int `json:"idle_engine_on"`
+	StdEngineOff             int `json:"std_engine_off"`
+	StdEngineUnknown         int `json:"std_engine_unkown"`
+	BdEngineOn               int `json:"bd_engine_on"`
+	BdEngineOff              int `json:"bg_engine_off"`
+	BdEngineUnknown          int `json:"bd_engine_unkown"`
+	AcdEngineUnknown         int `json:"acd_engine_unkown"`
+	ChasisCrackEngineUnknown int `json:"chasis_crack_engine_unkown"`
 }
 
 func NewUtilization(date time.Time, contract, moveType, unitCategory, unitName, unit, condition string) Utilization {
